@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/groundsgg/library-motd/compare/v0.1.0...v0.1.1) (2026-10-21)
+
+
+### Bug Fixes
+
+* ship release history and verify the packed React adapter ([#3](https://github.com/groundsgg/library-motd/issues/3)) ([4300547](https://github.com/groundsgg/library-motd/commit/43005475430c3cd33b45a4077f60d3c716986aa1))
+
 ## 0.1.0 (2026-10-21)
 
 
