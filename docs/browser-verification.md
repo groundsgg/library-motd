@@ -1,7 +1,8 @@
 # Browser verification
 
-The same 31 browser tests run in Chromium, Firefox and Playwright WebKit on
-Ubuntu 24.04 for every pull request and before a release (93 cases). CI installs
+The full browser suite runs in Chromium, Firefox and Playwright WebKit on
+Ubuntu 24.04 for every pull request and before a release. The initial matrix
+verification passed 31 tests per engine (93 cases in total). CI installs
 all three engines and their system dependencies; `CI` limits concurrency to two
 workers. A browser failure blocks the shared validation and publishing jobs.
 
