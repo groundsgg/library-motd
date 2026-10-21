@@ -48,6 +48,8 @@ const editor = createEditor(host, {
 // editor.update({...}); editor.getDocument(); editor.destroy();
 ```
 
+Use `createComparison` (DOM) or `ServerListComparison` (React) for [side-by-side client comparisons](docs/comparison.md) with per-client context and diagnostics.
+
 React: import `ServerListEditor` or `ServerListPreview` from `@groundsgg/motd/react`, pass the same options as props, and return `onChange` values through controlled state. React >=18 is an optional peer; core and DOM consumers need no React. SSR renders an empty host and initializes in the browser.
 
 - [Public API](docs/api.md)

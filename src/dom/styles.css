@@ -416,3 +416,31 @@
   width: 16px;
   height: 16px;
 }
+
+.mcp-comparison {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 16px;
+}
+.mcp-comparison-panel {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--mce-line, #454550);
+  border-radius: 8px;
+}
+.mcp-comparison-title {
+  margin: 0 0 8px;
+}
+.mcp-comparison-context,
+.mcp-comparison-differences,
+.mcp-comparison-diagnostics {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.mcp-comparison-viewport {
+  max-width: 100%;
+  overflow: auto;
+}
+.mcp-comparison-diagnostics {
+  padding-left: 20px;
+}

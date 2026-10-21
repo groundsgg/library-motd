@@ -8,6 +8,9 @@ import {
 import {
   createEditor,
   createPreview,
+  createComparison,
+  type ComparisonHandle,
+  type ComparisonOptions,
   type EditorHandle,
   type EditorOptions,
   type PreviewHandle,
@@ -49,6 +52,30 @@ export function ServerListPreview(
       handle.current = null;
     };
     // Mount once; the effect below applies current props without destroying editor state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    handle.current?.update(props);
+  });
+  return createElement("div", {
+    ref: host,
+    className: props.className,
+    style: props.style,
+  });
+}
+
+export function ServerListComparison(
+  props: ComparisonOptions & ContainerProps,
+): ReactElement {
+  const host = useRef<HTMLDivElement>(null);
+  const handle = useRef<ComparisonHandle | null>(null);
+  useEffect(() => {
+    if (host.current) handle.current = createComparison(host.current, props);
+    return () => {
+      handle.current?.destroy();
+      handle.current = null;
+    };
+    // Mount once; updates keep independently keyed client previews alive.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
