@@ -1,0 +1,24 @@
+{
+  "upstream": "https://github.com/IdreesInc/Minecraft-Font",
+  "commit": "261ac77fbf28796ca09c22eb83ecdfe386c4b838",
+  "license": "SIL-OFL-1.1",
+  "modification": "hmtx advances rounded down to an even font unit, preserving outlines; half-unit letter spacing removed",
+  "files": [
+    {
+      "name": "Minecraft.otf",
+      "sha256": "ebc7a7be9f69479f02875af1fe79a2b93cc868b83be4f6369ecceb45fabe5ee6"
+    },
+    {
+      "name": "Minecraft-Bold.otf",
+      "sha256": "2a7216d047fd2991aa8a2fcbc002e0782a903d68de3cc248092ffa88aa941b4f"
+    },
+    {
+      "name": "GroundsPixel.otf",
+      "sha256": "c0ede96682eb71e5a56b4fdb0ff074069698b7f6f51a691a1ef0c77b3c52f487"
+    },
+    {
+      "name": "GroundsPixel-Bold.otf",
+      "sha256": "a40940dda21b5379c16792343861392c156a542d9cc700241d6483ac64421d4a"
+    }
+  ]
+}
