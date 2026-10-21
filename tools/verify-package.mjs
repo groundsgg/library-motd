@@ -32,17 +32,32 @@ const root = join(directory, "node_modules/@groundsgg/motd"),
 for (const [, asset] of css.matchAll(/url\(['"]?([^'")]+)/g))
   if (!existsSync(resolve(root, "dist", asset)))
     throw Error("Missing CSS asset: " + asset);
+// Resolve React only after proving that the core consumer does not require it.
+const reactVersions = ["react", "react-dom"].map((name) => {
+  const { version } = JSON.parse(
+    readFileSync(join("node_modules", name, "package.json"), "utf8"),
+  );
+  return `${name}@${version}`;
+});
 execFileSync(
-  process.execPath,
-  [
-    "--test",
-    "tests/package/core-import.test.mjs",
-    "tests/package/react-ssr.test.mjs",
-  ],
-  {
-    stdio: "inherit",
-  },
+  npm,
+  ["install", "--ignore-scripts", "--no-save", ...reactVersions],
+  { cwd: directory, stdio: "pipe" },
 );
+writeFileSync(
+  join(directory, "react-ssr.test.mjs"),
+  readFileSync("tests/package/react-ssr.test.mjs", "utf8")
+    .replace("../../dist/react/index.js", "@groundsgg/motd/react")
+    .replace("../../dist/index.js", "@groundsgg/motd"),
+);
+execFileSync(process.execPath, ["--test", "react-ssr.test.mjs"], {
+  cwd: directory,
+  stdio: "inherit",
+});
+for (const required of ["LICENSE", "CHANGELOG.md", "THIRD_PARTY_NOTICES.md"]) {
+  if (!existsSync(join(root, required)))
+    throw new Error(`Package is missing ${required}`);
+}
 console.log(
   "Verified packed Node + DOM without React, local CSS assets, React SSR:",
   tar,

@@ -8,7 +8,7 @@ The canonical package is [`@groundsgg/motd` on npm](https://www.npmjs.com/packag
 2. Review and merge the release PR after its CI checks pass. Release Please updates `package.json`, the lockfile, the changelog and its manifest, then creates `vX.Y.Z` and a GitHub release.
 3. The same workflow publishes its tested archive to npm through OIDC and to GitHub Packages with `GITHUB_TOKEN`. There is no long-lived npm token.
 
-Release PR CI is dispatched explicitly because a PR created with `GITHUB_TOKEN` does not trigger another workflow automatically. No personal access token is needed.
+Release PR CI is dispatched explicitly because a PR created with `GITHUB_TOKEN` does not trigger another workflow automatically. No personal access token is needed. GitHub may additionally request approval for the pull-request workflow created by the bot. In that case, review and approve that run from the PR before merging; the dispatched run does not replace checks on GitHub's PR merge commit.
 
 Both registries receive the same bytes. The publisher rejects tag/version mismatches, unknown registries and existing versions with different integrity. Authentication and network errors fail the job. To recover a failed publication, run the Release workflow manually with the existing release tag. It rebuilds and verifies the tagged source; an already published version is skipped only when its SHA512 integrity matches. Changes to package tooling must be released under a new version.
 
@@ -26,7 +26,7 @@ npm trust github @groundsgg/motd \
   --allow-publish --yes
 ```
 
-This needs npm 11.15 or newer and an owner account with two-factor authentication. Configure the trusted publisher just before the next automated publication; npm expires a new publisher configuration if unused for two days. Subsequent releases use OIDC. Restrict token publishing in the npm package settings after verifying the first automated release.
+This needs npm 11.15 or newer and an owner account with two-factor authentication. Configure the trusted publisher just before the next automated publication; npm expires a new publisher configuration if unused for two days. Verify an actual OIDC publication within that period; checking an already published version does not validate the new connection. Subsequent releases use OIDC. Restrict token publishing in the npm package settings after verifying the first automated release.
 
 GitHub Packages uses the repository's `GITHUB_TOKEN`. Verify package visibility after its initial publication; package visibility is managed separately from repository visibility.
 
