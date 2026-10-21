@@ -126,3 +126,7 @@ jobs:
           RELEASE_TAG: ${{ needs.release.outputs.tag }}
           PUBLISH_REGISTRY: https://npm.pkg.github.com
         run: node tools/publish-package.mjs release-artifact/*.tgz
+      - name: Report package visibility
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api "orgs/${GITHUB_REPOSITORY_OWNER}/packages/npm/motd" --jq '{name, visibility, html_url}'
