@@ -1,0 +1,15 @@
+import type { JavaStatus, Outcome, ServerListDocument } from '../model.js';
+import { createDocument,validateDocument } from '../document.js';
+import { failure } from '../diagnostics.js';
+import { parseText } from '../text/parse.js';
+export function importStatus(status:JavaStatus):Outcome<ServerListDocument> {
+  try {
+    if(!status||typeof status.version?.name!=='string'||!Number.isInteger(status.version.protocol))return failure('invalid-status','','Invalid server version');
+    const source=JSON.stringify(status.description);if(source.length>65536)return failure('text-limit','motd','Server MOTD exceeds import limit');
+    const text=parseText(source,'json');if(!text.value)return {value:null,diagnostics:text.diagnostics};
+    const doc=createDocument(text.value);
+    if(status.players){const p=status.players;if(!Number.isInteger(p.online)||p.online<0||!Number.isInteger(p.max)||p.max<0)return failure('invalid-status','players','Invalid server player counts');doc.players.online={mode:'fixed',value:p.online};doc.players.maximum={mode:'fixed',value:p.max};if(p.sample?.length){const hover=parseText(p.sample.map(p=>p.name).join('\n'),'legacy-section');if(!hover.value)return {value:null,diagnostics:hover.diagnostics};doc.hover={mode:'custom',text:hover.value};}}
+    if(status.favicon){if(!status.favicon.startsWith('data:image/png;base64,'))return failure('invalid-icon','icon','Server icon must be a PNG data URI');doc.icon={pngBase64:status.favicon.slice(22)};}
+    return validateDocument(doc);
+  }catch{return failure('invalid-status','','Invalid server status response');}
+}

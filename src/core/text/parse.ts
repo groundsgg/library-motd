@@ -9,7 +9,7 @@ export function parseText(input: string, format: TextFormat, options: ParseOptio
   if(input.length>(options.maxTextLength??65536))return failure('text-limit','','Text exceeds its configured limit');
   if(format === 'minimessage') return parseMiniMessage(input,options);
   try {
-    const doc=format==='json'?parseJsonText(JSON.parse(input)):format==='properties'?parseLegacy(decodeProperties(input),'§'):parseLegacy(input,format==='legacy-ampersand'?'&':'§');
+    const doc=format==='json'?parseJsonText(JSON.parse(input),options.maxDepth):format==='properties'?parseLegacy(decodeProperties(input),'§'):parseLegacy(input,format==='legacy-ampersand'?'&':'§');
     doc.source={format,value:input,revision:0};
     return {value:doc,diagnostics:[]};
   }catch{return failure('invalid-text','','Invalid text component');}

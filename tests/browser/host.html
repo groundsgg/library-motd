@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="/src/dom/styles.css"></head><body><div id="preview"></div><div id="second"></div><div id="editor"></div><script type="module">
+import * as api from '/src/index.ts';
+import * as dom from '/src/dom/index.ts';
+const document=api.createDocument(api.parseText('<gold><b>Grounds</b></gold><newline><green>Welcome, {{players}} players','minimessage').value);
+const context={base:{version:{protocol:767,name:'1.21.1'},players:{online:42,max:500,sample:[{name:'Ada',id:'00000000-0000-0000-0000-000000000000'}]},description:''},clientProtocol:767,values:{},profile:api.java1211Profile,viewportWidth:640,guiScale:2,serverName:'Grounds Network',pingMs:35,animations:true};
+window.api=api;window.dom=dom;window.doc=document;window.context=context;
+window.preview=dom.createPreview(window.document.querySelector('#preview'),{document,context});
+window.second=dom.createPreview(window.document.querySelector('#second'),{document,context});
+window.changes=[];
+if(dom.createEditor)window.editor=dom.createEditor(window.document.querySelector('#editor'),{document,context,onChange:(doc,change)=>{window.doc=doc;window.changes.push(change);window.preview.update({document:doc,context});}});
+</script></body></html>

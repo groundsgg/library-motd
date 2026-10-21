@@ -1,0 +1,21 @@
+@import './properties.css';
+@font-face{font-family:GroundsMinecraft;src:url('../../assets/java-1.21.1/GroundsPixel.otf') format('opentype');font-weight:400;font-display:block}
+@font-face{font-family:GroundsMinecraft;src:url('../../assets/java-1.21.1/GroundsPixel-Bold.otf') format('opentype');font-weight:700;font-display:block}
+.mcp-wrap{position:relative;max-width:100%;font-family:var(--mcp-font,GroundsMinecraft,monospace);font-synthesis:style;image-rendering:pixelated;text-rendering:geometricPrecision}
+.mcp-stage{position:relative;max-width:100%;overflow:hidden;background:#161616}
+.mcp-row{height:36px;position:relative;transform-origin:top left;color:#fff;font-size:9px;line-height:9px;background:rgba(0,0,0,.65);box-shadow:inset 0 0 0 1px #777;overflow:hidden;box-sizing:border-box}
+.mcp-icon{position:absolute;left:2px;top:2px;width:32px;height:32px;background:#212121;color:#777;display:grid;place-items:center;font-size:20px}
+.mcp-icon img{width:32px;height:32px;image-rendering:pixelated}
+.mcp-server-name{position:absolute;left:37px;top:2px;white-space:pre;text-shadow:1px 1px #3f3f3f}
+.mcp-players,.mcp-ping{position:absolute;top:2px;border:0;background:transparent;padding:0;font:inherit;line-height:9px;cursor:default;color:#aaa;white-space:pre}
+.mcp-players{right:17px;max-width:72%;overflow:hidden}.mcp-ping{right:3px;color:#00e000;font-size:8px}
+.mcp-incompatible{color:#ff5555}.mcp-version-text{position:relative;font:inherit}
+.mcp-motd{position:absolute;left:37px;top:12px;overflow:hidden}.mcp-glyph{position:absolute;display:inline-block;white-space:pre;height:9px;font-size:9px;line-height:9px}
+.mcp-tooltip{position:fixed;z-index:10000;padding:6px 8px;background:#100010f5;color:#fff;border:2px solid #390080;box-shadow:0 0 0 2px #100010;font:18px/1.2 var(--mcp-font,GroundsMinecraft,monospace);pointer-events:none;white-space:pre;max-width:calc(100vw - 12px);box-sizing:border-box}
+.mcp-tooltip[hidden]{display:none}.mcp-tooltip-text{position:relative;font-size:9px}.mcp-row button:focus-visible{outline:1px solid white;outline-offset:1px}
+@media(prefers-reduced-motion:reduce){.mcp-wrap *{animation:none!important}}
+.mce-root{--mce-accent:#ba5d30;--mce-line:#d4d0c7;--mce-panel:#f5f3ed;color:#282923;background:var(--mce-panel);border:1px solid var(--mce-line);font:13px/1.5 system-ui,sans-serif;max-width:100%;box-sizing:border-box}
+.mce-tabs,.mce-toolbar{display:flex;align-items:center;gap:4px;padding:8px 12px;border-bottom:1px solid var(--mce-line);flex-wrap:wrap}
+.mce-tabs{background:#ebe8df;gap:12px}.mce-button{font:inherit;color:inherit;border:1px solid transparent;background:transparent;padding:5px 10px;cursor:pointer;border-radius:3px}.mce-button:hover{background:#ddd8cd}.mce-button:focus-visible{outline:2px solid var(--mce-accent);outline-offset:1px}.mce-button:disabled{opacity:.4;cursor:default}.mce-toolbar>.mce-button{min-width:30px;font-weight:600}.mce-color{width:28px;height:28px;padding:2px;border:1px solid var(--mce-line);background:none}
+.mce-canvas{padding:32px 20px;background:repeating-linear-gradient(0deg,#1b1e1b 0 4px,#1a1c19 4px 8px);overflow:auto}.mce-canvas>.mcp-wrap{margin:auto}
+.mce-inline .ProseMirror{outline:none;white-space:pre-wrap;word-break:break-word;font:9px/9px var(--mcp-font,GroundsMinecraft,monospace);color:#aaa;min-height:9px;caret-color:#fff}.mce-inline .ProseMirror p{margin:0;min-height:9px;line-height:9px}.mce-inline .ProseMirror:focus{box-shadow:inset 0 -1px #ffffff40}.mce-inline .ProseMirror-selectednode{outline:1px solid #fff}.mce-token{background:#ffffff14;white-space:pre}.mce-source{display:block;box-sizing:border-box;width:calc(100% - 24px);margin:12px;padding:12px;background:#fffdf8;border:1px solid var(--mce-line);font:12px/1.7 ui-monospace,monospace;resize:vertical}.mce-source[hidden]{display:none}.mce-diagnostics{padding:8px 12px;white-space:pre-wrap;color:#9b341e;font-size:12px}.mce-diagnostics[hidden]{display:none}.mce-hover-editor{background:#100010;color:white;padding:12px;margin:12px;width:max-content;min-width:160px;max-width:85%;border:2px solid #390080}.mce-hover-editor .ProseMirror{font-size:18px;line-height:18px}.mce-hover-editor p{line-height:18px!important}.mce-inline[data-editor-field=version]{min-width:30px}
