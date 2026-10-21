@@ -40,9 +40,15 @@ export function toEditorNode(text: TextDocument, schema: Schema): PMNode {
     ),
   );
 }
+export interface EditorSourceRange {
+  from: number;
+  to: number;
+  atom: boolean;
+}
 export function fromEditorNode(
   pm: PMNode,
   previous: TextDocument,
+  positions?: Map<string, EditorSourceRange>,
 ): TextDocument {
   const root: TextNode[] = [],
     used = new Set<string>();
@@ -76,23 +82,32 @@ export function fromEditorNode(
     }
     return active.at(-1)?.children ?? root;
   };
-  pm.forEach((paragraph, _, line) => {
+  pm.forEach((paragraph, paragraphOffset, line) => {
     if (line)
       container(paragraph.attrs.breakPath ?? []).push({
         id: unique(),
         type: "newline",
       });
-    paragraph.forEach((node) => {
+    paragraph.forEach((node, inlineOffset) => {
+      const from = paragraphOffset + 1 + inlineOffset;
       if (node.isText) {
         const mark = node.marks.find((m) => m.type.name === "format");
-        container(mark?.attrs.path ?? []).push({
-          id: unique(mark?.attrs.leafId ?? undefined),
+        const target = container(mark?.attrs.path ?? []);
+        const id = unique(mark?.attrs.leafId ?? undefined);
+        positions?.set(id, { from, to: from + node.nodeSize, atom: false });
+        target.push({
+          id,
           type: "text",
           value: node.text!,
         });
       } else if (node.type.name === "token") {
         const token = structuredClone(node.attrs.node) as TextNode;
         token.id = unique(token.id);
+        positions?.set(token.id, {
+          from,
+          to: from + node.nodeSize,
+          atom: true,
+        });
         container(node.attrs.path ?? []).push(token);
       }
     });

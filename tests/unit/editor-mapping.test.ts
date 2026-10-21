@@ -7,7 +7,11 @@ import {
   createDocument,
 } from "../../src/index.js";
 import { editorSchema } from "../../src/dom/editor/schema.js";
-import { fromEditorNode, toEditorNode } from "../../src/dom/editor/mapping.js";
+import {
+  fromEditorNode,
+  toEditorNode,
+  type EditorSourceRange,
+} from "../../src/dom/editor/mapping.js";
 it("preserves protected nodes and parent gradient identity across a neighbouring edit", () => {
   const raw =
     "<gradient:#ff0000:#0000ff>A<b>B</b><font:custom>C</font>D</gradient>";
@@ -33,4 +37,24 @@ it("keeps imported third lines and combining sequences in the model", () => {
   expect(
     serializeText(result, { format: "minimessage", rgb: true }).value,
   ).toBe("é😀<newline>two<newline>three");
+});
+
+it("maps UTF-16 text and atomic placeholders across lines without changing export semantics", () => {
+  const text = parseText(
+    "<gradient:#ff0000:#0000ff>é😀{{x}}<newline>W</gradient>",
+    "minimessage",
+  ).value!;
+  const schema = editorSchema({} as Document, {});
+  const pm = toEditorNode(text, schema);
+  const positions = new Map<string, EditorSourceRange>();
+  const result = fromEditorNode(pm, text, positions);
+  expect([...positions.values()]).toEqual([
+    { from: 1, to: 5, atom: false },
+    { from: 5, to: 6, atom: true },
+    { from: 8, to: 9, atom: false },
+  ]);
+  const target = { format: "minimessage" as const, rgb: true };
+  expect(serializeText(result, target).value).toBe(
+    serializeText(fromEditorNode(pm, text), target).value,
+  );
 });
