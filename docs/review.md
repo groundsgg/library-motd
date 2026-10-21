@@ -28,7 +28,6 @@ All ten concrete findings from a fresh independent reviewer were addressed. No m
 - Final: Ruling: broader native glyph fidelity remains unverified — one independent Latin reference is preserved without a full-profile claim — cost if wrong: additional glyph/decoration profiles require correction.
 - Final: Ruling: Firefox and real IME remain unverified — Chromium tests and incremental ProseMirror updates do not prove those environments — cost if wrong: browser/input-specific issues before wider release.
 
-
 User acceptance follow-up: reproduced icon/frame overlap and missing menu backdrop. The selection frame is separate from row content; real 1.20.4/1.21.1/1.21.11/26.1/26.2/26.3 clients establish the included geometry/text cases. Eight release presets use official protocol metadata. Native 26.1.1/26.1.2 entry classes match 26.1; those patch clients were not launched independently. Alpha upload and selected compositing match a native reference, and the React/DOM upload action has a keyboard-accessible original pixel-art image-plus glyph.
 
 Ruling: background, icon, button and font resources belong to an optional host asset provider, outside persisted documents and npm artifacts. Own illustrations/OFL fonts remain defaults; original release panoramas and all game assets need separate rights and hosting decisions. Cost if wrong: a new licensed asset pack/provider can replace the defaults without changing the document API. Current provider hooks do not certify complete pixel-perfect native UI; the old 1.20.4 version-field position remains unverified.

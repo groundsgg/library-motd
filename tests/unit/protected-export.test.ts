@@ -1,10 +1,5 @@
 import { expect, it } from "vitest";
-import {
-  parseText,
-  serializeText,
-  java1211Profile,
-  type TextDocument,
-} from "../../src/index.js";
+import { parseText, serializeText, java1211Profile } from "../../src/index.js";
 const layout = {
   profile: java1211Profile,
   width: 271,

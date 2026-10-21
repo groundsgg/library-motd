@@ -1,0 +1,10 @@
+node_modules/
+dist/
+demo-dist/
+playwright-report/
+test-results/
+tests/fixtures/
+assets/java-1.21.1/
+CHANGELOG.md
+LICENSE
+THIRD_PARTY_NOTICES.md

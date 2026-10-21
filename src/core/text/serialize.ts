@@ -7,7 +7,7 @@ import type {
   TextTarget,
 } from "../model.js";
 import { diagnostic } from "../diagnostics.js";
-import { flattenText, hex, rgb } from "./colors.js";
+import { flattenText, rgb } from "./colors.js";
 import { LEGACY_PALETTE } from "./legacy.js";
 import { encodeProperties } from "./properties.js";
 import { layoutText } from "../layout/layout.js";

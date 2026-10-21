@@ -43,20 +43,20 @@ Neues eigenständiges Repository: `/home/lukas/grounds/library-motd`. Vor Erstel
 
 Alle nachfolgenden Pfade sind relativ zu diesem neuen Repository. Dateien werden beim jeweiligen fachlichen Task angelegt, nicht vorab als leere Platzhalter.
 
-| Pfad | Verantwortung |
-| --- | --- |
-| `src/index.ts`, `src/core/model.ts`, `src/core/document.ts`, `src/core/diagnostics.ts` | Öffentliche Typen, Validierung, Dokumentlebenszyklus |
-| `src/core/text/{parse,minimessage,legacy,properties,json,serialize}.ts` | Formate und Quelltexttreue |
-| `src/core/text/{colors,placeholders,simplify}.ts` | Farbeffekte, Resolver und optionale Importhilfen |
-| `src/core/layout/{layout,profiles}.ts`, `src/profiles/java-1.21.1.ts` | Glyphenmetriken und Clientgeometrie |
-| `src/core/status/{evaluate,template,import}.ts` | Ausgewertete Statusantwort, übertragbare Statusvorlage und Import gelieferter Statusdaten |
-| `src/dom/{index,preview,tooltips,animation}.ts`, `src/dom/styles.css` | Darstellung und unabhängiger Lebenszyklus |
-| `src/dom/editor/{index,schema,mapping,commands,history,toolbar,source}.ts` | Inline-Eingabe, Auswahl, gemeinsame Historie und Quelltextmodus |
-| `src/dom/{icon,import,properties}.ts` | Bildverarbeitung, Importadapter und Status-Eigenschaften |
-| `src/react/index.tsx` | Kontrollierte React-Anbindung |
-| `assets/`, `THIRD_PARTY_NOTICES.md`, `tests/fixtures/` | Gebündelte Assets und nachvollziehbare Referenzen |
-| `tests/unit/`, `tests/browser/`, `tests/package/`, `tools/` | Semantik-, Browser- und Paketprüfungen |
-| `examples/dom/`, `examples/react/`, `docs/`, `README.md` | Eigenständige Beispiele und öffentliche Nutzung |
+| Pfad                                                                                   | Verantwortung                                                                             |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `src/index.ts`, `src/core/model.ts`, `src/core/document.ts`, `src/core/diagnostics.ts` | Öffentliche Typen, Validierung, Dokumentlebenszyklus                                      |
+| `src/core/text/{parse,minimessage,legacy,properties,json,serialize}.ts`                | Formate und Quelltexttreue                                                                |
+| `src/core/text/{colors,placeholders,simplify}.ts`                                      | Farbeffekte, Resolver und optionale Importhilfen                                          |
+| `src/core/layout/{layout,profiles}.ts`, `src/profiles/java-1.21.1.ts`                  | Glyphenmetriken und Clientgeometrie                                                       |
+| `src/core/status/{evaluate,template,import}.ts`                                        | Ausgewertete Statusantwort, übertragbare Statusvorlage und Import gelieferter Statusdaten |
+| `src/dom/{index,preview,tooltips,animation}.ts`, `src/dom/styles.css`                  | Darstellung und unabhängiger Lebenszyklus                                                 |
+| `src/dom/editor/{index,schema,mapping,commands,history,toolbar,source}.ts`             | Inline-Eingabe, Auswahl, gemeinsame Historie und Quelltextmodus                           |
+| `src/dom/{icon,import,properties}.ts`                                                  | Bildverarbeitung, Importadapter und Status-Eigenschaften                                  |
+| `src/react/index.tsx`                                                                  | Kontrollierte React-Anbindung                                                             |
+| `assets/`, `THIRD_PARTY_NOTICES.md`, `tests/fixtures/`                                 | Gebündelte Assets und nachvollziehbare Referenzen                                         |
+| `tests/unit/`, `tests/browser/`, `tests/package/`, `tools/`                            | Semantik-, Browser- und Paketprüfungen                                                    |
+| `examples/dom/`, `examples/react/`, `docs/`, `README.md`                               | Eigenständige Beispiele und öffentliche Nutzung                                           |
 
 ## Gemeinsame Verträge
 
@@ -85,8 +85,10 @@ Task 1 definiert alle folgenden Typen in `src/core/model.ts`. Tests und Folgetas
 - [ ] Schreibe Tests `document_defaults_preserve_live_values`, `unknown_schema_is_rejected`, `history_and_preview_are_not_persisted`, `invalid_rules_have_field_paths`: Defaults sind automatische Version, übernommene Zahlen und Hover; JSON-Rundlauf erhält Dokumentdaten, ohne Auswahl/Undo/Kontext zu speichern.
 
   ```ts
-  expect(createDocument().version.mode).toBe('automatic');
-  expect(readDocument(writeDocument(createDocument())).value).toEqual(createDocument());
+  expect(createDocument().version.mode).toBe("automatic");
+  expect(readDocument(writeDocument(createDocument())).value).toEqual(
+    createDocument(),
+  );
   expect(validateDocument({ schemaVersion: 99 }).value).toBeNull();
   ```
 
@@ -104,9 +106,9 @@ Task 1 definiert alle folgenden Typen in `src/core/model.ts`. Tests und Folgetas
 - [ ] Schreibe `reference_profile_matches_recorded_advances` und `all_assets_resolve_locally`: Prüfe die gemessenen Referenzwerte für `Mi! äé`, Leerzeichen und Bold sowie Assetpfade ohne fremde Origins. Erfasse dafür zuerst die Referenzdaten aus Java 1.21.1 mit Standardschrift, GUI-Skalierung und aufgezeichneten Fenstermaßen.
 
   ```ts
-  expect(java1211Profile.id).toBe('java-1.21.1');
+  expect(java1211Profile.id).toBe("java-1.21.1");
   expect(actualAdvances).toEqual(reference.advances);
-  expect(assetOrigins.every(origin => origin === localOrigin)).toBe(true);
+  expect(assetOrigins.every((origin) => origin === localOrigin)).toBe(true);
   ```
 
 - [ ] Führe `npm test -- tests/unit/profile.test.ts` aus; erwarte ein fehlendes Profil oder fehlende Assets.
@@ -123,9 +125,11 @@ Task 1 definiert alle folgenden Typen in `src/core/model.ts`. Tests und Folgetas
 - [ ] Schreibe `nested_styles_keep_inheritance`, `escaped_open_tag_is_literal`, `unclosed_tags_match_lenient_mode`, `opaque_subtree_keeps_raw_source`, `depth_limit_keeps_previous_document`: Vergleiche Nodes und Quelltextbereiche für `<red>A<b>B</b>C`, `\\<red>`, einen geschützten Hover-Unterbaum und Tiefe 129 bei Limit 128. Fehler ergeben `value: null` mit Diagnose, keine Teilmutation eines bestehenden Dokuments.
 
   ```ts
-  const raw = '<red>A<b>B</b>C';
-  expect(parseText(raw, 'minimessage').value?.source?.value).toBe(raw);
-  expect(parseText('<b>'.repeat(129), 'minimessage', { maxDepth: 128 }).value).toBeNull();
+  const raw = "<red>A<b>B</b>C";
+  expect(parseText(raw, "minimessage").value?.source?.value).toBe(raw);
+  expect(
+    parseText("<b>".repeat(129), "minimessage", { maxDepth: 128 }).value,
+  ).toBeNull();
   ```
 
 - [ ] Führe `npm test -- tests/unit/minimessage.test.ts` aus; erwarte Parserfehler bzw. fehlende Nodes.
@@ -144,7 +148,9 @@ Task 1 definiert alle folgenden Typen in `src/core/model.ts`. Tests und Folgetas
   ```ts
   for (const fixture of adventureFixtures) {
     const parsed = parseText(fixture.input, fixture.format);
-    expect(serializeText(parsed.value!, fixture.target).value).toBe(fixture.expectedExport);
+    expect(serializeText(parsed.value!, fixture.target).value).toBe(
+      fixture.expectedExport,
+    );
   }
   expect(exportRgbToVanilla16WithoutReduction.value).toBeNull();
   ```
@@ -163,9 +169,13 @@ Task 1 definiert alle folgenden Typen in `src/core/model.ts`. Tests und Folgetas
 - [ ] Schreibe `uneven_stops_keep_all_eight_colors`, `unknown_placeholder_stays_visible`, `placeholder_cannot_inject_tags`, `grapheme_positions_survive_layout`, `alignment_uses_actual_width`: Prüfe Stops bei 0, 5/7 und 1, die acht Farben aus der Importregression, `{{players}} = '<red>42'`, `e` plus kombinierenden Akzent und Emoji. Schätze fehlende Glyphen nicht still als sechs Pixel.
 
   ```ts
-  expect(layout.glyphs.map(glyph => glyph.color)).toEqual(originalEightColors);
-  expect(renderedPlaceholderText).toBe('<red>42');
-  expect(simplificationSourceAfterSuggestion).toEqual(simplificationSourceBeforeSuggestion);
+  expect(layout.glyphs.map((glyph) => glyph.color)).toEqual(
+    originalEightColors,
+  );
+  expect(renderedPlaceholderText).toBe("<red>42");
+  expect(simplificationSourceAfterSuggestion).toEqual(
+    simplificationSourceBeforeSuggestion,
+  );
   ```
 
 - [ ] Führe `npm test -- tests/unit/effects.test.ts tests/unit/placeholders.test.ts tests/unit/layout.test.ts` aus; erwarte fehlende Effekte/Layoutwerte.
@@ -202,8 +212,10 @@ Task 1 definiert alle folgenden Typen in `src/core/model.ts`. Tests und Folgetas
 - [ ] Schreibe Playwright-Prüfungen für Referenzlayout, zwei unabhängige Instanzen, Tastatur-Hover, verborgenes Spielerfeld, inkompatiblen Status, `prefers-reduced-motion` und zerstörte Instanzen. Vergleiche mit den extern erzeugten Aufnahmen aus Task 2, nicht mit erstmals selbst erzeugten Snapshots.
 
   ```ts
-  await expect(page.getByTestId('server-row-a')).toHaveScreenshot('client-reference.png');
-  await expect(page.getByTestId('player-tooltip')).toBeVisible();
+  await expect(page.getByTestId("server-row-a")).toHaveScreenshot(
+    "client-reference.png",
+  );
+  await expect(page.getByTestId("player-tooltip")).toBeVisible();
   expect(activeAnimationCountAfterDestroy).toBe(0);
   ```
 
@@ -224,7 +236,7 @@ Task 1 definiert alle folgenden Typen in `src/core/model.ts`. Tests und Folgetas
   expect(selectionAfterToolbar).toEqual(selectionBeforeToolbar);
   expect(documentAfterUndo).toEqual(documentBeforeChange);
   expect(opaqueRawAfterNeighbourEdit).toBe(opaqueRawBeforeNeighbourEdit);
-  expect(committedCompositionText).toBe('日本語');
+  expect(committedCompositionText).toBe("日本語");
   ```
 
 - [ ] Führe `npm test -- tests/unit/editor-mapping.test.ts` und `npm run test:browser -- tests/browser/editor.spec.ts` aus; erwarte fehlenden Editor bzw. fehlende Transaktionen.
@@ -241,7 +253,7 @@ Task 1 definiert alle folgenden Typen in `src/core/model.ts`. Tests und Folgetas
 - [ ] Schreibe Prüfungen für JPEG/PNG-Zuschnitt auf exakt 64 mal 64 Pixel, beschädigte und zu große Bilder, Icon-Undo, alle Statusmodi, Spieler-Hover und Importabbruch. Assertiere, dass eine ältere Importantwort eine neuere Bearbeitung nicht überschreibt und fehlgeschlagener Import den gültigen Entwurf erhält.
 
   ```ts
-  expect(decodedOutput).toMatchObject({ width: 64, height: 64, format: 'png' });
+  expect(decodedOutput).toMatchObject({ width: 64, height: 64, format: "png" });
   expect(documentAfterRejectedImage).toEqual(documentBeforeImage);
   expect(documentAfterStaleImport).toEqual(documentAfterNewerEdit);
   ```

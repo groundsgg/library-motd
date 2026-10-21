@@ -1,9 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES2022", "module": "NodeNext", "moduleResolution": "NodeNext",
-    "lib": ["ES2022", "DOM", "DOM.Iterable", "ES2022.Intl"], "strict": true,
-    "declaration": true, "outDir": "dist", "rootDir": "src", "jsx": "react-jsx",
-    "noUncheckedIndexedAccess": true, "skipLibCheck": true
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable", "ES2022.Intl"],
+    "strict": true,
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "jsx": "react-jsx",
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true
   },
   "include": ["src"]
 }

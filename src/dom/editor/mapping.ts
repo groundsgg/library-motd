@@ -52,7 +52,7 @@ export function fromEditorNode(
     used.add(id);
     return id;
   };
-  let active: { signature: string; children: TextNode[] }[] = [];
+  const active: { signature: string; children: TextNode[] }[] = [];
   const container = (path: StylePath[]): TextNode[] => {
     let same = 0;
     while (

@@ -114,13 +114,11 @@ test("keeps icon alpha during upload and composites over the selected row", asyn
 }) => {
   await page.goto("/tests/browser/host.html");
   const png = readFileSync("tests/fixtures/client/transparent-icon.png");
-  await page
-    .getByLabel("Server icon", { exact: true })
-    .setInputFiles({
-      name: "transparent.png",
-      mimeType: "image/png",
-      buffer: png,
-    });
+  await page.getByLabel("Server icon", { exact: true }).setInputFiles({
+    name: "transparent.png",
+    mimeType: "image/png",
+    buffer: png,
+  });
   await expect(page.locator("#preview .mcp-icon img")).toBeVisible();
   const normalized = PNG.sync.read(
     Buffer.from(await page.evaluate(() => window.doc.icon.pngBase64), "base64"),

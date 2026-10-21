@@ -9,10 +9,7 @@ import type {
   TextFormat,
   TextStyle,
 } from "../../core/model.js";
-import {
-  evaluateStatus,
-  evaluatePlayerCounts,
-} from "../../core/status/evaluate.js";
+import { evaluatePlayerCounts } from "../../core/status/evaluate.js";
 import { validateDocument } from "../../core/document.js";
 import { parseText } from "../../core/text/parse.js";
 import { serializeText } from "../../core/text/serialize.js";

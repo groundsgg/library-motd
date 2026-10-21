@@ -5,7 +5,6 @@ import {
   compileStatusTemplate,
   serializeText,
   evaluateStatus,
-  resolveText,
   flattenText,
   java1211Profile,
 } from "../dist/index.js";
@@ -32,11 +31,6 @@ function add(name, modify, clientProtocol = 767) {
   };
   const expected = evaluateStatus(document, context);
   if (!expected.value) throw Error(JSON.stringify(expected.diagnostics));
-  const values = {
-    ...context.values,
-    players: String(expected.value.players?.online ?? base.players.online),
-    max: String(expected.value.players?.max ?? base.players.max),
-  };
   fixtures.push({
     name,
     document,

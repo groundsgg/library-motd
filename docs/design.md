@@ -24,11 +24,11 @@ Ein frameworkunabhängiger Kern mit einem DOM-Editor und einer optionalen React-
 
 Als Paketname dient in diesem Entwurf `@groundsgg/motd`. Die Implementierung liefert ein einzelnes Paket mit getrennten Einstiegspunkten; der Name beschreibt keine Abhängigkeit von Grounds.
 
-| Einstiegspunkt | Verantwortung | Laufzeit |
-| --- | --- | --- |
-| `@groundsgg/motd` | Dokumentmodell, Parser, Serializer, Platzhalter, Layout und Diagnosen | Browser und Node.js, ohne DOM |
-| `@groundsgg/motd/dom` | Serverlisten-Vorschau, Inline-Editor, Werkzeugleisten und Icon-Bearbeitung | Browser, ohne React |
-| `@groundsgg/motd/react` | Deklarative Anbindung derselben DOM-Oberfläche und Ereignisse | React als optionale Peer-Abhängigkeit |
+| Einstiegspunkt          | Verantwortung                                                              | Laufzeit                              |
+| ----------------------- | -------------------------------------------------------------------------- | ------------------------------------- |
+| `@groundsgg/motd`       | Dokumentmodell, Parser, Serializer, Platzhalter, Layout und Diagnosen      | Browser und Node.js, ohne DOM         |
+| `@groundsgg/motd/dom`   | Serverlisten-Vorschau, Inline-Editor, Werkzeugleisten und Icon-Bearbeitung | Browser, ohne React                   |
+| `@groundsgg/motd/react` | Deklarative Anbindung derselben DOM-Oberfläche und Ereignisse              | React als optionale Peer-Abhängigkeit |
 
 Der Hauptimport und der React-Einstiegspunkt dürfen beim Import auf dem Server keine Browserobjekte ansprechen. Die interaktive Oberfläche initialisiert sich nach dem Mount. TypeScript-Typen und explizite Paketexports gehören zum Paket; nicht verwendete Oberflächen werden nicht durch den Hauptimport geladen.
 
@@ -36,15 +36,15 @@ Der Hauptimport und der React-Einstiegspunkt dürfen beim Import auf dem Server 
 
 Das versionierte Dokument trennt Serverstatus, Editorinformationen und Vorschaukontext.
 
-| Bereich | Inhalt |
-| --- | --- |
-| MOTD | Strukturierter Text, Zeilen, Ausrichtung, Formatierung und Quelltextzuordnung |
-| Version | Automatischer Status, bedingter eigener Hinweis oder dauerhaft eigener Hinweis mit erzwungener Inkompatibilitätsanzeige |
-| Icon | Normalisiertes PNG und Informationen für die Bearbeitung |
-| Spieleranzeige | Übernommene, feste oder berechnete Onlinezahl und Kapazität sowie verborgene Anzeige |
-| Spieler-Hover | Übernommene Spielerauswahl, eigener Text oder deaktivierter eigener Inhalt |
+| Bereich             | Inhalt                                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| MOTD                | Strukturierter Text, Zeilen, Ausrichtung, Formatierung und Quelltextzuordnung                                             |
+| Version             | Automatischer Status, bedingter eigener Hinweis oder dauerhaft eigener Hinweis mit erzwungener Inkompatibilitätsanzeige   |
+| Icon                | Normalisiertes PNG und Informationen für die Bearbeitung                                                                  |
+| Spieleranzeige      | Übernommene, feste oder berechnete Onlinezahl und Kapazität sowie verborgene Anzeige                                      |
+| Spieler-Hover       | Übernommene Spielerauswahl, eigener Text oder deaktivierter eigener Inhalt                                                |
 | Editorinformationen | Schema-Version, Auswahl, Undo-Verlauf und Importinformationen; temporäre Zustände werden nicht als Serverdaten exportiert |
-| Vorschaukontext | Clientversion, Profil, Fensterbreite, GUI-Skalierung, Ping, Beispielspieler und Platzhalterwerte |
+| Vorschaukontext     | Clientversion, Profil, Fensterbreite, GUI-Skalierung, Ping, Beispielspieler und Platzhalterwerte                          |
 
 Servername und Ping sind ausdrücklich Vorschauwerte. Der im Client gespeicherte Servername wird nicht als serverseitig änderbares Ping-Feld behandelt. Eine simulierte Ping-Latenz wird nicht als wirksame Serverkonfiguration exportiert.
 
@@ -82,11 +82,11 @@ Padding, Umbruch, Abschneiden, Formatbreiten und Tooltipverhalten werden gegen C
 
 Der Bereich rechts im Servereintrag ist konfigurierbar:
 
-| Modus | Verhalten |
-| --- | --- |
-| Automatisch | Übernimmt die Versionsdaten und stellt die Kompatibilität zum Vorschauclient dar |
-| Eigener Hinweis bei Inkompatibilität | Verwendet eigenen Text, wenn der Anwendungskontext den Client als inkompatibel einordnet |
-| Eigener Hinweis dauerhaft | Verwendet eigenen Text und erzeugt die dafür erforderliche Inkompatibilitätsanzeige in der Statusantwort |
+| Modus                                | Verhalten                                                                                                |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| Automatisch                          | Übernimmt die Versionsdaten und stellt die Kompatibilität zum Vorschauclient dar                         |
+| Eigener Hinweis bei Inkompatibilität | Verwendet eigenen Text, wenn der Anwendungskontext den Client als inkompatibel einordnet                 |
+| Eigener Hinweis dauerhaft            | Verwendet eigenen Text und erzeugt die dafür erforderliche Inkompatibilitätsanzeige in der Statusantwort |
 
 Der Text ist inline und über die Eigenschaftsansicht bearbeitbar. Formatierung wird entsprechend den Fähigkeiten des tatsächlichen Versionsfelds serialisiert, nicht pauschal wie eine MOTD-Komponente behandelt. Ein frei formatierter Spielertext an derselben Position nutzt denselben Modus; zwei konkurrierende Texte werden dort nicht gleichzeitig dargestellt.
 
@@ -142,19 +142,19 @@ Alle Interaktionen sind per Tastatur erreichbar. Tooltips lassen sich auch über
 
 ## Qualität und Abnahme
 
-| Prüfung | Abnahmekriterium |
-| --- | --- |
-| Unabhängige Nutzung | Eine kleine Website verwendet den DOM-Editor ohne React, Portalcode und Backend |
-| Textverarbeitung | Der Kern importiert und serialisiert übergebene Daten unter Node.js ohne Browserobjekte oder Netzwerkanfragen |
-| React-Anbindung | Eine separate Beispielanwendung hält Dokument und Editor über Änderungsereignisse synchron |
-| Texttreue | MiniMessage- und Legacy-Fixtures stimmen semantisch mit Adventure-Referenzausgaben überein; Escapes, verschachtelte Formate und formatierte Leerzeichen sind abgedeckt |
-| Importtreue | Ein Verlauf mit ungleich verteilten Stops sowie geschützte Quelltextbereiche bleiben beim unveränderten Import und Export erhalten |
-| Visuelle Darstellung | Referenzaufnahmen für Java 1.21.1 prüfen Glyphen, Abstände, Schatten, zwei Zeilen, Padding, Überlauf, Icon, Kompatibilitätsstatus und Hover |
-| Eingabe | Browserprüfungen decken Auswahl über Formatgrenzen, Undo und Redo, Zwischenablage, Komposition und stabile Cursorpositionen ab |
-| Spieleranzeige | Jeder Zählmodus und Konflikte zwischen verborgenen Spielerdaten, Hover und Versionshinweis werden korrekt dargestellt |
-| Bilder | Zuschnitt, Skalierung, PNG-Ausgabe sowie ungültige und zu große Eingaben sind geprüft |
-| Paket | Ein installierbares Paket enthält Typen, Einstiegspunkte, benötigte Styles und Assets; Beispiele verwenden das gepackte Artefakt |
-| Offlinebetrieb | Demo und Kernfunktionen arbeiten nach dem Laden mit lokalen Daten; es gibt keine impliziten Drittanbieteranfragen |
+| Prüfung              | Abnahmekriterium                                                                                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unabhängige Nutzung  | Eine kleine Website verwendet den DOM-Editor ohne React, Portalcode und Backend                                                                                        |
+| Textverarbeitung     | Der Kern importiert und serialisiert übergebene Daten unter Node.js ohne Browserobjekte oder Netzwerkanfragen                                                          |
+| React-Anbindung      | Eine separate Beispielanwendung hält Dokument und Editor über Änderungsereignisse synchron                                                                             |
+| Texttreue            | MiniMessage- und Legacy-Fixtures stimmen semantisch mit Adventure-Referenzausgaben überein; Escapes, verschachtelte Formate und formatierte Leerzeichen sind abgedeckt |
+| Importtreue          | Ein Verlauf mit ungleich verteilten Stops sowie geschützte Quelltextbereiche bleiben beim unveränderten Import und Export erhalten                                     |
+| Visuelle Darstellung | Referenzaufnahmen für Java 1.21.1 prüfen Glyphen, Abstände, Schatten, zwei Zeilen, Padding, Überlauf, Icon, Kompatibilitätsstatus und Hover                            |
+| Eingabe              | Browserprüfungen decken Auswahl über Formatgrenzen, Undo und Redo, Zwischenablage, Komposition und stabile Cursorpositionen ab                                         |
+| Spieleranzeige       | Jeder Zählmodus und Konflikte zwischen verborgenen Spielerdaten, Hover und Versionshinweis werden korrekt dargestellt                                                  |
+| Bilder               | Zuschnitt, Skalierung, PNG-Ausgabe sowie ungültige und zu große Eingaben sind geprüft                                                                                  |
+| Paket                | Ein installierbares Paket enthält Typen, Einstiegspunkte, benötigte Styles und Assets; Beispiele verwenden das gepackte Artefakt                                       |
+| Offlinebetrieb       | Demo und Kernfunktionen arbeiten nach dem Laden mit lokalen Daten; es gibt keine impliziten Drittanbieteranfragen                                                      |
 
 Der Lieferumfang umfasst eine eigenständige Demo, eine Nutzung ohne Framework, ein React-Beispiel, API-Dokumentation, die Erklärung der Exportprofile und dokumentierte Erweiterungspunkte. Abweichungen einzelner Clientprofile werden konkret dokumentiert.
 

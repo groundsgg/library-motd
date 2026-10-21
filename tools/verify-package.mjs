@@ -3,9 +3,9 @@ import { mkdtempSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
-const packed = JSON.parse(
-  execFileSync(npm, ["pack", "--json"], { encoding: "utf8" }),
-)[0];
+const packed = process.env.MOTD_PACKAGE_TARBALL
+  ? { filename: process.env.MOTD_PACKAGE_TARBALL }
+  : JSON.parse(execFileSync(npm, ["pack", "--json"], { encoding: "utf8" }))[0];
 const tar = resolve(packed.filename);
 const directory = mkdtempSync(join(tmpdir(), "motd-consumer-"));
 writeFileSync(
@@ -29,12 +29,20 @@ if (existsSync(join(directory, "node_modules/react")))
   throw Error("Core consumer unexpectedly installed React");
 const root = join(directory, "node_modules/@groundsgg/motd"),
   css = readFileSync(join(root, "dist/styles.css"), "utf8");
-for (const [, asset] of css.matchAll(/url\(['"]?([^'"\)]+)/g))
+for (const [, asset] of css.matchAll(/url\(['"]?([^'")]+)/g))
   if (!existsSync(resolve(root, "dist", asset)))
     throw Error("Missing CSS asset: " + asset);
-execFileSync(process.execPath, ["--test", "tests/package/react-ssr.test.mjs"], {
-  stdio: "inherit",
-});
+execFileSync(
+  process.execPath,
+  [
+    "--test",
+    "tests/package/core-import.test.mjs",
+    "tests/package/react-ssr.test.mjs",
+  ],
+  {
+    stdio: "inherit",
+  },
+);
 console.log(
   "Verified packed Node + DOM without React, local CSS assets, React SSR:",
   tar,

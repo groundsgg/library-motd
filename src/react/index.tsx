@@ -25,6 +25,8 @@ export function ServerListEditor(
       handle.current?.destroy();
       handle.current = null;
     };
+    // Mount once; the effect below applies current props without destroying editor state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     handle.current?.update(props);
@@ -46,6 +48,8 @@ export function ServerListPreview(
       handle.current?.destroy();
       handle.current = null;
     };
+    // Mount once; the effect below applies current props without destroying editor state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     handle.current?.update(props);

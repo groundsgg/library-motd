@@ -10,7 +10,6 @@ Server import is optional and explicitly triggered. Supply `imports: {adapter(ad
 
 `normalizeIcon(blob,{crop?,maxBytes?,maxPixels?})` accepts PNG/JPEG and returns a normalized 64×64 PNG. Crop is `{x,y,width,height}` and must be square and inside the source. Defaults: 10 MiB, 16 million decoded pixels. Uploads remain local. Keep backend image validation in the consuming application too.
 
-
 Preview defaults to a complete menu excerpt. `presentation: "row"` embeds just the entry. `viewportWidth` and optional `viewportHeight` are physical CSS pixels; `guiScale` maps GUI coordinates to CSS pixels. `selected` controls the native selection frame. `background` accepts `auto`, `dirt`, `panorama`, `none`, or `{imageUrl}`; `auto` follows the selected client profile or host assets. Controls change context, never persisted MOTD intent.
 
 PNG uploads preserve alpha. The editor offers a pixel-art image-plus upload button on icon hover and keyboard focus; read-only/disabled instances and plain previews have no upload action.

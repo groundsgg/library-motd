@@ -1,0 +1,128 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing GitHub release tag to retry publishing (leave empty for Release Please)"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    uses: ./.github/workflows/ci.yml
+    with:
+      ref: ${{ inputs.tag || github.sha }}
+
+  release:
+    needs: validate
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+    outputs:
+      tag: ${{ inputs.tag || steps.release.outputs.tag_name }}
+      publish: ${{ inputs.tag != '' || steps.release.outputs.release_created == 'true' }}
+    steps:
+      - name: Validate recovery tag
+        if: inputs.tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.draft')" = false
+      - name: Ensure main is still the verified revision
+        if: inputs.tag == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERIFIED_SHA: ${{ needs.validate.outputs.sha }}
+        run: test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$VERIFIED_SHA"
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        if: inputs.tag == ''
+        id: release
+        with:
+          target-branch: main
+      - name: Run CI on the release PR
+        if: steps.release.outputs.prs_created == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRS: ${{ steps.release.outputs.prs }}
+        run: |
+          echo "$PRS" | jq -r '.[].headBranchName' | while IFS= read -r branch; do
+            gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$branch"
+          done
+      - name: Check release revision
+        if: steps.release.outputs.release_created == 'true'
+        env:
+          RELEASE_SHA: ${{ steps.release.outputs.sha }}
+          VERIFIED_SHA: ${{ needs.validate.outputs.sha }}
+        run: test "$RELEASE_SHA" = "$VERIFIED_SHA"
+
+  npm:
+    name: Publish to npm
+    needs: [validate, release]
+    if: needs.release.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.validate.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: npm-package
+          path: release-artifact
+      - name: Publish verified archive with npm trusted publishing
+        env:
+          RELEASE_TAG: ${{ needs.release.outputs.tag }}
+          PUBLISH_REGISTRY: https://registry.npmjs.org
+        run: node tools/publish-package.mjs release-artifact/*.tgz
+
+  github-packages:
+    name: Publish to GitHub Packages
+    needs: [validate, release]
+    if: needs.release.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    environment: github-packages
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.validate.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: "@groundsgg"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: npm-package
+          path: release-artifact
+      - name: Publish the same verified archive to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.release.outputs.tag }}
+          PUBLISH_REGISTRY: https://npm.pkg.github.com
+        run: node tools/publish-package.mjs release-artifact/*.tgz
