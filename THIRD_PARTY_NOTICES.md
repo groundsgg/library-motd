@@ -10,3 +10,5 @@ rounded down to an even font unit to remove the original half-pixel spacing.
 Their outlines are unchanged. They remain licensed under SIL OFL 1.1.
 
 ProseMirror modules used by the optional DOM editor are MIT licensed.
+
+Native Minecraft screenshots under tests/fixtures/client are comparison evidence, subject to Mojang/Microsoft rights and Minecraft Usage Guidelines; they are excluded from npm. assets/ui contains independently code-drawn MIT illustrations, not extracted Minecraft files.

@@ -1,0 +1,19 @@
+{
+  "client": "1.21.11",
+  "protocol": 774,
+  "date": "2026-10-21",
+  "viewport": [
+    854,
+    480
+  ],
+  "guiScale": 2,
+  "rowOrigin": [
+    126,
+    74
+  ],
+  "capture": "Unmodified official client in an isolated offline test session; local status-only server. Foreground sample: Grounds Network / bold gold Grounds / green Welcome, 42 players.",
+  "sha256": {
+    "selected.png": "b403d0913e2260dcfc3c77db4385f888aa9b3aaef53ce57321dd24140dfcf438",
+    "server-list.png": "7551af706876696e542318471d553d18dcd6b2447f828e0fc82bab6481674d6a"
+  }
+}

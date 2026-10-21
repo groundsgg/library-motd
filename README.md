@@ -37,3 +37,7 @@ React: import `ServerListEditor` or `ServerListPreview` from `@groundsgg/motd/re
 Develop with Node 24: `npm ci`, `npm run dev`, then open `/examples/dom/` or `/examples/react/`. All fonts are bundled locally. `npm run typecheck`, `npm test`, `npm run build`, `npm run test:browser`, `npm run test:package` and `npm run build:examples` validate the sources, package and examples. Install Chromium with `npx playwright install chromium` before browser tests.
 
 MIT code; local pixel fonts use SIL OFL 1.1. See THIRD_PARTY_NOTICES.md. No original Minecraft game assets are included in the npm archive. Client captures are test evidence only.
+
+Preview profiles include 26.1, 26.1.1, 26.1.2, 26.2 and 26.3 alongside older references. Select a client independently of compatibility. Optional per-version asset providers keep original/host resources separate from this package. The bundled illustrations are approximate.
+
+NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.

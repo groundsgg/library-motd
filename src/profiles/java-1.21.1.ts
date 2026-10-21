@@ -4,6 +4,8 @@ import { advances } from "./advances.js";
 export const java1211Profile: ClientProfile = {
   id: "java-1.21.1",
   clientVersion: "1.21.1",
+  protocol: 767,
+  background: "panorama",
   verified: false,
   font: {
     family: "GroundsMinecraft",

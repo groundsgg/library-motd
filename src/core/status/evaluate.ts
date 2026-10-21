@@ -12,13 +12,11 @@ import { java1211Profile } from "../../profiles/java-1.21.1.js";
 import { validateDocument } from "../document.js";
 import { diagnostic } from "../diagnostics.js";
 import { resolveText } from "../text/placeholders.js";
-import { serializeText } from "../text/serialize.js";
-export function evaluateStatus(
+import { serializeText, serializeLegacyLines } from "../text/serialize.js";
+export function evaluatePlayerCounts(
   document: ServerListDocument,
   context: RuntimeContext,
-): Outcome<JavaStatus> {
-  const valid = validateDocument(document);
-  if (!valid.value) return { value: null, diagnostics: valid.diagnostics };
+): Outcome<{ online?: number; max?: number }> {
   const diagnostics: Diagnostic[] = [];
   const count = (
     rule: CountRule,
@@ -59,8 +57,23 @@ export function evaluateStatus(
   };
   const online = count(document.players.online, context.base.players?.online),
     max = count(document.players.maximum, context.base.players?.max, online);
-  if (diagnostics.some((d) => d.severity === "error"))
-    return { value: null, diagnostics };
+  return {
+    value: diagnostics.some((d) => d.severity === "error")
+      ? null
+      : { online, max },
+    diagnostics,
+  };
+}
+export function evaluateStatus(
+  document: ServerListDocument,
+  context: RuntimeContext,
+): Outcome<JavaStatus> {
+  const valid = validateDocument(document);
+  if (!valid.value) return { value: null, diagnostics: valid.diagnostics };
+  const counts = evaluatePlayerCounts(document, context);
+  if (!counts.value) return { value: null, diagnostics: counts.diagnostics };
+  const { online, max } = counts.value;
+  const diagnostics = [...counts.diagnostics];
   const values = {
     ...context.values,
     ...(online !== undefined ? { players: String(online) } : {}),
@@ -131,17 +144,19 @@ export function evaluateStatus(
     };
     if (document.hover.mode === "disabled") status.players.sample = [];
     if (document.hover.mode === "custom") {
-      const hover = output(document.hover.text, {
-        format: "legacy-section",
-        rgb: false,
-      });
-      if (hover !== null)
-        status.players.sample = hover
-          .split("\n")
-          .map((name) => ({
-            name,
-            id: "00000000-0000-0000-0000-000000000000",
-          }));
+      const resolved = resolveText(document.hover.text, values);
+      diagnostics.push(...resolved.diagnostics);
+      const hover = serializeLegacyLines(
+        resolved.value!,
+        { format: "legacy-section", rgb: false },
+        { lossy: "reduce" },
+      );
+      diagnostics.push(...hover.diagnostics);
+      if (hover.value)
+        status.players.sample = hover.value.map((name) => ({
+          name,
+          id: "00000000-0000-0000-0000-000000000000",
+        }));
       if (customVersion)
         diagnostics.push(
           diagnostic(

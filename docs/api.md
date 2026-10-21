@@ -16,7 +16,7 @@
 | `evaluateStatus(document, context)` | Java status, count/version rules, icon and sample hover |
 | `compileStatusTemplate(document)` | JSON-safe runtime template, no source or UI extensions |
 | `importStatus(status)` | Validated document from supplied status data |
-| `java1211Profile` | Bundled local font and Java geometry |
+| `clientProfiles`, named Java profile exports | Local font, protocol, background family and per-version geometry |
 
 DOM exports `createPreview`, `createEditor`, `normalizeIcon` and associated public types. Both handles offer `update(options)` and idempotent `destroy()`. Preview exposes `getDiagnostics()`. Editor exposes `getDocument()`, `focus('motd'|'version'|'hover')`, and `execute(command)`.
 
@@ -25,3 +25,9 @@ Commands: `format {style,field?}`, `gradient {stops,field?}`, `align {line,align
 `EditorChange` contains origin (`visual`, `source`, `import`, `history`) and changedFields. Persist the document, not the handle or context. `update` with the acknowledged current document keeps history and selection; replacing the external document resets the editor baseline.
 
 Document fields: `motd {text,alignments}`, version `automatic|when-incompatible|always`, icon `null|{pngBase64}`, players `{hidden,online,maximum}`, hover `inherit|disabled|custom`, and JSON-only extensions. Count rules are `inherit|fixed|offset|percent`; maximum also accepts `headroom` above the displayed online count. Values clamp to non-negative signed 32-bit integers.
+
+`evaluatePlayerCounts(document, context)` returns resolved online/max values independently of whether the player field is hidden. Preview placeholders use those values. `serializeLegacyLines(text, target, options?)` exports separately styled client values for sample-player tooltips.
+
+`EditorOptions.mapChange(next, change)` can enrich a document before validation/history/notification. Use it for JSON-only application intent in `extensions`. It runs for visual/source/import commits; undo/redo restores the previously mapped document. It must return a valid document. This keeps application metadata in the same undo transaction without coupling the library to an application.
+
+`PreviewContext.assetProvider(profile)` returns optional `ClientAssets` for the selected version. `ClientAssets` accepts background, defaultServerIcon, fontFamily and button texture URLs. The host owns their licenses, loading and lifetime. `PreviewBackground` also supports transparent or explicit custom backgrounds. See embedding.md.

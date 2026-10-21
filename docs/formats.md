@@ -9,3 +9,5 @@ Unedited same-format serialization returns original source bytes. After editing,
 Uneven gradient stops are expanded into per-character colors for native MiniMessage output. Adventure 5.2 fixture comparisons cover gradients, rainbow, explicit child colors and phase. Gradient simplification is an explicit suggestion and does not mutate the document.
 
 Default text parser limits: see `ParseOptions` (length and nesting). Documents reject cycles, non-JSON values, excessive nesting, duplicate IDs, invalid rules and invalid 64×64 PNG structure. Image import additionally decodes and normalizes PNG/JPEG before applying it.
+
+Aligned/uneven-gradient MiniMessage output preserves placeholder tokens and protected raw subtrees. Runtime consumers should resolve placeholders before measuring alignment. JSON export preserves native opaque objects after adjacent edits; protected JSON layout that cannot be evaluated returns an explicit diagnostic. Legacy tooltip lines are serialized independently so inherited color and decoration carry into every sample name.

@@ -184,103 +184,25 @@
         "text": "",
         "extra": [
           {
-            "text": "e",
+            "text": "",
             "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "u",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": ":",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "1",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "/",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "2",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
+            "extra": [
+              {
+                "text": "eu"
+              },
+              {
+                "text": ": "
+              },
+              {
+                "text": "10"
+              },
+              {
+                "text": " / "
+              },
+              {
+                "text": "20"
+              }
+            ]
           }
         ]
       }
@@ -458,103 +380,25 @@
         "text": "",
         "extra": [
           {
-            "text": "e",
+            "text": "",
             "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "u",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": ":",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "8",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "/",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "1",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
+            "extra": [
+              {
+                "text": "eu"
+              },
+              {
+                "text": ": "
+              },
+              {
+                "text": "8"
+              },
+              {
+                "text": " / "
+              },
+              {
+                "text": "100"
+              }
+            ]
           }
         ]
       }
@@ -835,103 +679,25 @@
         "text": "",
         "extra": [
           {
-            "text": "e",
+            "text": "",
             "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "u",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": ":",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "8",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "/",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "1",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
+            "extra": [
+              {
+                "text": "eu"
+              },
+              {
+                "text": ": "
+              },
+              {
+                "text": "8"
+              },
+              {
+                "text": " / "
+              },
+              {
+                "text": "100"
+              }
+            ]
           }
         ]
       }
@@ -1162,103 +928,25 @@
         "text": "",
         "extra": [
           {
-            "text": "e",
+            "text": "",
             "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "u",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": ":",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "8",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "/",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "1",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
+            "extra": [
+              {
+                "text": "eu"
+              },
+              {
+                "text": ": "
+              },
+              {
+                "text": "8"
+              },
+              {
+                "text": " / "
+              },
+              {
+                "text": "100"
+              }
+            ]
           }
         ]
       }
@@ -1489,103 +1177,25 @@
         "text": "",
         "extra": [
           {
-            "text": "e",
+            "text": "",
             "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "u",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": ":",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "8",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "/",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "1",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
+            "extra": [
+              {
+                "text": "eu"
+              },
+              {
+                "text": ": "
+              },
+              {
+                "text": "8"
+              },
+              {
+                "text": " / "
+              },
+              {
+                "text": "100"
+              }
+            ]
           }
         ]
       }
@@ -1816,103 +1426,25 @@
         "text": "",
         "extra": [
           {
-            "text": "e",
+            "text": "",
             "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "u",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": ":",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "8",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "/",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": " ",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "1",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
-          },
-          {
-            "text": "0",
-            "color": "#ffaa00",
-            "bold": false,
-            "italic": false,
-            "underlined": false,
-            "strikethrough": false,
-            "obfuscated": false
+            "extra": [
+              {
+                "text": "eu"
+              },
+              {
+                "text": ": "
+              },
+              {
+                "text": "8"
+              },
+              {
+                "text": " / "
+              },
+              {
+                "text": "100"
+              }
+            ]
           }
         ]
       }
@@ -2104,6 +1636,726 @@
         "text": "",
         "extra": [
           {
+            "text": "",
+            "color": "#ffaa00",
+            "extra": [
+              {
+                "text": "eu"
+              },
+              {
+                "text": ": "
+              },
+              {
+                "text": "2"
+              },
+              {
+                "text": " / "
+              },
+              {
+                "text": "105"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "expectedPlain": "eu: 2 / 105"
+  },
+  {
+    "name": "inherited-hover-style",
+    "document": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<gold>{{region}}: {{players}} / {{max}}",
+            "revision": 0
+          }
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "custom",
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ff5555"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "value": "first"
+                },
+                {
+                  "id": "n2",
+                  "type": "newline"
+                },
+                {
+                  "id": "n3",
+                  "type": "text",
+                  "value": "second"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<red>first<newline>second",
+            "revision": 0
+          }
+        }
+      },
+      "extensions": {}
+    },
+    "template": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ]
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "custom",
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ff5555"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "value": "first"
+                },
+                {
+                  "id": "n2",
+                  "type": "newline"
+                },
+                {
+                  "id": "n3",
+                  "type": "text",
+                  "value": "second"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "source": "<gold>{{region}}: {{players}} / {{max}}",
+    "context": {
+      "base": {
+        "version": {
+          "protocol": 767,
+          "name": "1.21.1"
+        },
+        "players": {
+          "online": 8,
+          "max": 100,
+          "sample": [
+            {
+              "name": "Ada",
+              "id": "00000000-0000-0000-0000-000000000001"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "clientProtocol": 767,
+      "values": {
+        "region": "eu",
+        "continent": "Europe",
+        "localzone": "Europe"
+      }
+    },
+    "expected": {
+      "version": {
+        "protocol": 767,
+        "name": "1.21.1"
+      },
+      "players": {
+        "online": 8,
+        "max": 100,
+        "sample": [
+          {
+            "name": "§r§cfirst",
+            "id": "00000000-0000-0000-0000-000000000000"
+          },
+          {
+            "name": "§r§csecond",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        ]
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "",
+            "color": "#ffaa00",
+            "extra": [
+              {
+                "text": "eu"
+              },
+              {
+                "text": ": "
+              },
+              {
+                "text": "8"
+              },
+              {
+                "text": " / "
+              },
+              {
+                "text": "100"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "expectedPlain": "eu: 8 / 100"
+  },
+  {
+    "name": "aligned-placeholder",
+    "document": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<gold>{{region}}: {{players}} / {{max}}",
+            "revision": 0
+          }
+        },
+        "alignments": [
+          "center",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      },
+      "extensions": {}
+    },
+    "template": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ]
+        },
+        "alignments": [
+          "center",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      }
+    },
+    "source": "<#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffffff> </#ffffff><#ffaa00>{{region}}</#ffaa00><#ffaa00>:</#ffaa00><#ffaa00> </#ffaa00><#ffaa00>{{players}}</#ffaa00><#ffaa00> </#ffaa00><#ffaa00>/</#ffaa00><#ffaa00> </#ffaa00><#ffaa00>{{max}}</#ffaa00>",
+    "context": {
+      "base": {
+        "version": {
+          "protocol": 767,
+          "name": "1.21.1"
+        },
+        "players": {
+          "online": 8,
+          "max": 100,
+          "sample": [
+            {
+              "name": "Ada",
+              "id": "00000000-0000-0000-0000-000000000001"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "clientProtocol": 767,
+      "values": {
+        "region": "eu",
+        "continent": "Europe",
+        "localzone": "Europe"
+      }
+    },
+    "expected": {
+      "version": {
+        "protocol": 767,
+        "name": "1.21.1"
+      },
+      "players": {
+        "online": 8,
+        "max": 100,
+        "sample": [
+          {
+            "name": "Ada",
+            "id": "00000000-0000-0000-0000-000000000001"
+          }
+        ]
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffffff",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
             "text": "e",
             "color": "#ffaa00",
             "bold": false,
@@ -2140,7 +2392,7 @@
             "obfuscated": false
           },
           {
-            "text": "2",
+            "text": "8",
             "color": "#ffaa00",
             "bold": false,
             "italic": false,
@@ -2194,7 +2446,7 @@
             "obfuscated": false
           },
           {
-            "text": "5",
+            "text": "0",
             "color": "#ffaa00",
             "bold": false,
             "italic": false,
@@ -2205,6 +2457,6 @@
         ]
       }
     },
-    "expectedPlain": "eu: 2 / 105"
+    "expectedPlain": "                           eu: 8 / 100"
   }
 ]

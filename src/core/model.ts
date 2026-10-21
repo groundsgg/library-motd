@@ -100,19 +100,46 @@ export interface FontProfile {
 export interface ClientProfile {
   id: string;
   clientVersion: string;
+  /** Native status protocol, when known. Custom profiles may omit this. */
+  protocol?: number;
+  background?: "dirt" | "panorama";
   verified: boolean;
   font: FontProfile;
   geometry: {
     rowWidth: number;
+    contentWidth?: number;
+    rowTop?: number;
+    titleTop?: number;
+    listTop?: number;
+    footerHeight?: number;
+    footerBottom?: number;
     iconSize: number;
     iconGap: number;
     rightInset: number;
     lineHeight: number;
   };
 }
+/** Supplied by a host application; asset URLs are never persisted in the server document. */
+export type PreviewBackground =
+  "auto" | "dirt" | "panorama" | "none" | { imageUrl: string };
+export interface ClientAssets {
+  background?: Exclude<PreviewBackground, "auto">;
+  defaultServerIcon?: string;
+  fontFamily?: string;
+  buttons?: { normal: string; disabled?: string; border?: number };
+}
+export type ClientAssetProvider = (
+  profile: ClientProfile,
+) => ClientAssets | undefined;
 export interface PreviewContext extends RuntimeContext {
   profile: ClientProfile;
   viewportWidth: number;
+  /** Physical preview height. Defaults to 180 logical GUI pixels. */
+  viewportHeight?: number;
+  presentation?: "server-list" | "row";
+  background?: PreviewBackground;
+  assetProvider?: ClientAssetProvider;
+  selected?: boolean;
   guiScale: number;
   serverName: string;
   pingMs: number;

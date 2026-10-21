@@ -74,3 +74,12 @@ it("does not invent missing base counts and excludes sources from wire templates
   expect(template.motd.text).not.toHaveProperty("source");
   expect(template).not.toHaveProperty("extensions");
 });
+it("serializes independent hover lines with their inherited starting colors", () => {
+  const doc = document();
+  doc.hover = {
+    mode: "custom",
+    text: core.parseText("<red>first<newline>second", "minimessage").value!,
+  };
+  const result = core.evaluateStatus(doc, context);
+  expect(result.value?.players?.sample[1]?.name).toContain("§c");
+});

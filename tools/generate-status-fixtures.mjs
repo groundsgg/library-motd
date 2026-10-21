@@ -7,6 +7,7 @@ import {
   evaluateStatus,
   resolveText,
   flattenText,
+  java1211Profile,
 } from "../dist/index.js";
 const base = {
   version: { protocol: 767, name: "1.21.1" },
@@ -40,10 +41,24 @@ function add(name, modify, clientProtocol = 767) {
     name,
     document,
     template: compileStatusTemplate(document).value,
-    source: serializeText(document.motd.text, { format: "minimessage" }).value,
+    source: serializeText(
+      document.motd.text,
+      { format: "minimessage" },
+      document.motd.alignments.some((a) => a !== "left")
+        ? {
+            layout: {
+              profile: java1211Profile,
+              width: 271,
+              alignments: document.motd.alignments,
+            },
+          }
+        : {},
+    ).value,
     context,
     expected: expected.value,
-    expectedPlain: flattenText(resolveText(document.motd.text, values).value)
+    expectedPlain: flattenText(
+      parseText(JSON.stringify(expected.value.description), "json").value,
+    )
       .map((c) => c.text)
       .join(""),
   });
@@ -85,6 +100,14 @@ add(
 add("percent", (d) => {
   d.players.online = { mode: "percent", value: 25 };
   d.players.maximum = { mode: "offset", value: 5 };
+});
+add(
+  "inherited-hover-style",
+  (d) =>
+    (d.hover = { mode: "custom", text: text("<red>first<newline>second") }),
+);
+add("aligned-placeholder", (d) => {
+  d.motd.alignments = ["center", "left"];
 });
 fs.mkdirSync("tests/fixtures/status", { recursive: true });
 fs.writeFileSync(

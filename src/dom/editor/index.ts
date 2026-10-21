@@ -9,7 +9,10 @@ import type {
   TextFormat,
   TextStyle,
 } from "../../core/model.js";
-import { evaluateStatus } from "../../core/status/evaluate.js";
+import {
+  evaluateStatus,
+  evaluatePlayerCounts,
+} from "../../core/status/evaluate.js";
 import { validateDocument } from "../../core/document.js";
 import { parseText } from "../../core/text/parse.js";
 import { serializeText } from "../../core/text/serialize.js";
@@ -38,6 +41,11 @@ export interface EditorOptions {
   document: ServerListDocument;
   context: PreviewContext;
   onChange(document: ServerListDocument, change: EditorChange): void;
+  /** Enrich the next document atomically, e.g. application-specific intent in extensions. */
+  mapChange?(
+    document: ServerListDocument,
+    change: EditorChange,
+  ): ServerListDocument;
   features?: Partial<Record<Feature, boolean>>;
   labels?: Readonly<Record<string, string>>;
   readOnly?: boolean;
@@ -148,8 +156,14 @@ export function createEditor(
   function showErrors(): void {
     const output = root.querySelector<HTMLElement>(".mce-diagnostics");
     if (output) {
-      output.textContent = errors.join("\n");
-      output.hidden = !errors.length;
+      const messages = [
+        ...new Set([
+          ...errors,
+          ...(preview?.getDiagnostics().map((d) => d.message) ?? []),
+        ]),
+      ];
+      output.textContent = messages.join("\n");
+      output.hidden = !messages.length;
     }
   }
   function commit(
@@ -160,7 +174,16 @@ export function createEditor(
     before?: HistoryEntry,
     changedFields?: EditorChange["changedFields"],
   ): boolean {
-    const valid = validateDocument(next);
+    const change: EditorChange = {
+      origin,
+      changedFields: changedFields ?? [
+        field as EditorChange["changedFields"][number],
+      ],
+    };
+    const mapped = options.mapChange
+      ? options.mapChange(structuredClone(next), change)
+      : next;
+    const valid = validateDocument(mapped);
     if (!valid.value) {
       errors = valid.diagnostics.map((d) => d.message);
       showErrors();
@@ -199,15 +222,13 @@ export function createEditor(
     target.replaceChildren();
     target.dataset.editorField = field;
     target.classList.add("mce-inline");
-    const evaluated = evaluateStatus(current, options.context).value;
+    const evaluated = evaluatePlayerCounts(current, options.context).value;
     const schema = editorSchema(doc, {
       ...options.context.values,
-      ...(evaluated?.players
-        ? {
-            players: String(evaluated.players.online),
-            max: String(evaluated.players.max),
-          }
+      ...(evaluated?.online !== undefined
+        ? { players: String(evaluated.online) }
         : {}),
+      ...(evaluated?.max !== undefined ? { max: String(evaluated.max) } : {}),
     });
     const state = EditorState.create({
       schema,
@@ -517,11 +538,17 @@ export function createEditor(
         ] as const)
           if (!enabled(field))
             Object.assign(restored, { [field]: current[field] });
+        const changedFields = (
+          ["motd", "version", "icon", "players", "hover"] as const
+        ).filter(
+          (field) =>
+            JSON.stringify(restored[field]) !== JSON.stringify(current[field]),
+        );
         current = restored;
         rebuild(entry.selection);
         options.onChange(structuredClone(current), {
           origin: "history",
-          changedFields: ["motd", "version", "icon", "players", "hover"],
+          changedFields,
         });
       }
       return;

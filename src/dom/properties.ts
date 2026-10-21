@@ -187,9 +187,10 @@ export function mountProperties(editor: EditorExtension): void {
               : {
                   mode,
                   text:
-                    value.version.mode === "automatic"
+                    editor.getDocument().version.mode === "automatic"
                       ? plain("<red>Maintenance")
-                      : value.version.text,
+                      : (editor.getDocument().version as { text: TextDocument })
+                          .text,
                 },
         }),
     );
@@ -350,11 +351,40 @@ export function mountProperties(editor: EditorExtension): void {
       button(panel, label("resetIcon", "Reset icon"), () =>
         editor.execute({ type: "set-field", field: "icon", value: null }),
       );
-    root
-      .querySelector<HTMLElement>("[data-field=icon]")
-      ?.addEventListener("click", () => {
-        if (!locked) file.click();
-      });
+    const icon = root.querySelector<HTMLElement>("[data-field=icon]");
+    if (icon && !locked) {
+      const upload = element(
+        doc,
+        "button",
+        "mce-icon-upload",
+        label("upload", "Upload"),
+      );
+      const glyph = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
+      glyph.setAttribute("viewBox", "0 0 16 16");
+      glyph.setAttribute("class", "mce-upload-icon");
+      glyph.setAttribute("aria-hidden", "true");
+      glyph.setAttribute("fill", "currentColor");
+      glyph.setAttribute("shape-rendering", "crispEdges");
+      for (const data of [
+        "M1 3h8v1H2v10h12V8h1v7H1z",
+        "M3 11h1v-1h1V9h1v1h1v1h1v1h1v-1h1v-1h1v1h1v1h1v1H3z",
+        "M4 6h2v2H4z",
+        "M12 1h2v2h2v2h-2v2h-2V5h-2V3h2z",
+      ]) {
+        const path = doc.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", data);
+        glyph.append(path);
+      }
+      upload.prepend(glyph);
+      upload.type = "button";
+      upload.setAttribute(
+        "aria-label",
+        label("uploadIcon", "Upload server icon"),
+      );
+      upload.title = label("uploadIcon", "Upload server icon");
+      upload.addEventListener("click", () => file.click());
+      icon.append(upload);
+    }
   }
   if (enabled("export")) {
     heading(label("export", "Export"));

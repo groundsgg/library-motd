@@ -23,7 +23,7 @@ test("normalizes an uploaded icon and keeps the draft after a corrupt image", as
   page,
 }) => {
   await page.goto("/tests/browser/host.html");
-  const file = page.getByLabel("Server icon");
+  const file = page.getByLabel("Server icon", { exact: true });
   // A real browser-generated 96x48 PNG exercises the image pipeline.
   const png = await page.evaluate(() => {
     const c = document.createElement("canvas");
@@ -48,15 +48,31 @@ test("normalizes an uploaded icon and keeps the draft after a corrupt image", as
   });
   expect(size).toEqual([64, 64]);
   const before = await page.evaluate(() => window.doc.icon.pngBase64);
-  await page
-    .getByLabel("Server icon")
-    .setInputFiles({
-      name: "bad.png",
-      mimeType: "image/png",
-      buffer: Buffer.from("broken"),
-    });
+  await page.getByLabel("Server icon", { exact: true }).setInputFiles({
+    name: "bad.png",
+    mimeType: "image/png",
+    buffer: Buffer.from("broken"),
+  });
   await expect(
     page.getByRole("status").filter({ hasText: "Invalid image" }),
   ).toBeVisible();
   expect(await page.evaluate(() => window.doc.icon.pngBase64)).toBe(before);
+});
+
+test("offers icon upload on hover and keyboard focus only in the editor", async ({
+  page,
+}) => {
+  await page.goto("/examples/react/");
+  const upload = page.getByRole("button", {
+    name: "Upload server icon",
+    exact: true,
+  });
+  await expect(upload).toHaveCount(1);
+  await upload.hover();
+  await expect(upload).toHaveCSS("opacity", "1");
+  await upload.focus();
+  await expect(upload).toHaveCSS("opacity", "1");
+  const chooser = page.waitForEvent("filechooser");
+  await upload.press("Enter");
+  expect((await chooser).isMultiple()).toBe(false);
 });

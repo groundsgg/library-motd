@@ -9,7 +9,12 @@
     "assets",
     "README.md",
     "LICENSE",
-    "THIRD_PARTY_NOTICES.md"
+    "THIRD_PARTY_NOTICES.md",
+    "docs/api.md",
+    "docs/formats.md",
+    "docs/embedding.md",
+    "docs/profiles.md",
+    "docs/limitations.md"
   ],
   "exports": {
     ".": {

@@ -21,12 +21,33 @@
             and make the entry your own.
           </p>
           <label
-            >Client protocol
-            <select id="protocol">
-              <option value="767">Compatible · 1.21.1</option>
-              <option value="766">Incompatible · 1.20.6</option>
+            >Client version
+            <select id="client-version" aria-label="Client version"></select
+          ></label>
+          <label
+            >Compatibility
+            <select id="protocol" aria-label="Compatibility">
+              <option value="compatible">Compatible</option>
+              <option value="incompatible">Incompatible</option>
             </select></label
           >
+          <label
+            >Background
+            <select id="background" aria-label="Background">
+              <option value="auto">From client version</option>
+              <option value="panorama">Panorama</option>
+              <option value="dirt">Classic dirt</option>
+              <option value="none">Transparent</option>
+            </select></label
+          >
+          <label
+            >Presentation
+            <select id="presentation" aria-label="Presentation">
+              <option value="server-list">Server list</option>
+              <option value="row">Server row only</option>
+            </select></label
+          >
+          <label><input id="selected" type="checkbox" /> Selected server</label>
           <div class="note">
             Standalone DOM example<br />No account. No backend. All assets
             local.<br /><br /><a href="../react/">Open React example ↗</a>
@@ -44,7 +65,7 @@
       </main>
       <footer>
         <span>@groundsgg/motd · Framework independent</span
-        ><span>Java 1.21.1 reference profile</span>
+        ><span>Java client profiles · 1.20.4–26.3</span>
       </footer>
     </div>
     <script type="module" src="./main.ts"></script>

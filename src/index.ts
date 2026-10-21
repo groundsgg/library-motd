@@ -2,6 +2,7 @@ export * from "./core/model.js";
 export * from "./core/document.js";
 export * from "./core/text/parse.js";
 export * from "./profiles/java-1.21.1.js";
+export * from "./profiles/clients.js";
 export * from "./core/text/serialize.js";
 export * from "./core/text/colors.js";
 export * from "./core/text/placeholders.js";

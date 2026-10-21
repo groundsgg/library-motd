@@ -6,7 +6,10 @@ import type {
   TextDocument,
   TextStyle,
 } from "../core/model.js";
-import { evaluateStatus } from "../core/status/evaluate.js";
+import {
+  evaluateStatus,
+  evaluatePlayerCounts,
+} from "../core/status/evaluate.js";
 import { resolveText } from "../core/text/placeholders.js";
 import { parseText } from "../core/text/parse.js";
 import { layoutText } from "../core/layout/layout.js";
@@ -57,6 +60,7 @@ export function renderText(
   width: number,
   maxLines = 2,
   alignments?: Alignment[],
+  defaultColor?: string,
 ): Diagnostic[] {
   const layout = layoutText(text, {
     profile: context.profile,
@@ -75,7 +79,16 @@ export function renderText(
     span.style.left = glyph.x + "px";
     span.style.top = glyph.line * context.profile.font.lineHeight + "px";
     span.style.width = glyph.advance + "px";
-    applyTextStyle(span, glyph.style, glyph.color);
+    applyTextStyle(
+      span,
+      glyph.style,
+      defaultColor &&
+        !glyph.style.color &&
+        !glyph.style.gradient &&
+        !glyph.style.rainbow
+        ? defaultColor
+        : glyph.color,
+    );
     if (glyph.style.obfuscated && glyph.text.trim()) {
       span.dataset.obfuscated = "";
       span.dataset.advance = String(glyph.advance - (glyph.style.bold ? 1 : 0));
@@ -109,36 +122,144 @@ export function createPreview(
         140,
         Math.min(geometry.rowWidth, context.viewportWidth / scale),
       );
+    const assets = context.assetProvider?.(context.profile);
+    const contentWidth = Math.min(width, geometry.contentWidth ?? width);
+    const full = context.presentation !== "row";
+    const sceneWidth = full
+      ? Math.max(width, Math.floor(context.viewportWidth / scale))
+      : width + 4;
+    const height = full
+      ? Math.max(
+          132,
+          Math.floor((context.viewportHeight ?? 180 * scale) / scale),
+        )
+      : 40;
+    const rowX = full
+      ? Math.floor(sceneWidth / 2) - Math.floor(width / 2) + 2
+      : 2;
+    const rowY = full ? (geometry.rowTop ?? 36) : 4;
     const stage = element(doc, "div", "mcp-stage"),
+      scene = element(doc, "div", "mcp-scene"),
       row = element(doc, "div", "mcp-row");
-    wrapper.style.width = width * scale + "px";
+    const background =
+      !context.background || context.background === "auto"
+        ? (assets?.background ?? "auto")
+        : context.background;
+    const backgroundKind =
+      typeof background === "object"
+        ? "custom"
+        : background === "auto"
+          ? (context.profile.background ?? "panorama")
+          : background;
+    stage.dataset.background = backgroundKind;
+    stage.dataset.clientProfile = context.profile.id;
+    wrapper.style.width = sceneWidth * scale + "px";
     wrapper.style.setProperty(
       "--mcp-font",
-      `'${context.profile.font.family}',monospace`,
+      `'${assets?.fontFamily ?? context.profile.font.family}',monospace`,
     );
-    stage.style.width = width * scale + "px";
-    stage.style.height = 36 * scale + "px";
-    row.style.width = width + "px";
-    row.style.transform = `scale(${scale})`;
+    stage.style.width = sceneWidth * scale + "px";
+    stage.style.height = height * scale + "px";
+    scene.style.width = sceneWidth + "px";
+    scene.style.height = height + "px";
+    scene.style.transform = `scale(${scale})`;
+    scene.style.setProperty(
+      "--mcp-title-top",
+      (geometry.titleTop ?? 19) + "px",
+    );
+    scene.style.setProperty("--mcp-list-top", (geometry.listTop ?? 31) + "px");
+    scene.style.setProperty(
+      "--mcp-footer-height",
+      (geometry.footerHeight ?? 63) + "px",
+    );
+    scene.style.setProperty(
+      "--mcp-footer-bottom",
+      (geometry.footerBottom ?? 9) + "px",
+    );
+    const backdrop = element(doc, "div", "mcp-background");
+    if (typeof background === "object")
+      backdrop.style.backgroundImage = `url(${JSON.stringify(background.imageUrl)})`;
+    scene.append(backdrop);
+    if (full) {
+      const listBackground = element(doc, "div", "mcp-list-background");
+      const title = element(
+        doc,
+        "div",
+        "mcp-menu-title",
+        labels.multiplayerTitle ?? "Play Multiplayer",
+      );
+      const footer = element(doc, "div", "mcp-menu-footer");
+      footer.setAttribute("aria-hidden", "true");
+      for (const [key, fallback] of [
+        ["joinServer", "Join Server"],
+        ["directConnection", "Direct Connection"],
+        ["addServer", "Add Server"],
+        ["editServer", "Edit"],
+        ["deleteServer", "Delete"],
+        ["refreshServers", "Refresh"],
+        ["back", "Back"],
+      ]) {
+        const button = element(
+          doc,
+          "span",
+          "mcp-menu-button",
+          labels[key!] ?? fallback,
+        );
+        if (assets?.buttons) {
+          const source =
+            !context.selected &&
+            ["joinServer", "editServer", "deleteServer"].includes(key!)
+              ? (assets.buttons.disabled ?? assets.buttons.normal)
+              : assets.buttons.normal;
+          Object.assign(button.style, {
+            background: "transparent",
+            boxShadow: "none",
+            borderImageSource: `url(${JSON.stringify(source)})`,
+            borderImageSlice: `${assets.buttons.border ?? 2} fill`,
+            borderImageWidth: `${assets.buttons.border ?? 2}px`,
+          });
+        }
+        footer.append(button);
+      }
+      scene.append(listBackground, title, footer);
+    }
+    if (context.selected) {
+      const selection = element(doc, "div", "mcp-selection");
+      Object.assign(selection.style, {
+        left: rowX - 2 + "px",
+        top: rowY - 2 + "px",
+        width: width + "px",
+      });
+      scene.append(selection);
+    }
+    Object.assign(row.style, {
+      left: rowX + "px",
+      top: rowY + "px",
+      width: contentWidth + "px",
+    });
     row.role = "group";
     row.setAttribute(
       "aria-label",
       labels.serverEntry ?? "Minecraft server entry",
     );
-    stage.append(row);
+    scene.append(row);
+    stage.append(scene);
     wrapper.append(stage);
     const icon = element(doc, "div", "mcp-icon");
     icon.dataset.field = "icon";
-    if (status.favicon?.startsWith("data:image/png;base64,")) {
+    const iconSource = status.favicon?.startsWith("data:image/png;base64,")
+      ? status.favicon
+      : assets?.defaultServerIcon;
+    if (iconSource) {
       const image = element(doc, "img", "");
-      image.src = status.favicon;
+      image.src = iconSource;
       image.alt = labels.serverIcon ?? "Server icon";
       image.addEventListener("error", () => {
         image.remove();
-        icon.textContent = "?";
+        icon.classList.add("mcp-icon-default");
       });
       icon.append(image);
-    } else icon.textContent = "?";
+    } else icon.classList.add("mcp-icon-default");
     row.append(
       icon,
       element(doc, "div", "mcp-server-name", context.serverName),
@@ -167,7 +288,7 @@ export function createPreview(
         const content = element(doc, "span", "mcp-version-text");
         const size = layoutText(legacy, {
           profile: context.profile,
-          width: width - 42,
+          width: contentWidth - 42,
           maxLines: 1,
         });
         const textWidth = size.lines[0]?.width ?? 0;
@@ -175,8 +296,10 @@ export function createPreview(
           content,
           legacy,
           context,
-          Math.min(width - 42, textWidth),
+          Math.min(contentWidth - 42, textWidth),
           1,
+          undefined,
+          "#ff5555",
         );
         content.style.display = "block";
         players.append(content);
@@ -213,14 +336,13 @@ export function createPreview(
     row.append(ping);
     const motd = element(doc, "div", "mcp-motd");
     motd.dataset.field = "motd";
+    const counts = evaluatePlayerCounts(state, context).value;
     const values = {
       ...context.values,
-      ...(status.players
-        ? {
-            players: String(status.players.online),
-            max: String(status.players.max),
-          }
+      ...(counts?.online !== undefined
+        ? { players: String(counts.online) }
         : {}),
+      ...(counts?.max !== undefined ? { max: String(counts.max) } : {}),
     };
     const resolved = resolveText(state.motd.text, values);
     diagnostics.push(...resolved.diagnostics);
@@ -229,7 +351,10 @@ export function createPreview(
         motd,
         resolved.value!,
         context,
-        width - geometry.iconSize - geometry.iconGap - geometry.rightInset,
+        contentWidth -
+          geometry.iconSize -
+          geometry.iconGap -
+          geometry.rightInset,
         2,
         state.motd.alignments,
       ),
@@ -246,14 +371,14 @@ export function createPreview(
             String(remaining),
           ),
         );
-      const raw = names.join("\n");
+      const raw = names.join("\n§r");
       const text = parseText(raw, "legacy-section").value!;
       const content = element(doc, "div", "mcp-tooltip-text");
       const lineWidth = Math.max(
         ...raw.split("\n").map((l) => l.length * 6),
         40,
       );
-      renderText(content, text, context, lineWidth, 30);
+      renderText(content, text, context, lineWidth, 30, undefined, "#ffffff");
       tooltip.append(content);
       tooltip.style.setProperty("--mcp-tooltip-scale", String(scale));
       content.style.zoom = String(scale);
@@ -273,7 +398,7 @@ export function createPreview(
       wrapper.dataset.profileVerified = "false";
       wrapper.title =
         labels.unverifiedProfile ??
-        "Client profile awaiting reference validation";
+        "Client profile has partial native reference coverage";
     }
   }
   update(initial);

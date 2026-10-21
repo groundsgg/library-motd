@@ -1,6 +1,6 @@
 import {
   createDocument,
-  java1211Profile,
+  java263Profile,
   parseText,
   type PreviewContext,
 } from "../../src/index.js";
@@ -12,7 +12,7 @@ export const initialDocument = createDocument(
 );
 export const context: PreviewContext = {
   base: {
-    version: { protocol: 767, name: "1.21.1" },
+    version: { protocol: 777, name: "26.3" },
     players: {
       online: 128,
       max: 500,
@@ -29,9 +29,10 @@ export const context: PreviewContext = {
     },
     description: "",
   },
-  clientProtocol: 767,
+  clientProtocol: 777,
+  compatible: true,
   values: { region: "EU", continent: "Europe" },
-  profile: java1211Profile,
+  profile: java263Profile,
   viewportWidth: 680,
   guiScale: 2,
   serverName: "Grounds Network",

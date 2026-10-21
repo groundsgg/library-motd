@@ -57,6 +57,47 @@ export function serializeText(
     );
     if (options.lossy !== "reduce") return { value: null, diagnostics };
   }
+  const owners = new Map<string, TextNode>();
+  const indexNodes = (nodes: TextNode[]) => {
+    for (const node of nodes) {
+      owners.set(node.id, node);
+      if (node.type === "group") indexNodes(node.children);
+    }
+  };
+  indexNodes(text.nodes);
+  function renderedMiniMessage(chars: ReturnType<typeof flattenText>): string {
+    const emitted = new Set<string>();
+    return chars
+      .map((c) => {
+        const node = owners.get(c.nodeId),
+          atom = node?.type === "placeholder" || node?.type === "opaque";
+        if (atom) {
+          if (emitted.has(node.id)) return "";
+          emitted.add(node.id);
+          const raw =
+            node.type === "placeholder"
+              ? `{{${node.name}}}`
+              : node.format === "minimessage"
+                ? node.raw
+                : esc(node.fallback ?? node.raw);
+          return wrap(raw, {
+            ...c.style,
+            color: c.color,
+            gradient: undefined,
+            rainbow: undefined,
+          });
+        }
+        return c.text === "\n"
+          ? "<newline>"
+          : wrap(esc(c.text), {
+              ...c.style,
+              color: c.color,
+              gradient: undefined,
+              rainbow: undefined,
+            });
+      })
+      .join("");
+  }
   const mm = (nodes: TextNode[]): string =>
     nodes
       .map((n) => {
@@ -70,16 +111,7 @@ export function serializeText(
         );
         if (uneven) {
           const flat = flattenText({ revision: 0, nodes: [n] });
-          return flat
-            .map((c) =>
-              wrap(esc(c.text), {
-                ...c.style,
-                color: c.color,
-                gradient: undefined,
-                rainbow: undefined,
-              }),
-            )
-            .join("");
+          return renderedMiniMessage(flat);
         }
         return wrap(mm(n.children), n.style);
       })
@@ -114,6 +146,8 @@ export function serializeText(
           ...Array.from({ length: pad }, () => ({
             ...c,
             text: " ",
+            nodeId: "",
+            opaque: undefined,
             color: "#ffffff",
             style: {},
           })),
@@ -128,28 +162,78 @@ export function serializeText(
   if (target.format === "minimessage") {
     if (!options.layout) return { value: mm(text.nodes), diagnostics };
     return {
-      value: chars
-        .map((c) =>
-          c.text === "\n"
-            ? "<newline>"
-            : wrap(esc(c.text), {
-                ...c.style,
-                color: c.color,
-                gradient: undefined,
-                rainbow: undefined,
-              }),
-        )
-        .join(""),
+      value: renderedMiniMessage(chars),
       diagnostics,
     };
   }
   if (target.format === "json") {
-    const extra = chars.map((c) => ({
+    const charJson = (c: ReturnType<typeof flattenText>[number]) => ({
       text: c.text,
       color: c.color,
       ...Object.fromEntries(decorations.map((k) => [k, !!c.style[k]])),
-    }));
-    return { value: JSON.stringify({ text: "", extra }), diagnostics };
+    });
+    const containsProtected = (nodes: TextNode[]): boolean =>
+      nodes.some(
+        (n) =>
+          n.type === "opaque" ||
+          (n.type === "group" && containsProtected(n.children)),
+      );
+    const encode = (node: TextNode): unknown => {
+      if (node.type === "opaque")
+        return node.format === "json"
+          ? JSON.parse(node.raw)
+          : { text: node.fallback ?? node.raw };
+      if (node.type === "text") return { text: node.value };
+      if (node.type === "newline") return { text: "\n" };
+      if (node.type === "placeholder") return { text: `{{${node.name}}}` };
+      const style = {
+        ...(node.style.color ? { color: node.style.color } : {}),
+        ...Object.fromEntries(
+          decorations
+            .filter((k) => node.style[k] !== undefined)
+            .map((k) => [k, node.style[k]]),
+        ),
+      };
+      if (node.style.gradient || node.style.rainbow) {
+        if (containsProtected(node.children))
+          diagnostics.push(
+            diagnostic(
+              "protected-effect",
+              node.id,
+              "Protected component preserved; its enclosing color effect cannot be evaluated",
+              "warning",
+            ),
+          );
+        else
+          return {
+            text: "",
+            extra: flattenText({ revision: 0, nodes: [node] }).map(charJson),
+          };
+      }
+      return { text: "", ...style, extra: node.children.map(encode) };
+    };
+    // Keep unknown native component objects intact after source revisions change.
+    if (!options.layout)
+      return {
+        value: JSON.stringify({ text: "", extra: text.nodes.map(encode) }),
+        diagnostics,
+      };
+    if (containsProtected(text.nodes))
+      return {
+        value: null,
+        diagnostics: [
+          ...diagnostics,
+          diagnostic(
+            "protected-layout",
+            "",
+            "JSON layout of protected components is unavailable; export without layout",
+          ),
+        ],
+      };
+    return {
+      value: JSON.stringify({ text: "", extra: chars.map(charJson) }),
+      diagnostics,
+    };
   }
   const prefix = target.format === "legacy-ampersand" ? "&" : "§";
   let out = "",
@@ -211,4 +295,43 @@ export function serializeText(
         : out,
     diagnostics,
   };
+}
+
+/** Each sample/line is a separate client value and must carry its own effective starting style. */
+export function serializeLegacyLines(
+  text: TextDocument,
+  target: TextTarget & { format: "legacy-section" | "legacy-ampersand" },
+  options: SerializeOptions = {},
+): Outcome<string[]> {
+  const checked = serializeText(text, target, options);
+  if (checked.value === null)
+    return { value: null, diagnostics: checked.diagnostics };
+  const lines: ReturnType<typeof flattenText>[] = [[]];
+  for (const char of flattenText(text)) {
+    if (char.text === "\n") lines.push([]);
+    else lines.at(-1)!.push(char);
+  }
+  const diagnostics: import("../model.js").Diagnostic[] = [
+      ...checked.diagnostics,
+    ],
+    values: string[] = [];
+  for (const [line, chars] of lines.entries()) {
+    const nodes: TextNode[] = chars.map((c, i) => ({
+      id: `line-${line}-${i}`,
+      type: "group",
+      style: {
+        ...c.style,
+        color: c.color,
+        gradient: undefined,
+        gradientPhase: undefined,
+        rainbow: undefined,
+      },
+      children: [{ id: `char-${line}-${i}`, type: "text", value: c.text }],
+    }));
+    const result = serializeText({ revision: 0, nodes }, target, options);
+    diagnostics.push(...result.diagnostics);
+    if (result.value === null) return { value: null, diagnostics };
+    values.push(result.value);
+  }
+  return { value: values, diagnostics };
 }
