@@ -6,3 +6,6 @@ playwright-report/
 .superpowers/
 .vite/
 *.class
+
+demo-dist/
+*.tgz

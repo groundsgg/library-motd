@@ -1,0 +1,47 @@
+{
+  "client": "1.21.1",
+  "date": "2026-10-21",
+  "viewport": [
+    854,
+    480
+  ],
+  "guiScale": 2,
+  "rowOrigin": [
+    126,
+    72
+  ],
+  "status": {
+    "version": {
+      "protocol": 767,
+      "name": "1.21.1"
+    },
+    "players": {
+      "online": 42,
+      "max": 500,
+      "sample": [
+        {
+          "name": "Ada",
+          "id": "00000000-0000-0000-0000-000000000000"
+        }
+      ]
+    },
+    "description": {
+      "text": "",
+      "extra": [
+        {
+          "text": "Grounds\n",
+          "color": "gold",
+          "bold": true
+        },
+        {
+          "text": "Welcome, 42 players",
+          "color": "green"
+        }
+      ]
+    }
+  },
+  "sha256": {
+    "server-list.png": "8334fb36e74d2119903eeb9627ec3c090dda3a0c1c7a828373f158b4962c71b1",
+    "players-hover.png": "c0814983651c8d4b9a9cb40d979436b54d9e03f75e9edb6ac8d76b85b11bdfd7"
+  }
+}

@@ -1,0 +1,17 @@
+# Grounds integration and validation
+
+The library is consumed unchanged through its public package. Forge and Portal vendor the local 0.1.0 tar archive until npm publication is explicitly requested. No live Worker version, tag or release workflow has been activated.
+
+Forge adds optional `serverList`, `editor`, `serverListFallbackText` to both legacy settings envelopes. It validates the document, recompiles the runtime template and MiniMessage fallback, rejects contradictions and fully decodes PNGs before persistence. Existing Stage/Production permissions, optimistic version strings, audit and 262144-byte request limits remain in place. Stored legacy fallback edits discard stale editor source while keeping independent status rules.
+
+Maintenance additionally stores `serverListOverrides`, the explicit field names changed in this environment. This Grounds-only envelope field distinguishes inheritance from deliberate resets (automatic version, removed icon, unhidden players). The universal library's model is unchanged. Empty maintenance text keeps the normal MOTD; player rules with inherit keep the normal rules. Ended maintenance removes the complete override.
+
+The proxy consumes cached config and network presence. It resolves displayed count rules before player placeholders, caches decoded icons and static auxiliary text at refresh, and retains the previous snapshot on malformed data or refresh failure. The backwards-compatible MiniMessage field is the compiled MOTD source; native Adventure renders it, including protected constructs. New command text changes invalidate stale editor source while retaining independent status settings.
+
+Portal embeds the public React editor for both normal and maintenance messages. Context and example player values are separate from persisted documents. Region and example count are selectable. This route currently has no authorized live network-presence endpoint; the example count is labeled explicitly. No local proxy count is presented as a network count.
+
+Verified: independent Java 1.21.1 foreground text reference; 37 core/unit tests; Chromium interaction suite; install from npm pack without React; React SSR; a production-bundled packed consumer; both standalone example builds. Forge configuration/route/contract tests preserve authorization and 409 behavior. Portal typecheck, lint, unit/component tests, production build and actual authenticated-page browser tests cover inline editing, version mode, conflict payloads, drafts, environments and mobile overflow.
+
+Two actual Velocity 4.2.0 processes at 127.0.0.1:25611 and :25612 were tested with separate cached stores and local baseline counts 3/5, shared network count 8, region-specific text, icon, sample hover, displayed 10/20 rules, maintenance start/end, invalid icon and failed refresh. The harness uses the unchanged production handler but local adapters, so live NATS/service-config delivery is outside this test. Raw responses and reproducible scripts are in the proxy branch under docs/server-list and tools/server-list.
+
+Portal's usual production build initially failed because DNS could not resolve Google Fonts. Its successful test build used Next's font-mock input and a pre-existing font served on loopback. Production font declarations were not changed. npm publication, live deployment, actual IME/Firefox verification and broader client profile validation remain outside the completed verification.

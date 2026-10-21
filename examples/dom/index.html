@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>MOTD Workbench · Grounds</title>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div class="wordmark">grounds<span style="color: #ba5d30">.</span></div>
+        <span class="tag">MOTD Workbench / 01</span>
+      </header>
+      <main>
+        <aside>
+          <div class="accent"></div>
+          <span class="tag">Make an entrance</span>
+          <h1>Your server.<br />Your first impression.</h1>
+          <p>
+            Edit directly in the Minecraft row. Shape the text, tune the status,
+            and make the entry your own.
+          </p>
+          <label
+            >Client protocol
+            <select id="protocol">
+              <option value="767">Compatible · 1.21.1</option>
+              <option value="766">Incompatible · 1.20.6</option>
+            </select></label
+          >
+          <div class="note">
+            Standalone DOM example<br />No account. No backend. All assets
+            local.<br /><br /><a href="../react/">Open React example ↗</a>
+          </div>
+        </aside>
+        <section>
+          <div class="workspace-heading">
+            <span>SERVER ENTRY</span
+            ><span><i class="dot"></i>Local workspace</span>
+          </div>
+          <div id="editor"></div>
+          <div class="output-label">Player-facing preview</div>
+          <div class="preview-output" id="preview"></div>
+        </section>
+      </main>
+      <footer>
+        <span>@groundsgg/motd · Framework independent</span
+        ><span>Java 1.21.1 reference profile</span>
+      </footer>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

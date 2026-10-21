@@ -1,0 +1,145 @@
+@import "@fontsource-variable/manrope";
+:root {
+  font-family: Manrope, system-ui, sans-serif;
+  color: #282e28;
+  background: #f4f1e9;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+.shell {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 42px 36px 64px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 34px;
+  border-bottom: 1px solid #d8d4c9;
+}
+.wordmark {
+  font-weight: 800;
+  letter-spacing: -1px;
+  font-size: 22px;
+}
+.tag {
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #717769;
+}
+a {
+  color: inherit;
+}
+main {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 48px;
+  margin-top: 42px;
+}
+h1 {
+  font-size: 36px;
+  line-height: 1.12;
+  letter-spacing: -1.7px;
+  margin: 12px 0 20px;
+}
+p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #686e61;
+}
+.accent {
+  width: 35px;
+  height: 4px;
+  background: #ba5d30;
+  margin-bottom: 28px;
+}
+.note {
+  padding-top: 18px;
+  border-top: 1px solid #d8d4c9;
+  margin-top: 30px;
+  font-size: 12px;
+}
+aside label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  margin: 20px 0;
+}
+select {
+  font: inherit;
+  padding: 5px;
+  background: #fffdf8;
+  border: 1px solid #c6c8bb;
+}
+.workspace-heading {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.dot {
+  display: inline-block;
+  background: #59856c;
+  border-radius: 50%;
+  width: 6px;
+  height: 6px;
+  margin-right: 7px;
+}
+.mce-root {
+  box-shadow: 0 15px 45px #353d2810;
+}
+.mce-canvas {
+  min-height: 136px;
+  display: grid;
+  align-items: center;
+}
+.preview-output {
+  padding: 20px;
+  background: #22271f;
+  overflow: auto;
+}
+.output-label {
+  margin: 30px 0 10px;
+  font-size: 11px;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  color: #777e70;
+}
+footer {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #d8d4c9;
+  margin-top: 42px;
+  padding-top: 18px;
+  font-size: 11px;
+  color: #777e70;
+}
+@media (max-width: 850px) {
+  main {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .shell {
+    padding: 24px 16px;
+  }
+  h1 {
+    max-width: 500px;
+  }
+  aside p {
+    max-width: 600px;
+  }
+  .note {
+    display: none;
+  }
+  .tag {
+    font-size: 9px;
+  }
+}

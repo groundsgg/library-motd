@@ -1,0 +1,2210 @@
+[
+  {
+    "name": "offset-headroom",
+    "document": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<gold>{{region}}: {{players}} / {{max}}",
+            "revision": 0
+          }
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "offset",
+          "value": 2
+        },
+        "maximum": {
+          "mode": "headroom",
+          "value": 10
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      },
+      "extensions": {}
+    },
+    "template": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ]
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "offset",
+          "value": 2
+        },
+        "maximum": {
+          "mode": "headroom",
+          "value": 10
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      }
+    },
+    "source": "<gold>{{region}}: {{players}} / {{max}}",
+    "context": {
+      "base": {
+        "version": {
+          "protocol": 767,
+          "name": "1.21.1"
+        },
+        "players": {
+          "online": 8,
+          "max": 100,
+          "sample": [
+            {
+              "name": "Ada",
+              "id": "00000000-0000-0000-0000-000000000001"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "clientProtocol": 767,
+      "values": {
+        "region": "eu",
+        "continent": "Europe",
+        "localzone": "Europe"
+      }
+    },
+    "expected": {
+      "version": {
+        "protocol": 767,
+        "name": "1.21.1"
+      },
+      "players": {
+        "online": 10,
+        "max": 20,
+        "sample": [
+          {
+            "name": "Ada",
+            "id": "00000000-0000-0000-0000-000000000001"
+          }
+        ]
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "e",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "u",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": ":",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "1",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "/",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "2",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          }
+        ]
+      }
+    },
+    "expectedPlain": "eu: 10 / 20"
+  },
+  {
+    "name": "hidden",
+    "document": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<gold>{{region}}: {{players}} / {{max}}",
+            "revision": 0
+          }
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": true,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      },
+      "extensions": {}
+    },
+    "template": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ]
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": true,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      }
+    },
+    "source": "<gold>{{region}}: {{players}} / {{max}}",
+    "context": {
+      "base": {
+        "version": {
+          "protocol": 767,
+          "name": "1.21.1"
+        },
+        "players": {
+          "online": 8,
+          "max": 100,
+          "sample": [
+            {
+              "name": "Ada",
+              "id": "00000000-0000-0000-0000-000000000001"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "clientProtocol": 767,
+      "values": {
+        "region": "eu",
+        "continent": "Europe",
+        "localzone": "Europe"
+      }
+    },
+    "expected": {
+      "version": {
+        "protocol": 767,
+        "name": "1.21.1"
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "e",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "u",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": ":",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "8",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "/",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "1",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          }
+        ]
+      }
+    },
+    "expectedPlain": "eu: 8 / 100"
+  },
+  {
+    "name": "custom-hover",
+    "document": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<gold>{{region}}: {{players}} / {{max}}",
+            "revision": 0
+          }
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "custom",
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": " players"
+                },
+                {
+                  "id": "n3",
+                  "type": "newline"
+                },
+                {
+                  "id": "n4",
+                  "type": "group",
+                  "style": {
+                    "color": "#55ff55"
+                  },
+                  "children": [
+                    {
+                      "id": "n5",
+                      "type": "text",
+                      "value": "Welcome"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<gold>{{players}} players<newline><green>Welcome",
+            "revision": 0
+          }
+        }
+      },
+      "extensions": {}
+    },
+    "template": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ]
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "custom",
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": " players"
+                },
+                {
+                  "id": "n3",
+                  "type": "newline"
+                },
+                {
+                  "id": "n4",
+                  "type": "group",
+                  "style": {
+                    "color": "#55ff55"
+                  },
+                  "children": [
+                    {
+                      "id": "n5",
+                      "type": "text",
+                      "value": "Welcome"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "source": "<gold>{{region}}: {{players}} / {{max}}",
+    "context": {
+      "base": {
+        "version": {
+          "protocol": 767,
+          "name": "1.21.1"
+        },
+        "players": {
+          "online": 8,
+          "max": 100,
+          "sample": [
+            {
+              "name": "Ada",
+              "id": "00000000-0000-0000-0000-000000000001"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "clientProtocol": 767,
+      "values": {
+        "region": "eu",
+        "continent": "Europe",
+        "localzone": "Europe"
+      }
+    },
+    "expected": {
+      "version": {
+        "protocol": 767,
+        "name": "1.21.1"
+      },
+      "players": {
+        "online": 8,
+        "max": 100,
+        "sample": [
+          {
+            "name": "§r§68 players",
+            "id": "00000000-0000-0000-0000-000000000000"
+          },
+          {
+            "name": "§r§aWelcome",
+            "id": "00000000-0000-0000-0000-000000000000"
+          }
+        ]
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "e",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "u",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": ":",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "8",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "/",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "1",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          }
+        ]
+      }
+    },
+    "expectedPlain": "eu: 8 / 100"
+  },
+  {
+    "name": "forced-version",
+    "document": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<gold>{{region}}: {{players}} / {{max}}",
+            "revision": 0
+          }
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "always",
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ff5555"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "value": "Maintenance"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<red>Maintenance",
+            "revision": 0
+          }
+        }
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      },
+      "extensions": {}
+    },
+    "template": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ]
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "always",
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ff5555"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "value": "Maintenance"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      }
+    },
+    "source": "<gold>{{region}}: {{players}} / {{max}}",
+    "context": {
+      "base": {
+        "version": {
+          "protocol": 767,
+          "name": "1.21.1"
+        },
+        "players": {
+          "online": 8,
+          "max": 100,
+          "sample": [
+            {
+              "name": "Ada",
+              "id": "00000000-0000-0000-0000-000000000001"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "clientProtocol": 767,
+      "values": {
+        "region": "eu",
+        "continent": "Europe",
+        "localzone": "Europe"
+      }
+    },
+    "expected": {
+      "version": {
+        "protocol": -1,
+        "name": "§r§cMaintenance"
+      },
+      "players": {
+        "online": 8,
+        "max": 100,
+        "sample": [
+          {
+            "name": "Ada",
+            "id": "00000000-0000-0000-0000-000000000001"
+          }
+        ]
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "e",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "u",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": ":",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "8",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "/",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "1",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          }
+        ]
+      }
+    },
+    "expectedPlain": "eu: 8 / 100"
+  },
+  {
+    "name": "compatible-version",
+    "document": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<gold>{{region}}: {{players}} / {{max}}",
+            "revision": 0
+          }
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "when-incompatible",
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ff5555"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "value": "Update required"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<red>Update required",
+            "revision": 0
+          }
+        }
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      },
+      "extensions": {}
+    },
+    "template": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ]
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "when-incompatible",
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ff5555"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "value": "Update required"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      }
+    },
+    "source": "<gold>{{region}}: {{players}} / {{max}}",
+    "context": {
+      "base": {
+        "version": {
+          "protocol": 767,
+          "name": "1.21.1"
+        },
+        "players": {
+          "online": 8,
+          "max": 100,
+          "sample": [
+            {
+              "name": "Ada",
+              "id": "00000000-0000-0000-0000-000000000001"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "clientProtocol": 767,
+      "values": {
+        "region": "eu",
+        "continent": "Europe",
+        "localzone": "Europe"
+      }
+    },
+    "expected": {
+      "version": {
+        "protocol": 767,
+        "name": "1.21.1"
+      },
+      "players": {
+        "online": 8,
+        "max": 100,
+        "sample": [
+          {
+            "name": "Ada",
+            "id": "00000000-0000-0000-0000-000000000001"
+          }
+        ]
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "e",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "u",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": ":",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "8",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "/",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "1",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          }
+        ]
+      }
+    },
+    "expectedPlain": "eu: 8 / 100"
+  },
+  {
+    "name": "incompatible-version",
+    "document": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<gold>{{region}}: {{players}} / {{max}}",
+            "revision": 0
+          }
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "when-incompatible",
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ff5555"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "value": "Update required"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<red>Update required",
+            "revision": 0
+          }
+        }
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      },
+      "extensions": {}
+    },
+    "template": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ]
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "when-incompatible",
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ff5555"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "value": "Update required"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "inherit"
+        },
+        "maximum": {
+          "mode": "inherit"
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      }
+    },
+    "source": "<gold>{{region}}: {{players}} / {{max}}",
+    "context": {
+      "base": {
+        "version": {
+          "protocol": 767,
+          "name": "1.21.1"
+        },
+        "players": {
+          "online": 8,
+          "max": 100,
+          "sample": [
+            {
+              "name": "Ada",
+              "id": "00000000-0000-0000-0000-000000000001"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "clientProtocol": 766,
+      "values": {
+        "region": "eu",
+        "continent": "Europe",
+        "localzone": "Europe"
+      }
+    },
+    "expected": {
+      "version": {
+        "protocol": -1,
+        "name": "§r§cUpdate required"
+      },
+      "players": {
+        "online": 8,
+        "max": 100,
+        "sample": [
+          {
+            "name": "Ada",
+            "id": "00000000-0000-0000-0000-000000000001"
+          }
+        ]
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "e",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "u",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": ":",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "8",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "/",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "1",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          }
+        ]
+      }
+    },
+    "expectedPlain": "eu: 8 / 100"
+  },
+  {
+    "name": "percent",
+    "document": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ],
+          "source": {
+            "format": "minimessage",
+            "value": "<gold>{{region}}: {{players}} / {{max}}",
+            "revision": 0
+          }
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "percent",
+          "value": 25
+        },
+        "maximum": {
+          "mode": "offset",
+          "value": 5
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      },
+      "extensions": {}
+    },
+    "template": {
+      "schemaVersion": 1,
+      "motd": {
+        "text": {
+          "revision": 0,
+          "nodes": [
+            {
+              "id": "n0",
+              "type": "group",
+              "style": {
+                "color": "#ffaa00"
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "placeholder",
+                  "name": "region"
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "value": ": "
+                },
+                {
+                  "id": "n3",
+                  "type": "placeholder",
+                  "name": "players"
+                },
+                {
+                  "id": "n4",
+                  "type": "text",
+                  "value": " / "
+                },
+                {
+                  "id": "n5",
+                  "type": "placeholder",
+                  "name": "max"
+                }
+              ]
+            }
+          ]
+        },
+        "alignments": [
+          "left",
+          "left"
+        ]
+      },
+      "version": {
+        "mode": "automatic"
+      },
+      "icon": null,
+      "players": {
+        "hidden": false,
+        "online": {
+          "mode": "percent",
+          "value": 25
+        },
+        "maximum": {
+          "mode": "offset",
+          "value": 5
+        }
+      },
+      "hover": {
+        "mode": "inherit"
+      }
+    },
+    "source": "<gold>{{region}}: {{players}} / {{max}}",
+    "context": {
+      "base": {
+        "version": {
+          "protocol": 767,
+          "name": "1.21.1"
+        },
+        "players": {
+          "online": 8,
+          "max": 100,
+          "sample": [
+            {
+              "name": "Ada",
+              "id": "00000000-0000-0000-0000-000000000001"
+            }
+          ]
+        },
+        "description": ""
+      },
+      "clientProtocol": 767,
+      "values": {
+        "region": "eu",
+        "continent": "Europe",
+        "localzone": "Europe"
+      }
+    },
+    "expected": {
+      "version": {
+        "protocol": 767,
+        "name": "1.21.1"
+      },
+      "players": {
+        "online": 2,
+        "max": 105,
+        "sample": [
+          {
+            "name": "Ada",
+            "id": "00000000-0000-0000-0000-000000000001"
+          }
+        ]
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "e",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "u",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": ":",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "2",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "/",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": " ",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "1",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "0",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          },
+          {
+            "text": "5",
+            "color": "#ffaa00",
+            "bold": false,
+            "italic": false,
+            "underlined": false,
+            "strikethrough": false,
+            "obfuscated": false
+          }
+        ]
+      }
+    },
+    "expectedPlain": "eu: 2 / 105"
+  }
+]
