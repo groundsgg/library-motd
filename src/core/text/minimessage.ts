@@ -61,7 +61,8 @@ export function parseMiniMessage(input: string, options: ParseOptions = {}): Out
     else if(['bold','italic','underlined','strikethrough','obfuscated'].includes(tag)) style={[tag]:!lower.startsWith('!') && parts[1]!=='false'};
     else if(tag==='gradient') {
       const stops=parts.slice(1).filter(p=>/^#[\da-f]{6}$/.test(p)||COLORS[p]).map(p=>COLORS[p]??p);
-      if(stops.length>=2) style={gradient:stops.map((c,n)=>({color:c,position:n/(stops.length-1)}))};
+      const last=parts.at(-1)!;const phase=/^-?(?:\d+\.?\d*|\.\d+)$/.test(last)?Number(last):0;
+      if(stops.length>=2&&Math.abs(phase)<=1) style={gradient:stops.map((c,n)=>({color:c,position:n/(stops.length-1)})),...(phase?{gradientPhase:phase}:{})};
     } else if(tag==='rainbow') style={rainbow:{phase:Number(parts[1]?.replace('!','')??0),reversed:!!parts[1]?.startsWith('!')}};
     if(style) {
       flush();

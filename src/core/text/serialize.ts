@@ -23,7 +23,7 @@ export function serializeText(text:TextDocument,target:TextTarget,options:Serial
   function wrap(value:string,style:TextStyle):string {
     let out=value;
     if(style.color)out=`<${style.color}>${out}</${style.color}>`;
-    if(style.gradient)out=`<gradient:${style.gradient.map(s=>s.color).join(':')}>${out}</gradient>`;
+    if(style.gradient)out=`<gradient:${style.gradient.map(s=>s.color).join(':')}${style.gradientPhase?':'+style.gradientPhase:''}>${out}</gradient>`;
     if(style.rainbow)out=`<rainbow:${style.rainbow.reversed?'!':''}${style.rainbow.phase}>${out}</rainbow>`;
     for(const k of decorations)if(style[k]!==undefined)out=`<${style[k]?'':'!'}${tags[k]}>${out}</${tags[k]}>`;
     return out;

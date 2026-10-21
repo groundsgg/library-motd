@@ -3,7 +3,7 @@ export interface Diagnostic { code: string; severity: 'error' | 'warning'; path:
 export interface Outcome<T> { value: T | null; diagnostics: Diagnostic[] }
 export type TextFormat = 'minimessage' | 'legacy-ampersand' | 'legacy-section' | 'properties' | 'json';
 export interface GradientStop { color: string; position: number }
-export interface TextStyle { color?: string; bold?: boolean; italic?: boolean; underlined?: boolean; strikethrough?: boolean; obfuscated?: boolean; gradient?: GradientStop[]; rainbow?: { phase: number; reversed: boolean } }
+export interface TextStyle { color?: string; bold?: boolean; italic?: boolean; underlined?: boolean; strikethrough?: boolean; obfuscated?: boolean; gradient?: GradientStop[]; gradientPhase?: number; rainbow?: { phase: number; reversed: boolean } }
 interface NodeBase { id: string }
 export type TextNode =
   | (NodeBase & { type: 'text'; value: string })
