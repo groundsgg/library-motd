@@ -5,6 +5,6 @@
 - The preview wraps by glyph width. Minecraft word wrapping and complex-script shaping need additional profile work. Extra imported lines are retained and warned about; only two MOTD lines are visible.
 - Gradients render per glyph in preview. While editing, CSS gradient presentation can differ slightly from the final per-glyph colors.
 - Unknown MiniMessage/JSON constructs remain protected. Their visual fallback is approximate; cross-format export may require explicit reduction.
-- IME-safe incremental updates are implemented, but an actual Japanese input method and Firefox have not yet been manually verified. Synthetic composition events alone are not considered proof.
+- Chromium, Firefox and Playwright WebKit run the automated editing/preview suite; see [browser-verification.md](browser-verification.md). Real Japanese IME, assistive technology and shipping Safari on macOS/iOS still need manual verification. Synthetic composition events alone are not proof of actual IME support.
 - Count hover can be unreachable when players are hidden or the version is forced incompatible; diagnostics report this. Minecraft controls the final tooltip behavior.
 - No automatic network ping/import or clipboard permission assumptions. The consuming application supplies transport, persistence, permissions and publication.

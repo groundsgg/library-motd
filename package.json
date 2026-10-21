@@ -15,7 +15,8 @@
     "docs/formats.md",
     "docs/embedding.md",
     "docs/profiles.md",
-    "docs/limitations.md"
+    "docs/limitations.md",
+    "docs/browser-verification.md"
   ],
   "exports": {
     ".": {
