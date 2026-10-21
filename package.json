@@ -66,7 +66,7 @@
     "eslint": "10.13.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "fontkit": "^2.0.4",
-    "globals": "17.4.0",
+    "globals": "17.13.0",
     "pngjs": "^7.0.0",
     "prettier": "3.9.10",
     "react": "^19.3.1",
