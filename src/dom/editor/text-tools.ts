@@ -44,7 +44,7 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
       ),
     );
     content.append(heading);
-    function apply(style: TextStyle) {
+    function editSelection(action: () => void) {
       if (
         !fieldEditable(mount, selection.field) ||
         !controller.restoreSelection(selection)
@@ -57,8 +57,13 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
         return;
       }
       const active = doc.activeElement as HTMLElement | null;
-      controller.execute({ type: "format", field: selection.field, style });
+      action();
       if (active?.isConnected && content.contains(active)) active.focus();
+    }
+    function apply(style: TextStyle) {
+      editSelection(() =>
+        controller.execute({ type: "format", field: selection.field, style }),
+      );
     }
     if (tool === "color") {
       const swatch = element(doc, "input", "mce-tool-color"),
@@ -272,6 +277,19 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
           toolLabel(mount, "applyRainbow", "Apply rainbow"),
           toolLabel(mount, "applyRainbow", "Apply rainbow"),
           change,
+        ),
+        toolButton(
+          doc,
+          toolLabel(mount, "removeRainbow", "Remove rainbow"),
+          toolLabel(mount, "removeRainbow", "Remove rainbow"),
+          () =>
+            editSelection(() =>
+              controller.execute({
+                type: "clear-format",
+                field: selection.field,
+                styles: ["rainbow"],
+              }),
+            ),
         ),
       );
     } else {

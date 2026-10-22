@@ -20,7 +20,7 @@
 
 DOM exports `createPreview`, `createEditor`, `normalizeIcon` and associated public types. Both handles offer `update(options)` and idempotent `destroy()`. Preview exposes `getDiagnostics()`. Editor exposes `getDocument()`, `focus('motd'|'version'|'hover')`, and `execute(command)`.
 
-Commands: `format {style,field?}`, `gradient {stops,field?}`, `align {line,align}`, `set-field {field,value}`, `replace-source {source,format?,field?}`, `replace-document {document,origin?}`, `undo`, `redo`. Gradient stops have hex colors and strictly increasing positions in [0,1]. Format styles include explicit false values. Undo covers every document field; consecutive typing is grouped.
+Commands: `format {style,field?}`, `clear-format {styles,field?}`, `gradient {stops,field?}`, `align {line,align}`, `set-field {field,value}`, `replace-source {source,format?,field?}`, `replace-document {document,origin?}`, `undo`, `redo`. Gradient stops have hex colors and strictly increasing positions in [0,1]. Format styles include explicit false values. `clear-format` removes the named style keys from inherited selection paths (for example `styles: ["rainbow"]`), preserving other styles. At a caret it clears the stored formatting for future typing; selected text and line breaks are cleared atomically and support undo. Undo covers every document field; consecutive typing is grouped.
 
 `EditorChange` contains origin (`visual`, `source`, `import`, `history`) and changedFields. Persist the document, not the handle or context. `update` with the acknowledged current document keeps history and selection; replacing the external document resets the editor baseline.
 

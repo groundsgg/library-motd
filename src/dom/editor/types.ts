@@ -40,6 +40,11 @@ export interface EditorOptions {
 export type EditorCommand =
   | { type: "format"; style: TextStyle; field?: EditableField }
   | {
+      type: "clear-format";
+      styles: readonly (keyof TextStyle)[];
+      field?: EditableField;
+    }
+  | {
       type: "gradient";
       stops: import("../../core/model.js").GradientStop[];
       field?: EditableField;
