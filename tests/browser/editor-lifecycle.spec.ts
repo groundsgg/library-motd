@@ -12,12 +12,16 @@ test("context and labels preserve the focused input, selection and undo", async 
   await input.click();
   await page.keyboard.press("Control+Home");
   await page.keyboard.type("Hello ");
-  await page.keyboard.press("Shift+ArrowLeft");
+  await input.press("Control+A");
+  const selected = await page.evaluate(() =>
+    document.getSelection().toString(),
+  );
+  expect(selected).toContain("Hello ");
+  expect(selected).toContain("Grounds");
   await page.evaluate(() => {
     window.originalInput = document.querySelector(
       "#editor [data-editor-field=motd] .ProseMirror",
     );
-    window.originalSelection = document.getSelection().toString();
     window.setEditorOptions({
       context: { ...window.context, serverName: "Updated name" },
       labels: { undo: "Undo change" },
@@ -32,7 +36,7 @@ test("context and labels preserve the focused input, selection and undo", async 
   ).toBe(true);
   await expect(input).toBeFocused();
   expect(await page.evaluate(() => document.getSelection().toString())).toBe(
-    " ",
+    selected,
   );
   await page.getByRole("button", { name: "Undo change", exact: true }).click();
   await expect(input).not.toContainText("Hello ");
