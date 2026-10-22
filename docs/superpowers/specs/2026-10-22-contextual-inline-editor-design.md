@@ -1,6 +1,6 @@
 # Contextual inline server-list viewer and editor
 
-Status: proposed specification for review. The interaction concept was agreed in conversation on 2026-10-22; this document defines its implementation boundaries. It does not describe already shipped behavior.
+Status: approved in conversation on 2026-10-22. The interaction concept and this written specification have both been reviewed and accepted by the user. This document defines implementation boundaries, not already shipped behavior.
 
 ## Purpose and agreed experience
 
