@@ -4,6 +4,7 @@ interface OverlayOptions {
   id: string;
   label: string;
   anchor: HTMLElement;
+  getAnchorRect?: () => Pick<DOMRect, "left" | "bottom">;
   content: HTMLElement;
   mode: "popover" | "dialog";
   onClose?: (reason: OverlayClose) => void;
@@ -11,13 +12,20 @@ interface OverlayOptions {
 export interface OverlayController {
   open(options: OverlayOptions): void;
   getOpenId(): string | null;
+  reposition(): void;
   close(reason: OverlayClose): void;
   destroy(): void;
 }
 
-export function positionTool(pane: HTMLElement, anchor: HTMLElement): void {
+export function positionTool(
+  pane: HTMLElement,
+  anchor: HTMLElement | Pick<DOMRect, "left" | "bottom">,
+): void {
   const win = pane.ownerDocument.defaultView!,
-    rect = anchor.getBoundingClientRect(),
+    rect =
+      "getBoundingClientRect" in anchor
+        ? anchor.getBoundingClientRect()
+        : anchor,
     box = pane.getBoundingClientRect(),
     viewport = win.visualViewport,
     width = viewport?.width ?? win.innerWidth,
@@ -58,7 +66,7 @@ export function createOverlays(root: HTMLElement): OverlayController {
   const notify = () => root.dispatchEvent(new win.Event("mce-overlay-change"));
   function position() {
     if (!current || !pane || modal) return;
-    positionTool(pane, current.anchor);
+    positionTool(pane, current.getAnchorRect?.() ?? current.anchor);
   }
   function makePane(focus = true) {
     if (!current) return;
@@ -149,6 +157,7 @@ export function createOverlays(root: HTMLElement): OverlayController {
   win.visualViewport?.addEventListener("scroll", position);
   return {
     getOpenId: () => current?.id ?? null,
+    reposition: position,
     open(options) {
       if (destroyed) return;
       close("dismiss");
