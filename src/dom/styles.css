@@ -681,3 +681,43 @@
 .mce-pinned-surface .ProseMirror p {
   margin: 0;
 }
+.mce-tool-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+.mce-icon-preview {
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 12px 0;
+  image-rendering: pixelated;
+  background: repeating-conic-gradient(#8884 0% 25%, transparent 0% 50%) 0
+    0/16px 16px;
+}
+.mce-crop-canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 300px;
+  margin-top: 12px;
+  object-fit: contain;
+  touch-action: none;
+  cursor: move;
+  background: repeating-conic-gradient(#8884 0% 25%, transparent 0% 50%) 0
+    0/16px 16px;
+}
+.mce-crop-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.mce-popout [hidden],
+.mce-icon-upload[hidden] {
+  display: none !important;
+}
+
+.mce-tool-footer .mce-button:last-child:not(:disabled) {
+  background: var(--mce-accent);
+  color: white;
+}

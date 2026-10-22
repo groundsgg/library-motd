@@ -120,6 +120,10 @@ test("keeps icon alpha during upload and composites over the selected row", asyn
     mimeType: "image/png",
     buffer: png,
   });
+  await page
+    .getByRole("dialog", { name: "Server icon editor", exact: true })
+    .getByRole("button", { name: "Apply", exact: true })
+    .click();
   await expect(page.locator("#preview .mcp-icon img")).toBeVisible();
   const normalized = PNG.sync.read(
     Buffer.from(await page.evaluate(() => window.doc.icon.pngBase64), "base64"),
