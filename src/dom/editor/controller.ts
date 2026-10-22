@@ -11,6 +11,7 @@ import type {
   Diagnostic,
   ServerListDocument,
   TextDocument,
+  TextFormat,
 } from "../../core/model.js";
 import { evaluatePlayerCounts } from "../../core/status/evaluate.js";
 import { validateDocument } from "../../core/document.js";
@@ -54,6 +55,9 @@ export interface EditorController extends EditorHandle {
   captureSelection(): FieldSelection | null;
   restoreSelection(selection: FieldSelection): boolean;
   insertPlaceholder(name: string, selection: FieldSelection): void;
+  applySources(
+    sources: { field: EditableField; source: string; format: TextFormat }[],
+  ): void;
   subscribe(listener: (event: EditorEvent) => void): () => void;
 }
 export function createEditorController(
@@ -592,6 +596,34 @@ export function createEditorController(
       })),
     isComposing: () => composing.size > 0,
     mountText,
+    applySources(sources) {
+      if (destroyed || locked() || composing.size) return;
+      const next = structuredClone(current);
+      for (const { field, source, format } of sources) {
+        if (
+          !enabled(field) ||
+          (field === "version" && current.version.mode === "automatic") ||
+          (field === "hover" && current.hover.mode !== "custom")
+        )
+          return;
+        const result = parseText(source, format);
+        if (!result.value) {
+          errors = result.diagnostics.map((d) => d.message);
+          showErrors();
+          return;
+        }
+        setText(next, field, result.value);
+      }
+      const changed = (["motd", "version", "hover"] as const).filter(
+        (field) =>
+          JSON.stringify(current[field]) !== JSON.stringify(next[field]),
+      );
+      if (
+        changed.length &&
+        commit(next, "source", changed[0]!, false, undefined, changed)
+      )
+        rebuild();
+    },
     captureSelection() {
       const view = views.get(activeField);
       if (!view) return null;

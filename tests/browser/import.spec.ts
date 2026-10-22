@@ -1,3 +1,4 @@
+import { openEntryTool } from "./editor-actions.js";
 import { expect, test } from "@playwright/test";
 test("ignores a server response that arrives after a newer inline edit", async ({
   page,
@@ -22,9 +23,14 @@ test("ignores a server response that arrives after a newer inline edit", async (
       },
     }),
   );
+  await openEntryTool(page, "Import");
   await page.getByLabel("Server address").fill("example.test");
   await page
     .getByRole("button", { name: "Import server", exact: true })
+    .click();
+  await page
+    .getByRole("dialog", { name: "Import server status", exact: true })
+    .getByRole("button", { name: "Cancel", exact: true })
     .click();
   const input = page.locator("#editor [data-editor-field=motd] .ProseMirror");
   await input.click();
@@ -63,9 +69,14 @@ test("imports all fields as one undoable transaction", async ({ page }) => {
       },
     }),
   );
+  await openEntryTool(page, "Import");
   await page.getByLabel("Server address").fill("example.test");
   await page
     .getByRole("button", { name: "Import server", exact: true })
+    .click();
+  await page
+    .getByRole("dialog", { name: "Import server status", exact: true })
+    .getByRole("button", { name: "Apply", exact: true })
     .click();
   await expect(page.locator("#editor .ProseMirror").first()).toContainText(
     "Imported",

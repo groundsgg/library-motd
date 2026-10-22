@@ -1,4 +1,3 @@
-@import "./properties.css";
 @font-face {
   font-family: GroundsMinecraft;
   src: url("../../assets/java-1.21.1/GroundsPixel.otf") format("opentype");
@@ -171,7 +170,6 @@
   max-width: 100%;
   box-sizing: border-box;
 }
-.mce-tabs,
 .mce-toolbar {
   display: flex;
   align-items: center;
@@ -179,10 +177,6 @@
   padding: 8px 12px;
   border-bottom: 1px solid var(--mce-line);
   flex-wrap: wrap;
-}
-.mce-tabs {
-  background: #ebe8df;
-  gap: 12px;
 }
 .mce-button {
   font: inherit;
@@ -249,22 +243,6 @@
   background: #ffffff14;
   white-space: pre;
 }
-.mce-source {
-  display: block;
-  box-sizing: border-box;
-  width: calc(100% - 24px);
-  margin: 12px;
-  padding: 12px;
-  background: #fffdf8;
-  border: 1px solid var(--mce-line);
-  font:
-    12px/1.7 ui-monospace,
-    monospace;
-  resize: vertical;
-}
-.mce-source[hidden] {
-  display: none;
-}
 .mce-diagnostics {
   padding: 8px 12px;
   white-space: pre-wrap;
@@ -273,23 +251,6 @@
 }
 .mce-diagnostics[hidden] {
   display: none;
-}
-.mce-hover-editor {
-  background: #100010;
-  color: white;
-  padding: 12px;
-  margin: 12px;
-  width: max-content;
-  min-width: 160px;
-  max-width: 85%;
-  border: 2px solid #390080;
-}
-.mce-hover-editor .ProseMirror {
-  font-size: 18px;
-  line-height: 18px;
-}
-.mce-hover-editor p {
-  line-height: 18px !important;
 }
 .mce-inline[data-editor-field="version"] {
   min-width: 30px;
@@ -498,9 +459,6 @@
   font:
     13px/1.5 system-ui,
     sans-serif;
-}
-.mce-tabs {
-  background: var(--mce-soft);
 }
 .mce-button:hover {
   background: var(--mce-soft);
@@ -720,4 +678,27 @@
 .mce-tool-footer .mce-button:last-child:not(:disabled) {
   background: var(--mce-accent);
   color: white;
+}
+
+.mce-tool-source {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--mce-line);
+  border-radius: 5px;
+  padding: 10px;
+  resize: vertical;
+  color: var(--mce-fg);
+  background: var(--mce-soft);
+  font:
+    12px/1.6 ui-monospace,
+    monospace;
+}
+.mce-pinned-surface .mce-inline .ProseMirror {
+  font: inherit;
+  color: inherit;
+}
+.mce-pinned-surface .ProseMirror p {
+  line-height: inherit;
+  min-height: 1em;
 }

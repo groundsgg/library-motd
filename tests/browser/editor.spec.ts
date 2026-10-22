@@ -1,3 +1,4 @@
+import { openEntryTool } from "./editor-actions.js";
 import { expect, test } from "@playwright/test";
 test("edits inside the server row and supports selection formatting and undo", async ({
   page,
@@ -26,9 +27,13 @@ test("keeps invalid source text and read-only state without losing the last vali
 }) => {
   await page.goto("/tests/browser/host.html");
   await page.waitForFunction(() => !!window.editor);
-  await page.getByRole("button", { name: "Source", exact: true }).click();
+  await openEntryTool(page, "Source");
   const source = page.getByRole("textbox", { name: "MOTD source" });
   await source.fill("<red>New message");
+  await page
+    .getByRole("dialog", { name: "Source editor", exact: true })
+    .getByRole("button", { name: "Apply", exact: true })
+    .click();
   await expect(page.locator("#preview .mcp-motd")).toContainText("New message");
   await page.evaluate(() =>
     window.editor.update({

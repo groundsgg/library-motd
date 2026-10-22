@@ -202,11 +202,19 @@ test("read-only and feature-disabled entry actions do not open mutating tools", 
   page,
 }) => {
   await page.evaluate(() => window.setEditorOptions({ readOnly: true }));
-  await expect(
-    page
-      .locator("#editor")
-      .getByRole("button", { name: "Server entry tools", exact: true }),
-  ).toBeDisabled();
+  await page
+    .locator("#editor")
+    .getByRole("button", { name: "Server entry tools", exact: true })
+    .click();
+  const menu = page.getByRole("dialog", {
+    name: "Server entry tools",
+    exact: true,
+  });
+  for (const name of ["Player display", "Version settings", "Player hover"])
+    await expect(
+      menu.getByRole("button", { name, exact: true }),
+    ).toBeDisabled();
+  await page.keyboard.press("Escape");
   await page.locator("#editor .mcp-status-action").click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.evaluate(() =>
@@ -215,11 +223,14 @@ test("read-only and feature-disabled entry actions do not open mutating tools", 
       features: { version: false, players: false, hover: false },
     }),
   );
-  await expect(
-    page
-      .locator("#editor")
-      .getByRole("button", { name: "Server entry tools", exact: true }),
-  ).toBeDisabled();
+  await page
+    .locator("#editor")
+    .getByRole("button", { name: "Server entry tools", exact: true })
+    .click();
+  for (const name of ["Player display", "Version settings", "Player hover"])
+    await expect(
+      menu.getByRole("button", { name, exact: true }),
+    ).toBeDisabled();
   expect(await page.evaluate(() => window.changes.length)).toBe(0);
 });
 
