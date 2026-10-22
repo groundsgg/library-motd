@@ -1,10 +1,14 @@
+import { openEntryTool } from "./editor-actions.js";
 import { expect, test } from "@playwright/test";
 test("edits version, counts and hover independently", async ({ page }) => {
   await page.goto("/tests/browser/host.html");
+  await openEntryTool(page, "Version settings");
   await page.getByLabel("Version display").selectOption("always");
+  await page.keyboard.press("Escape");
   await expect(page.locator("#preview .mcp-players")).toContainText(
     "Maintenance",
   );
+  await openEntryTool(page, "Player display");
   await page.getByLabel("Maximum players mode").selectOption("headroom");
   await page.getByLabel("Maximum players value").fill("10");
   await page.getByLabel("Maximum players value").press("Tab");
@@ -14,9 +18,10 @@ test("edits version, counts and hover independently", async ({ page }) => {
         window.api.evaluateStatus(window.doc, window.context).value.players.max,
     ),
   ).toBe(52);
-  await page.getByLabel("Player hover").selectOption("custom");
+  await openEntryTool(page, "Player hover");
+  await page.getByLabel("Player hover", { exact: true }).selectOption("custom");
   await expect(
-    page.locator("#editor [data-editor-field=hover] .ProseMirror"),
+    page.locator("[data-editor-field=hover] .ProseMirror"),
   ).toBeVisible();
 });
 test("normalizes an uploaded icon and keeps the draft after a corrupt image", async ({

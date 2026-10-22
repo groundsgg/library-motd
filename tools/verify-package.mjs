@@ -89,7 +89,12 @@ try {
   );
   const page = await browser.newPage();
   await page.goto("http://127.0.0.1:4183");
-  await page.getByLabel("Version display").waitFor({ timeout: 5000 });
+  await page
+    .getByRole("button", { name: "Server entry tools", exact: true })
+    .click({ timeout: 5000 });
+  await page
+    .getByRole("button", { name: "Version settings", exact: true })
+    .click();
   await page.getByLabel("Version display").selectOption("always");
   await page.getByLabel("Version inline editor").waitFor();
   console.log(

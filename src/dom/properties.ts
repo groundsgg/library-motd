@@ -1,10 +1,4 @@
-import type {
-  CountRule,
-  GradientStop,
-  TextDocument,
-  TextFormat,
-} from "../core/model.js";
-import { parseText } from "../core/text/parse.js";
+import type { GradientStop, TextFormat } from "../core/model.js";
 import { serializeText } from "../core/text/serialize.js";
 import { importStatus } from "../core/status/import.js";
 import { element } from "./preview.js";
@@ -71,17 +65,6 @@ export function mountProperties(editor: EditorExtension): void {
     field(name, s);
     return s;
   };
-  const number = (name: string, n: number, change: (v: number) => void) => {
-    const i = element(doc, "input", "");
-    i.type = "number";
-    i.value = String(n);
-    i.disabled = locked;
-    i.addEventListener("change", () => {
-      const v = Number(i.value);
-      if (Number.isFinite(v)) change(v);
-    });
-    field(name, i);
-  };
   const button = (
     parent: HTMLElement,
     name: string,
@@ -96,116 +79,6 @@ export function mountProperties(editor: EditorExtension): void {
     parent.append(b);
     return b;
   };
-  const plain = (s: string): TextDocument => parseText(s, "minimessage").value!;
-  if (enabled("version")) {
-    heading(label("serverStatus", "Server status"));
-    select(
-      label("versionDisplay", "Version display"),
-      [
-        ["automatic", "Automatic"],
-        ["when-incompatible", "Custom when incompatible"],
-        ["always", "Custom always"],
-      ],
-      value.version.mode,
-      (mode) =>
-        editor.execute({
-          type: "set-field",
-          field: "version",
-          value:
-            mode === "automatic"
-              ? { mode }
-              : {
-                  mode,
-                  text:
-                    editor.getDocument().version.mode === "automatic"
-                      ? plain("<red>Maintenance")
-                      : (editor.getDocument().version as { text: TextDocument })
-                          .text,
-                },
-        }),
-    );
-  }
-  if (enabled("players")) {
-    const hidden = element(doc, "input", "");
-    hidden.type = "checkbox";
-    hidden.checked = value.players.hidden;
-    hidden.disabled = locked;
-    hidden.addEventListener("change", () =>
-      editor.execute({
-        type: "set-field",
-        field: "players",
-        value: { ...editor.getDocument().players, hidden: hidden.checked },
-      }),
-    );
-    field(label("hidePlayers", "Hide player count"), hidden);
-    for (const fieldName of ["online", "maximum"] as const) {
-      const title =
-          fieldName === "online" ? "Online players" : "Maximum players",
-        rule = value.players[fieldName];
-      select(
-        `${title} mode`,
-        [
-          ["inherit", "Live value"],
-          ["fixed", "Fixed value"],
-          ["offset", "Add offset"],
-          ["percent", "Percent of live value"],
-          ...(fieldName === "maximum"
-            ? [["headroom", "Free slots above online"] as [string, string]]
-            : []),
-        ],
-        rule.mode,
-        (mode) => {
-          const players = editor.getDocument().players;
-          players[fieldName] =
-            mode === "inherit"
-              ? { mode }
-              : ({ mode, value: mode === "percent" ? 100 : 0 } as CountRule);
-          editor.execute({
-            type: "set-field",
-            field: "players",
-            value: players,
-          });
-        },
-      );
-      if (rule.mode !== "inherit")
-        number(`${title} value`, rule.value, (n) => {
-          const players = editor.getDocument().players;
-          players[fieldName] = { ...rule, value: n };
-          editor.execute({
-            type: "set-field",
-            field: "players",
-            value: players,
-          });
-        });
-    }
-  }
-  if (enabled("hover"))
-    select(
-      label("playerHover", "Player hover"),
-      [
-        ["inherit", "Live player list"],
-        ["custom", "Custom text"],
-        ["disabled", "No custom entries"],
-      ],
-      value.hover.mode,
-      (mode) =>
-        editor.execute({
-          type: "set-field",
-          field: "hover",
-          value:
-            mode === "custom"
-              ? {
-                  mode,
-                  text:
-                    value.hover.mode === "custom"
-                      ? value.hover.text
-                      : plain(
-                          "<gold>Welcome<newline><gray>{{players}} players online",
-                        ),
-                }
-              : { mode },
-        }),
-    );
   if (enabled("icon")) {
     heading(label("serverIcon", "Server icon"));
     const file = element(doc, "input", "");

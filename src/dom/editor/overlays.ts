@@ -15,6 +15,25 @@ export interface OverlayController {
   destroy(): void;
 }
 
+export function positionTool(pane: HTMLElement, anchor: HTMLElement): void {
+  const win = pane.ownerDocument.defaultView!,
+    rect = anchor.getBoundingClientRect(),
+    box = pane.getBoundingClientRect(),
+    viewport = win.visualViewport,
+    width = viewport?.width ?? win.innerWidth,
+    height = viewport?.height ?? win.innerHeight,
+    left = viewport?.offsetLeft ?? 0,
+    top = viewport?.offsetTop ?? 0;
+  pane.style.left =
+    Math.max(left + 8, Math.min(left + width - box.width - 8, rect.left)) +
+    "px";
+  pane.style.top =
+    Math.max(
+      top + 8,
+      Math.min(top + height - box.height - 8, rect.bottom + 8),
+    ) + "px";
+}
+
 export function copyToolTheme(root: HTMLElement, target: HTMLElement): void {
   const style = root.ownerDocument.defaultView!.getComputedStyle(root);
   for (const name of [
@@ -39,21 +58,7 @@ export function createOverlays(root: HTMLElement): OverlayController {
   const notify = () => root.dispatchEvent(new win.Event("mce-overlay-change"));
   function position() {
     if (!current || !pane || modal) return;
-    const rect = current.anchor.getBoundingClientRect(),
-      box = pane.getBoundingClientRect();
-    const viewport = win.visualViewport,
-      width = viewport?.width ?? win.innerWidth,
-      height = viewport?.height ?? win.innerHeight;
-    const left = viewport?.offsetLeft ?? 0,
-      top = viewport?.offsetTop ?? 0;
-    pane.style.left =
-      Math.max(left + 8, Math.min(left + width - box.width - 8, rect.left)) +
-      "px";
-    pane.style.top =
-      Math.max(
-        top + 8,
-        Math.min(top + height - box.height - 8, rect.bottom + 8),
-      ) + "px";
+    positionTool(pane, current.anchor);
   }
   function makePane(focus = true) {
     if (!current) return;

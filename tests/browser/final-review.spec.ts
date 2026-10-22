@@ -1,10 +1,14 @@
+import { openEntryTool } from "./editor-actions.js";
 import { expect, test } from "@playwright/test";
 test("keeps current inline version text when switching version modes", async ({
   page,
 }) => {
   await page.goto("/tests/browser/host.html");
+  await openEntryTool(page, "Version settings");
   await page.getByLabel("Version display").selectOption("always");
+  await page.keyboard.press("Escape");
   await page.getByLabel("Version inline editor").fill("Edited version");
+  await openEntryTool(page, "Version settings");
   await page.getByLabel("Version display").selectOption("when-incompatible");
   expect(
     await page.evaluate(() =>
@@ -19,8 +23,10 @@ test("shows the reason a configured hover cannot be reached", async ({
   page,
 }) => {
   await page.goto("/tests/browser/host.html");
+  await openEntryTool(page, "Player display");
   await page.getByLabel("Hide player count").check();
-  await page.getByLabel("Player hover").selectOption("custom");
+  await openEntryTool(page, "Player hover");
+  await page.getByLabel("Player hover", { exact: true }).selectOption("custom");
   await expect(page.locator("#editor .mce-diagnostics")).toContainText(
     "Hidden player data",
   );

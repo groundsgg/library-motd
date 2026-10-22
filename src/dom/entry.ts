@@ -84,7 +84,10 @@ export function createEntry(
       statusAction,
       playerHover,
       wrapper,
-      () => playerTipEnabled && !bindings.has("hover"),
+      () =>
+        playerTipEnabled &&
+        !bindings.has("hover") &&
+        !playerHover.dataset.editorPinned,
     ),
     bindTooltip(ping, pingTip, wrapper),
   ];
