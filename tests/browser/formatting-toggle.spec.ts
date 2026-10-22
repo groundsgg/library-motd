@@ -176,3 +176,26 @@ test("version text uses the same selection formatting toggle", async ({
   await expect(input.locator('span[style*="font-weight: 700"]')).toHaveCount(0);
   await expect(input).toHaveText("Maintenance");
 });
+
+test("controlled React keeps selected formatting removable", async ({
+  page,
+}) => {
+  await page.goto("/tests/browser/react.html");
+  const input = page.locator("[data-editor-field=motd] .ProseMirror");
+  await input.focus();
+  await input.press("Control+A");
+  await expect
+    .poll(() => page.evaluate(() => document.getSelection()?.toString().trim()))
+    .toBe("Editable");
+  const bold = page.getByRole("button", { name: "Bold", exact: true });
+  await bold.click();
+  await expect(bold).toHaveAttribute("aria-pressed", "true");
+  await expect(input.locator('span[style*="font-weight: 700"]')).toHaveCount(1);
+  await bold.click();
+  await expect(bold).toHaveAttribute("aria-pressed", "false");
+  await expect(input.locator('span[style*="font-weight: 700"]')).toHaveCount(0);
+  await expect(input).toHaveText("Editable");
+  await page.getByRole("button", { name: "Undo", exact: true }).click();
+  await expect(bold).toHaveAttribute("aria-pressed", "true");
+  await expect(input.locator('span[style*="font-weight: 700"]')).toHaveCount(1);
+});
