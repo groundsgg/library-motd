@@ -44,6 +44,10 @@ test("normalizes an uploaded icon and keeps the draft after a corrupt image", as
     mimeType: "image/png",
     buffer: Buffer.from(png, "base64"),
   });
+  await page
+    .getByRole("dialog", { name: "Server icon editor", exact: true })
+    .getByRole("button", { name: "Apply", exact: true })
+    .click();
   await expect(page.locator("#preview .mcp-icon img")).toBeVisible();
   const size = await page.evaluate(async () => {
     const image = new Image();

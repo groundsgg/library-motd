@@ -2,11 +2,8 @@ import type { GradientStop, TextFormat } from "../core/model.js";
 import { serializeText } from "../core/text/serialize.js";
 import { importStatus } from "../core/status/import.js";
 import { element } from "./preview.js";
-import { normalizeIcon } from "./icon.js";
 import type { EditorExtension } from "./editor/index.js";
 interface PropertyState {
-  iconFile?: File;
-  crop?: { x: number; y: number; size: number };
   stops: GradientStop[];
   importRequest?: AbortController;
   sourceFormat: TextFormat;
@@ -15,8 +12,7 @@ const states = new WeakMap<HTMLElement, PropertyState>();
 export function mountProperties(editor: EditorExtension): void {
   const { root } = editor,
     doc = root.ownerDocument,
-    options = editor.getOptions(),
-    value = editor.getDocument();
+    options = editor.getOptions();
   const enabled = (feature: string) =>
     options.features?.[
       feature as keyof NonNullable<typeof options.features>
@@ -79,116 +75,6 @@ export function mountProperties(editor: EditorExtension): void {
     parent.append(b);
     return b;
   };
-  if (enabled("icon")) {
-    heading(label("serverIcon", "Server icon"));
-    const file = element(doc, "input", "");
-    file.type = "file";
-    file.accept = "image/png,image/jpeg";
-    file.disabled = locked;
-    field(label("serverIcon", "Server icon"), file);
-    const status = element(doc, "div", "mce-property-status");
-    status.role = "status";
-    panel.append(status);
-    file.addEventListener("change", async () => {
-      const uploaded = file.files?.[0];
-      if (!uploaded) return;
-      const result = await normalizeIcon(uploaded);
-      if (!alive) return;
-      if (result.value) {
-        state.iconFile = uploaded;
-        const image = await createImageBitmap(uploaded);
-        const size = Math.min(image.width, image.height);
-        state.crop = {
-          x: Math.floor((image.width - size) / 2),
-          y: Math.floor((image.height - size) / 2),
-          size,
-        };
-        image.close();
-        editor.execute({
-          type: "set-field",
-          field: "icon",
-          value: result.value,
-        });
-      } else
-        status.textContent = result.diagnostics
-          .map((d) => d.message)
-          .join("\n");
-    });
-    if (state.iconFile && state.crop) {
-      const crop = state.crop,
-        cropPanel = element(doc, "details", "");
-      cropPanel.append(
-        element(doc, "summary", "", label("crop", "Crop image")),
-      );
-      panel.append(cropPanel);
-      for (const key of ["x", "y", "size"] as const) {
-        const i = element(doc, "input", "");
-        i.type = "number";
-        i.value = String(crop[key]);
-        i.min = key === "size" ? "1" : "0";
-        i.setAttribute("aria-label", `Crop ${key}`);
-        i.disabled = locked;
-        i.addEventListener("input", () => {
-          crop[key] = Number(i.value);
-        });
-        cropPanel.append(i);
-      }
-      button(cropPanel, "Apply crop", async () => {
-        const result = await normalizeIcon(state.iconFile!, {
-          crop: { x: crop.x, y: crop.y, width: crop.size, height: crop.size },
-        });
-        if (!alive) return;
-        if (result.value)
-          editor.execute({
-            type: "set-field",
-            field: "icon",
-            value: result.value,
-          });
-        else
-          status.textContent = result.diagnostics
-            .map((d) => d.message)
-            .join("\n");
-      });
-    }
-    if (value.icon)
-      button(panel, label("resetIcon", "Reset icon"), () =>
-        editor.execute({ type: "set-field", field: "icon", value: null }),
-      );
-    const icon = root.querySelector<HTMLElement>("[data-field=icon]");
-    if (icon && !locked) {
-      const upload = element(
-        doc,
-        "button",
-        "mce-icon-upload",
-        label("upload", "Upload"),
-      );
-      const glyph = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
-      glyph.setAttribute("viewBox", "0 0 16 16");
-      glyph.setAttribute("class", "mce-upload-icon");
-      glyph.setAttribute("aria-hidden", "true");
-      glyph.setAttribute("fill", "currentColor");
-      glyph.setAttribute("shape-rendering", "crispEdges");
-      for (const data of [
-        "M1 3h8v1H2v10h12V8h1v7H1z",
-        "M3 11h1v-1h1V9h1v1h1v1h1v1h1v-1h1v-1h1v1h1v1h1v1H3z",
-        "M4 6h2v2H4z",
-        "M12 1h2v2h2v2h-2v2h-2V5h-2V3h2z",
-      ]) {
-        const path = doc.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", data);
-        glyph.append(path);
-      }
-      upload.prepend(glyph);
-      upload.type = "button";
-      upload.setAttribute(
-        "aria-label",
-        label("uploadIcon", "Upload server icon"),
-      );
-      upload.title = label("uploadIcon", "Upload server icon");
-      upload.addEventListener("click", () => file.click());
-      icon.append(upload);
-    }
-  }
   if (enabled("export")) {
     heading(label("export", "Export"));
     const output = element(doc, "textarea", "mce-export");

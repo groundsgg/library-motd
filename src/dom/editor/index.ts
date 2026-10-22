@@ -9,6 +9,7 @@ import { createOverlays } from "./overlays.js";
 import { mountToolbar } from "./toolbar.js";
 import { mountTextTools } from "./text-tools.js";
 import { mountStatusTools } from "./status-tools.js";
+import { mountIconTool } from "./icon-tool.js";
 import type {
   EditorOptions,
   EditorHandle,
@@ -90,9 +91,7 @@ export function createEditor(
   }
   function rebuild() {
     for (const fn of dispose.splice(0)) fn();
-    root
-      .querySelectorAll(".mce-properties,.mce-icon-upload")
-      .forEach((node) => node.remove());
+    root.querySelectorAll(".mce-properties").forEach((node) => node.remove());
     chrome.replaceChildren();
     extras.replaceChildren();
     const tabs = element(doc, "div", "mce-tabs");
@@ -221,6 +220,7 @@ export function createEditor(
     mountToolbar(mount),
     mountTextTools(mount),
     mountStatusTools(mount),
+    mountIconTool(mount),
   ];
   const unsubscribe = controller.subscribe((event) => {
     if (event === "selection") return;
