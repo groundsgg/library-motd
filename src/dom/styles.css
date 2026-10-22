@@ -8,6 +8,9 @@
   font-family: GroundsMinecraft;
   src: url("../../assets/java-1.21.1/GroundsPixel-Bold.otf") format("opentype");
   font-weight: 700;
+  /* Match the regular face's 2/18 em descent. Its Windows metrics otherwise
+     raise preview ink and expand mixed editor lines beyond the native 9px. */
+  descent-override: 11.111111%;
   font-display: block;
 }
 .mcp-wrap {
