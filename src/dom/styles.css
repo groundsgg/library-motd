@@ -20,6 +20,8 @@
   font-synthesis: style;
   image-rendering: pixelated;
   text-rendering: geometricPrecision;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .mcp-stage {
   position: relative;
@@ -228,6 +230,8 @@
   color: #aaa;
   min-height: 9px;
   caret-color: #fff;
+  -webkit-user-select: text;
+  user-select: text;
 }
 .mce-inline .ProseMirror p {
   font-size: inherit;
