@@ -617,6 +617,14 @@
   color: var(--mce-muted);
   font-size: 12px;
 }
+.mce-count-preview {
+  display: block;
+  padding: 9px 12px;
+  border-radius: 6px;
+  background: var(--mce-soft);
+  color: var(--mce-fg);
+  font-variant-numeric: tabular-nums;
+}
 .mce-pinned-surface {
   z-index: 1000;
   width: 380px;
