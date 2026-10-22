@@ -75,7 +75,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run test:browser
       - run: npm pack
       - run: MOTD_PACKAGE_TARBALL="$(find . -maxdepth 1 -name '*.tgz' -print -quit)" npm run test:package

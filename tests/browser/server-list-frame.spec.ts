@@ -111,6 +111,7 @@ test("selects real client versions independently from server protocol and backgr
 
 test("keeps icon alpha during upload and composites over the selected row", async ({
   page,
+  browserName,
 }) => {
   await page.goto("/tests/browser/host.html");
   const png = readFileSync("tests/fixtures/client/transparent-icon.png");
@@ -149,7 +150,22 @@ test("keeps icon alpha during upload and composites over the selected row", asyn
   );
   const nativeIcon = new PNG({ width: 64, height: 64 });
   PNG.bitblt(native, nativeIcon, 126, 74, 64, 64, 0, 0);
-  expect(actual.data.equals(nativeIcon.data)).toBe(true);
+  const source = PNG.sync.read(png);
+  // Canvas premultiplication/compositing rounds translucent channels differently
+  // across engines. Opaque/transparent pixels and Chromium remain exact.
+  let translucentDifference = 0;
+  let exactDifference = 0;
+  for (let i = 0; i < actual.data.length; i++) {
+    const alpha = source.data[Math.floor(i / 4) * 4 + 3]!;
+    const difference = Math.abs(actual.data[i]! - nativeIcon.data[i]!);
+    if (alpha > 0 && alpha < 255 && i % 4 !== 3)
+      translucentDifference = Math.max(translucentDifference, difference);
+    else exactDifference = Math.max(exactDifference, difference);
+  }
+  expect(exactDifference).toBe(0);
+  expect(translucentDifference).toBeLessThanOrEqual(
+    browserName === "chromium" ? 0 : 2,
+  );
   // In the native client the selection interior is black, including behind transparent pixels.
   for (const [x, y, r, g, b] of [
     [8, 8, 0, 0, 0],
@@ -158,7 +174,16 @@ test("keeps icon alpha during upload and composites over the selected row", asyn
     [48, 48, 200, 100, 50],
   ]) {
     const at = (y * actual.width + x) * 4;
-    expect([...actual.data.subarray(at, at + 3)]).toEqual([r, g, b]);
+    for (const [channel, expected] of [r, g, b].entries())
+      expect(
+        Math.abs(actual.data[at + channel]! - expected),
+      ).toBeLessThanOrEqual(
+        browserName === "chromium" ||
+          (x === 8 && y === 8) ||
+          (x === 48 && y === 48)
+          ? 0
+          : 2,
+      );
   }
   await page.evaluate(() => {
     window.context.selected = false;
