@@ -14,6 +14,8 @@ test("controlled React echoes preserve focus and destroy all DOM on unmount", as
     const selection = element.ownerDocument.getSelection()!;
     selection.removeAllRanges();
     selection.addRange(range);
+    // Acknowledge the native range before typing; ProseMirror reconciles focus asynchronously.
+    element.ownerDocument.dispatchEvent(new Event("selectionchange"));
   });
   const originalEditor = await editor.elementHandle();
   await page.keyboard.type("React ");

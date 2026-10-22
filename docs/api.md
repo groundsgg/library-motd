@@ -24,6 +24,8 @@ Commands: `format {style,field?}`, `gradient {stops,field?}`, `align {line,align
 
 `EditorChange` contains origin (`visual`, `source`, `import`, `history`) and changedFields. Persist the document, not the handle or context. `update` with the acknowledged current document keeps history and selection; replacing the external document resets the editor baseline.
 
+Context, label and permission updates retain the mounted text inputs and undo history. Updates during text composition are applied after composition ends. Context changes are detected even if the host updates the same context object, and changing an asset-provider function refreshes its resolved assets. Viewer and editor use the same persistent server-entry renderer; editor tools never change native row geometry.
+
 Document fields: `motd {text,alignments}`, version `automatic|when-incompatible|always`, icon `null|{pngBase64}`, players `{hidden,online,maximum}`, hover `inherit|disabled|custom`, and JSON-only extensions. Count rules are `inherit|fixed|offset|percent`; maximum also accepts `headroom` above the displayed online count. Values clamp to non-negative signed 32-bit integers.
 
 `evaluatePlayerCounts(document, context)` returns resolved online/max values independently of whether the player field is hidden. Preview placeholders use those values. `serializeLegacyLines(text, target, options?)` exports separately styled client values for sample-player tooltips.
