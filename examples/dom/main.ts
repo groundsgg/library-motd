@@ -35,7 +35,9 @@ const refresh = () => {
   context.presentation = query<HTMLSelectElement>("#presentation").value as
     "row" | "server-list";
   context.selected = query<HTMLInputElement>("#selected").checked;
-  editor.update({ document, context, onChange });
+  const toolbar = query<HTMLSelectElement>("#toolbar").value as
+    "fixed" | "selection";
+  editor.update({ document, context, onChange, toolbar });
   preview.update({ document, context });
 };
 for (const id of [
@@ -44,5 +46,6 @@ for (const id of [
   "#background",
   "#presentation",
   "#selected",
+  "#toolbar",
 ])
   query(id).addEventListener("change", refresh);

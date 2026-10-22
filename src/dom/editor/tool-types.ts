@@ -1,0 +1,18 @@
+import type { EntryHandle } from "../entry.js";
+import type { EditorController, FieldSelection } from "./controller.js";
+import type { OverlayController } from "./overlays.js";
+export interface ToolMount {
+  root: HTMLElement;
+  entry: EntryHandle;
+  controller: EditorController;
+  overlays: OverlayController;
+}
+export interface ToolHandle {
+  update(): void;
+  destroy(): void;
+}
+export interface TextToolRequest {
+  tool: "color" | "gradient" | "placeholder" | "rainbow" | "decorations";
+  anchor: HTMLElement;
+  selection: FieldSelection;
+}

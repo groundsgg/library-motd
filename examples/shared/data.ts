@@ -33,6 +33,7 @@ export const context: PreviewContext = {
   compatible: true,
   values: { region: "EU", continent: "Europe" },
   profile: java263Profile,
+  presentation: "row",
   viewportWidth: 680,
   guiScale: 2,
   serverName: "Grounds Network",

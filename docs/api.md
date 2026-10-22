@@ -26,6 +26,8 @@ Commands: `format {style,field?}`, `gradient {stops,field?}`, `align {line,align
 
 Context, label and permission updates retain the mounted text inputs and undo history. Updates during text composition are applied after composition ends. Context changes are detected even if the host updates the same context object, and changing an asset-provider function refreshes its resolved assets. Viewer and editor use the same persistent server-entry renderer; editor tools never change native row geometry.
 
+`EditorOptions.toolbar` accepts `"fixed"` (default) or `"selection"`. The selection toolbar follows mouse/keyboard text selections; the Text tools action or `Alt+F10` also opens it at a caret. Updating placement keeps selection/history and emits no document change. Both placements share contextual color, gradient, placeholder, decoration and rainbow tools. Line alignment applies to the active MOTD line. Tools use anchored popovers, or modal bottom sheets below a 640 CSS-pixel viewport; Escape closes a popover without undoing its live edits. Saved selections expire if their text is replaced.
+
 Document fields: `motd {text,alignments}`, version `automatic|when-incompatible|always`, icon `null|{pngBase64}`, players `{hidden,online,maximum}`, hover `inherit|disabled|custom`, and JSON-only extensions. Count rules are `inherit|fixed|offset|percent`; maximum also accepts `headroom` above the displayed online count. Values clamp to non-negative signed 32-bit integers.
 
 `evaluatePlayerCounts(document, context)` returns resolved online/max values independently of whether the player field is hidden. Preview placeholders use those values. `serializeLegacyLines(text, target, options?)` exports separately styled client values for sample-player tooltips.

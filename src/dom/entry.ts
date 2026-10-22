@@ -11,6 +11,7 @@ import { animateObfuscation } from "./animation.js";
 import {
   element,
   renderText,
+  entryTextWidth,
   type PreviewHandle,
   type PreviewOptions,
 } from "./render.js";
@@ -328,7 +329,7 @@ export function createEntry(
     };
     const resolved = resolveText(state.motd.text, values);
     diagnostics.push(...resolved.diagnostics);
-    const textWidth = contentWidth - g.iconSize - g.iconGap - g.rightInset;
+    const textWidth = entryTextWidth(context);
     const layout = layoutText(resolved.value!, {
       profile: context.profile,
       width: textWidth,
@@ -398,6 +399,7 @@ export function createEntry(
     getAnchors: () => ({ icon, motd, status, ping, playerHover }),
     bindText(field, content) {
       if (destroyed || bindings.get(field) === (content ?? undefined)) return;
+      bindings.get(field)?.remove();
       if (content) bindings.set(field, content);
       else bindings.delete(field);
       update(options);

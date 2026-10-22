@@ -5,7 +5,9 @@ import { element } from "../render.js";
 import { createEntry } from "../entry.js";
 import { mountProperties } from "../properties.js";
 import { createEditorController } from "./controller.js";
-import type { StylePath } from "./schema.js";
+import { createOverlays } from "./overlays.js";
+import { mountToolbar } from "./toolbar.js";
+import { mountTextTools } from "./text-tools.js";
 import type {
   EditorOptions,
   EditorHandle,
@@ -129,45 +131,6 @@ export function createEditor(
       },
       false,
     );
-    const toolbar = element(doc, "div", "mce-toolbar");
-    toolbar.role = "toolbar";
-    toolbar.setAttribute("aria-label", label("formatting", "Text formatting"));
-    chrome.append(toolbar);
-    for (const [key, text, name] of [
-      ["bold", "B", "Bold"],
-      ["italic", "I", "Italic"],
-      ["underlined", "U", "Underline"],
-      ["strikethrough", "S", "Strikethrough"],
-      ["obfuscated", "K", "Obfuscation"],
-    ] as const)
-      button(toolbar, text, label(key, name), () => {
-        const v = controller.getView(controller.getActiveField());
-        const m = v?.state.doc
-          .resolve(v.state.selection.from)
-          .marks()
-          .find((m) => m.type.name === "format");
-        const effective = Object.assign(
-          {},
-          ...(m?.attrs.path ?? []).map((p: StylePath) => p.style),
-        );
-        execute({ type: "format", style: { [key]: !effective[key] } });
-      });
-    const color = element(doc, "input", "mce-color");
-    color.type = "color";
-    color.value = "#ffaa00";
-    color.setAttribute("aria-label", label("color", "Text color"));
-    color.disabled = locked();
-    color.addEventListener("input", () =>
-      execute({ type: "format", style: { color: color.value } }),
-    );
-    toolbar.append(color);
-    button(toolbar, "↶", label("undo", "Undo"), () =>
-      execute({ type: "undo" }),
-    );
-    button(toolbar, "↷", label("redo", "Redo"), () =>
-      execute({ type: "redo" }),
-    );
-
     const format = element(doc, "select", "mce-source-format");
     format.setAttribute("aria-label", label("sourceFormat", "Source format"));
     format.hidden = !sourceMode;
@@ -264,7 +227,11 @@ export function createEditor(
       rebuild();
     }
     showErrors();
+    for (const tool of tools) tool.update();
   }
+  const overlays = createOverlays(root);
+  const mount = { root, entry, controller, overlays };
+  const tools = [mountToolbar(mount), mountTextTools(mount)];
   const unsubscribe = controller.subscribe((event) => {
     if (event === "selection") return;
     if (event === "diagnostics") {
@@ -286,6 +253,8 @@ export function createEditor(
       destroyed = true;
       unsubscribe();
       dispose.splice(0).forEach((fn) => fn());
+      for (const tool of tools) tool.destroy();
+      overlays.destroy();
       controller.destroy();
       entry.destroy();
       root.remove();
