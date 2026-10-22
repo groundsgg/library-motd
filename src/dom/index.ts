@@ -11,3 +11,11 @@ export type {
 } from "./editor/index.js";
 export { normalizeIcon } from "./icon.js";
 export type { IconOptions } from "./icon.js";
+
+export { createComparison } from "./comparison.js";
+export type {
+  ComparisonClient,
+  ComparisonOptions,
+  ComparisonField,
+  ComparisonHandle,
+} from "./comparison.js";

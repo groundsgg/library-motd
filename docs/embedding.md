@@ -32,3 +32,5 @@ The host controls URLs and authorization. Blob URLs support local-only image sel
 Mojang's [EULA](https://www.minecraft.net/en-us/eula) generally restricts redistribution of its content. The [Usage Guidelines](https://www.minecraft.net/en-us/usage-guidelines) separately permit screenshots under conditions; they are not a blanket license for distributing extracted textures. This implementation ships original illustrations/OFL fonts and a configurable integration boundary. Before hosting original game files publicly, obtain applicable permission or a project-specific rights review. Local use of user-supplied resources avoids shipping those files from this library; it does not transfer ownership or create a general license.
 
 NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
+
+Use `createComparison` (DOM) or `ServerListComparison` (optional React) to compare one document across independent client contexts. See [comparison.md](comparison.md) for lifecycle, diagnostics and examples.

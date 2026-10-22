@@ -18,7 +18,8 @@
     "docs/limitations.md",
     "docs/inline-effects.md",
     "docs/images/inline-gradient.png",
-    "docs/browser-verification.md"
+    "docs/browser-verification.md",
+    "docs/comparison.md"
   ],
   "exports": {
     ".": {
