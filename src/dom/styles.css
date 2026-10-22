@@ -444,3 +444,213 @@
 .mcp-comparison-diagnostics {
   padding-left: 20px;
 }
+
+/* Editor chrome is independent of the scaled Minecraft content. */
+.mce-root {
+  --mce-panel: light-dark(#fbfcfd, #171c23);
+  --mce-fg: light-dark(#24322e, #e3ece7);
+  --mce-muted: light-dark(#61726a, #a6b6ae);
+  --mce-soft: light-dark(#edf2ef, #26312c);
+  --mce-line: light-dark(#d6e0da, #36443d);
+  --mce-accent: light-dark(#237858, #8bd6b0);
+  border-radius: 10px;
+  color: var(--mce-fg);
+}
+.mce-root [hidden],
+.mce-toolbar[hidden],
+.mce-popout [hidden] {
+  display: none !important;
+}
+.mce-entry-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 6px 10px;
+}
+.mce-tool-host {
+  border-bottom: 1px solid var(--mce-line);
+}
+.mce-toolbar {
+  gap: 3px;
+  padding: 7px 10px;
+  border: 0;
+  box-sizing: border-box;
+}
+.mce-toolbar .mce-button {
+  padding: 5px 8px;
+  min-width: 30px;
+  min-height: 30px;
+}
+.mce-toolbar .mce-button[aria-pressed="true"] {
+  background: var(--mce-soft);
+  color: var(--mce-accent);
+}
+.mce-toolbar[data-placement="selection"] {
+  position: fixed;
+  z-index: 1001;
+  width: max-content;
+  max-width: calc(100vw - 16px);
+  border: 1px solid var(--mce-line);
+  border-radius: 9px;
+  box-shadow: 0 8px 28px #0003;
+  background: var(--mce-panel);
+  color: var(--mce-fg);
+  font:
+    13px/1.5 system-ui,
+    sans-serif;
+}
+.mce-tabs {
+  background: var(--mce-soft);
+}
+.mce-button:hover {
+  background: var(--mce-soft);
+}
+.mce-canvas {
+  padding: 24px 16px;
+}
+.mce-popout {
+  position: fixed;
+  z-index: 1002;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 320px;
+  min-width: 0;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--mce-line);
+  border-radius: 10px;
+  background: var(--mce-panel);
+  color: var(--mce-fg);
+  font:
+    13px/1.5 system-ui,
+    sans-serif;
+  box-shadow: 0 16px 48px #0004;
+}
+.mce-popout::backdrop {
+  background: #0007;
+}
+.mce-popout[data-presentation="dialog"] {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 560px;
+  max-width: calc(100vw - 32px);
+}
+.mce-popout[data-presentation="sheet"] {
+  top: auto;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  width: auto;
+  max-width: none;
+  border-radius: 14px;
+}
+.mce-popout .mce-button {
+  font: inherit;
+  color: inherit;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.mce-popout .mce-button:hover {
+  background: var(--mce-soft);
+}
+.mce-popout .mce-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.mce-popout .mce-button:focus-visible {
+  outline: 2px solid var(--mce-accent);
+  outline-offset: 1px;
+}
+.mce-tool-content {
+  padding: 14px;
+}
+.mce-tool-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.mce-tool-heading strong {
+  font-weight: 600;
+}
+.mce-tool-heading .mce-button {
+  padding: 3px 7px;
+}
+.mce-tool-field {
+  display: grid;
+  gap: 5px;
+  margin: 9px 0;
+  color: var(--mce-muted);
+  font-size: 12px;
+}
+.mce-tool-field input:not([type="checkbox"]),
+.mce-tool-field select,
+.mce-tool-field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--mce-line);
+  border-radius: 5px;
+  padding: 7px 8px;
+  background: var(--mce-soft);
+  color: var(--mce-fg);
+  font:
+    13px/1.4 system-ui,
+    sans-serif;
+}
+.mce-tool-field input[type="color"] {
+  width: 100%;
+  height: 36px;
+  padding: 3px;
+}
+.mce-tool-field:has(input[type="checkbox"]) {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+.mce-stop-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: end;
+}
+.mce-stop-row .mce-button {
+  margin-bottom: 9px;
+}
+.mce-placeholder-choices {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.mce-tool-status {
+  white-space: pre-wrap;
+  color: light-dark(#a23924, #f6a792);
+  font-size: 12px;
+}
+.mce-tool-status:empty {
+  display: none;
+}
+@media (pointer: coarse) {
+  .mce-toolbar .mce-button,
+  .mce-entry-actions .mce-button,
+  .mce-popout .mce-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .mce-tool-field input:not([type="checkbox"]),
+  .mce-tool-field textarea,
+  .mce-tool-field select {
+    font-size: 16px;
+  }
+}

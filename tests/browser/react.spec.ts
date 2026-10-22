@@ -28,3 +28,25 @@ test("controlled React echoes preserve focus and destroy all DOM on unmount", as
   await expect(page.locator(".mce-root")).toHaveCount(1);
   await expect(editor).toContainText("React Editable");
 });
+
+test("controlled React toolbar switches preserve editing and dispose floating tools", async ({
+  page,
+}) => {
+  await page.goto("/tests/browser/react.html");
+  const input = page.locator("[data-editor-field=motd] .ProseMirror");
+  await input.waitFor();
+  const original = await input.elementHandle();
+  await input.focus();
+  await input.press("Control+A");
+  await page
+    .getByRole("button", { name: "Toggle toolbar", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Text tools", exact: true }).click();
+  await page.getByRole("button", { name: "Bold", exact: true }).click();
+  await expect(page.locator("output")).toContainText('"bold":true');
+  expect(await original!.evaluate((el) => el.isConnected)).toBe(true);
+  await page
+    .getByRole("button", { name: "Toggle editor", exact: true })
+    .click();
+  await expect(page.locator(".mce-toolbar,.mce-popout")).toHaveCount(0);
+});

@@ -2,6 +2,17 @@
 
 Import `@groundsgg/motd/styles.css` once. Package CSS references included fonts; editing makes no external requests. Use DOM handles for Vue/Svelte/custom elements or the optional React entry point. One host per instance; dispose on unmount.
 
+Viewer and editor are separate: use `createPreview` / `ServerListPreview` for display-only content, and `createEditor` / `ServerListEditor` for editing. Set `context.presentation: "row"` for a compact entry, or `"server-list"` for the client menu. Omitting presentation retains the existing full-menu default.
+
+```tsx
+<ServerListPreview document={document} context={context} />
+<ServerListEditor document={document} context={context} onChange={setDocument} toolbar="selection" />
+```
+
+`toolbar="fixed"` keeps formatting above the entry and is the default. `toolbar="selection"` attaches the same tools to selected text; changing the option at runtime preserves editing state. Text tools / `Alt+F10` provide access without a pointer selection. Keep tool preferences in application UI state rather than the saved server document. Both standalone examples include toolbar and presentation selectors.
+
+Text tools open in the owning document, including when embedded in an iframe or scaled preview. The host must load the package stylesheet in that document. Popovers apply changes live and close on Escape; narrow viewports use a modal bottom sheet with the same controls. Read-only, disabled, and disabled-field states block mutating tools. Original source constructs remain protected; supported placeholder tokens can be formatted as a unit and retain their source name.
+
 Options separate `document` from `context`: the document is persistent intent; context contains base status, client protocol/compatibility, placeholder values, font profile, width, scale, server name, ping and animation preference. Do not persist context with the document. Supply measured network data yourself, or label example values in your application.
 
 `features` can disable `motd`, `version`, `icon`, `players`, `hover`, `import`, `export` independently. `readOnly` and `disabled` apply to visual/source commands and properties. External updates are still permitted. Labels can override UI strings by key; visible English strings are the defaults. CSS variables `--mce-accent`, `--mce-line`, `--mce-panel` style the editor; `--mcp-font` selects the renderer font.

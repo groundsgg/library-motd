@@ -17,6 +17,22 @@ export interface PreviewHandle {
   destroy(): void;
   getDiagnostics(): readonly Diagnostic[];
 }
+export function entryTextWidth(context: PreviewContext): number {
+  const g = context.profile.geometry;
+  const width = Math.max(
+    140,
+    Math.min(
+      g.rowWidth,
+      context.viewportWidth / Math.max(0.5, context.guiScale),
+    ),
+  );
+  return (
+    Math.min(width, g.contentWidth ?? width) -
+    g.iconSize -
+    g.iconGap -
+    g.rightInset
+  );
+}
 export const element = <K extends keyof HTMLElementTagNameMap>(
   doc: Document,
   tag: K,

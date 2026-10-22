@@ -19,6 +19,8 @@ import { editorSchema, type StylePath } from "./schema.js";
 import { fromEditorNode, nextId, toEditorNode } from "./mapping.js";
 import { EditorHistory, type HistoryEntry } from "./history.js";
 import { inlineEffects } from "./effects.js";
+import { inlineAlignment } from "./alignment.js";
+import { entryTextWidth } from "../render.js";
 import type {
   EditableField,
   Feature,
@@ -145,6 +147,20 @@ export function createEditorController(
   ) {
     return [
       inlineEffects(() => textFor(field), resolved),
+      ...(field === "motd"
+        ? [
+            inlineAlignment(
+              () => textFor(field),
+              resolved,
+              () => ({
+                profile: options.context.profile,
+                width: entryTextWidth(options.context),
+                maxLines: 2,
+                alignments: current.motd.alignments,
+              }),
+            ),
+          ]
+        : []),
       new Plugin({
         filterTransaction(tr, state) {
           return (
@@ -184,6 +200,10 @@ export function createEditorController(
         textSnapshots.get(field) !== textSnapshot ||
         valueSnapshots.get(field) !== valueSnapshot
       ) {
+        if (textSnapshots.get(field) !== textSnapshot) {
+          for (const saved of selections)
+            if (saved.field === field) selections.delete(saved);
+        }
         const schema = editorSchema(view.dom.ownerDocument, resolved),
           node = toEditorNode(textFor(field), schema);
         let nextSelection;
@@ -472,7 +492,8 @@ export function createEditorController(
       const mark = (path: StylePath[], leafId?: string) =>
         v.state.schema.marks.format!.create({
           path:
-            command.type === "gradient"
+            command.type === "gradient" ||
+            ("rainbow" in style && !!style.rainbow)
               ? [
                   { id, style },
                   ...path.map((p) => {
@@ -493,6 +514,16 @@ export function createEditorController(
         return;
       }
       v.state.doc.nodesBetween(from, to, (node, pos) => {
+        if (
+          node.type.name === "token" &&
+          node.attrs.node.type === "placeholder"
+        ) {
+          tr.setNodeMarkup(pos, undefined, {
+            ...node.attrs,
+            path: mark(node.attrs.path ?? []).attrs.path,
+          });
+          return;
+        }
         if (!node.isText) return;
         const old = node.marks.find((m) => m.type.name === "format");
         tr.addMark(
@@ -564,10 +595,30 @@ export function createEditorController(
     captureSelection() {
       const view = views.get(activeField);
       if (!view) return null;
+      const native = view.dom.ownerDocument.getSelection();
+      if (
+        native?.anchorNode &&
+        native.focusNode &&
+        view.dom.contains(native.anchorNode) &&
+        view.dom.contains(native.focusNode)
+      ) {
+        try {
+          const anchor = view.posAtDOM(native.anchorNode, native.anchorOffset),
+            head = view.posAtDOM(native.focusNode, native.focusOffset);
+          const selection = TextSelection.between(
+            view.state.doc.resolve(anchor),
+            view.state.doc.resolve(head),
+          );
+          if (!selection.eq(view.state.selection))
+            view.dispatch(view.state.tr.setSelection(selection));
+        } catch {
+          return null;
+        }
+      }
       const saved = {
         field: activeField,
-        from: view.state.selection.from,
-        to: view.state.selection.to,
+        from: Math.max(1, view.state.selection.from),
+        to: Math.min(view.state.doc.content.size - 1, view.state.selection.to),
         generation,
       };
       selections.add(saved);

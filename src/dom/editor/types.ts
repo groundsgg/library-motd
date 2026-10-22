@@ -31,6 +31,8 @@ export interface EditorOptions {
   ): ServerListDocument;
   features?: Partial<Record<Feature, boolean>>;
   labels?: Readonly<Record<string, string>>;
+  /** Fixed above the entry by default; selection places tools beside selected text. */
+  toolbar?: "fixed" | "selection";
   readOnly?: boolean;
   disabled?: boolean;
   imports?: { adapter: ImportAdapter; timeoutMs?: number };

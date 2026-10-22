@@ -8,9 +8,14 @@ import "../shared/page.css";
 function App() {
   const [document, setDocument] = useState(initialDocument);
   const [profile, setProfile] = useState(context.profile);
+  const [toolbar, setToolbar] = useState<"fixed" | "selection">("fixed");
+  const [presentation, setPresentation] = useState<"row" | "server-list">(
+    "row",
+  );
   const previewContext = {
     ...context,
     profile,
+    presentation,
     clientProtocol: profile.protocol!,
   };
   return createElement(
@@ -44,10 +49,43 @@ function App() {
         ),
       ),
     ),
+    createElement(
+      "label",
+      null,
+      " Toolbar ",
+      createElement(
+        "select",
+        {
+          value: toolbar,
+          "aria-label": "Toolbar placement",
+          onChange: (e: React.ChangeEvent<HTMLSelectElement>) =>
+            setToolbar(e.target.value as "fixed" | "selection"),
+        },
+        createElement("option", { value: "fixed" }, "Fixed"),
+        createElement("option", { value: "selection" }, "At selection"),
+      ),
+    ),
+    createElement(
+      "label",
+      null,
+      " Presentation ",
+      createElement(
+        "select",
+        {
+          value: presentation,
+          "aria-label": "Presentation",
+          onChange: (e: React.ChangeEvent<HTMLSelectElement>) =>
+            setPresentation(e.target.value as "row" | "server-list"),
+        },
+        createElement("option", { value: "row" }, "Server row only"),
+        createElement("option", { value: "server-list" }, "Server list"),
+      ),
+    ),
     createElement(ServerListEditor, {
       document,
       context: previewContext,
       onChange: setDocument,
+      toolbar,
     }),
     createElement("div", { className: "output-label" }, "Live preview"),
     createElement(

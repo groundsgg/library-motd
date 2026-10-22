@@ -22,14 +22,21 @@ function App() {
     createDocument(parseText("Editable", "minimessage").value!),
   );
   const [show, setShow] = useState(true);
+  const [toolbar, setToolbar] = useState<"fixed" | "selection">("fixed");
   return (
     <>
       <button onClick={() => setShow(!show)}>Toggle editor</button>
+      <button
+        onClick={() => setToolbar(toolbar === "fixed" ? "selection" : "fixed")}
+      >
+        Toggle toolbar
+      </button>
       {show && (
         <ServerListEditor
           document={document}
           context={context}
           onChange={setDocument}
+          toolbar={toolbar}
         />
       )}
       <output>{JSON.stringify(document.motd.text)}</output>
