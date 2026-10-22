@@ -8,7 +8,7 @@ The canonical package is [`@groundsgg/motd` on npm](https://www.npmjs.com/packag
 2. Review and merge the release PR after its CI checks pass. Release Please updates `package.json`, the lockfile, the changelog and its manifest, then creates `vX.Y.Z` and a GitHub release.
 3. The same workflow publishes its tested archive to npm through OIDC and to GitHub Packages with `GITHUB_TOKEN`. There is no long-lived npm token.
 
-Release PR CI is dispatched explicitly because a PR created with `GITHUB_TOKEN` does not trigger another workflow automatically. No personal access token is needed. GitHub may additionally request approval for the pull-request workflow created by the bot. In that case, review and approve that run from the PR before merging; the dispatched run does not replace checks on GitHub's PR merge commit.
+Release Please uses the organization secret `RELEASE_PLEASE_TOKEN`, belonging to `grounds-bot`, to create release PRs, tags and GitHub releases. The secret must remain available to this repository with permission to write contents, pull requests and issues. Bot-created PRs trigger CI automatically. If GitHub requests approval for the bot's pull-request workflow, review and approve that run from the PR before merging.
 
 Both registries receive the same bytes. The publisher rejects tag/version mismatches, unknown registries and existing versions with different integrity. Authentication and network errors fail the job. To recover a failed publication, run the Release workflow manually with the existing release tag. It rebuilds and verifies the tagged source; an already published version is skipped only when its SHA512 integrity matches. Changes to package tooling must be released under a new version.
 

@@ -30,7 +30,6 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-      actions: write
     outputs:
       tag: ${{ inputs.tag || steps.release.outputs.tag_name }}
       publish: ${{ inputs.tag != '' || steps.release.outputs.release_created == 'true' }}
@@ -53,16 +52,8 @@ jobs:
         if: inputs.tag == ''
         id: release
         with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           target-branch: main
-      - name: Run CI on the release PR
-        if: steps.release.outputs.prs_created == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PRS: ${{ steps.release.outputs.prs }}
-        run: |
-          echo "$PRS" | jq -r '.[].headBranchName' | while IFS= read -r branch; do
-            gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$branch"
-          done
       - name: Check release revision
         if: steps.release.outputs.release_created == 'true'
         env:
