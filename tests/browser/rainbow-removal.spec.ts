@@ -223,3 +223,22 @@ test("removing rainbow preserves protected source and leaves it untouched", asyn
       .every((glyph) => !glyph.rainbow),
   ).toBe(true);
 });
+
+test("clearing an absent effect from freshly typed unmarked text is a no-op", async ({
+  page,
+}) => {
+  const input = await setup(page, "");
+  await page.keyboard.type("Plain");
+  await input.press("Control+A");
+  const before = await page.evaluate(() => ({
+    document: JSON.stringify(window.doc),
+    changes: window.changes.length,
+  }));
+  await removeRainbow(page);
+  expect(
+    await page.evaluate(() => ({
+      document: JSON.stringify(window.doc),
+      changes: window.changes.length,
+    })),
+  ).toEqual(before);
+});

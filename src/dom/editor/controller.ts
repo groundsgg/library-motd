@@ -600,6 +600,12 @@ export function createEditorController(
         }
         if (!node.isText) return;
         const old = node.marks.find((m) => m.type.name === "format");
+        if (
+          clearKeys &&
+          JSON.stringify(old?.attrs.path ?? []) ===
+            JSON.stringify(clearPath(old?.attrs.path ?? []))
+        )
+          return;
         tr.addMark(
           Math.max(from, pos),
           Math.min(to, pos + node.nodeSize),
