@@ -6,6 +6,11 @@ verification passed 31 tests per engine (93 cases in total). CI installs
 all three engines and their system dependencies; `CI` limits concurrency to two
 workers. A browser failure blocks the shared validation and publishing jobs.
 
+A focused Chromium job on Windows also checks regular/bold baselines, mixed
+and fully bold two-line MOTDs, descenders, and the React formatting toggle.
+Windows uses different font metrics from Linux; passing the Ubuntu matrix
+alone does not establish correct Windows text geometry.
+
 ```sh
 npx playwright install --with-deps chromium firefox webkit
 npm run test:browser
