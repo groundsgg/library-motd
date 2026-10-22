@@ -51,12 +51,6 @@ export function editorSchema(
             style = Object.assign({}, ...path.map((p) => p.style)) as TextStyle;
           const span = doc.createElement("span");
           applyTextStyle(span, style);
-          if (style.gradient) {
-            span.style.backgroundImage = `linear-gradient(90deg,${style.gradient.map((s) => `${s.color} ${s.position * 100}%`).join(",")})`;
-            span.style.backgroundClip = "text";
-            span.style.color = "transparent";
-            span.style.textShadow = "none";
-          }
           return { dom: span, contentDOM: span };
         },
       },
