@@ -1,3 +1,4 @@
+import { openEntryTool } from "./editor-actions.js";
 import { expect, test, type Page } from "@playwright/test";
 
 async function selectAlpha(page: Page) {
@@ -15,6 +16,7 @@ async function selectAlpha(page: Page) {
     const selection = document.getSelection()!;
     selection.removeAllRanges();
     selection.addRange(range);
+    document.dispatchEvent(new Event("selectionchange"));
     root.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
   });
 }
@@ -90,7 +92,9 @@ test("switching_toolbar_preserves_selection_and_undo", async ({ page }) => {
 });
 
 test("popover_formats_original_field", async ({ page }) => {
+  await openEntryTool(page, "Version settings");
   await page.getByLabel("Version display").selectOption("always");
+  await page.keyboard.press("Escape");
   await selectAlpha(page);
   await page.getByRole("button", { name: "Text color", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Text color" });
@@ -182,6 +186,8 @@ test("gradient stops affect only the saved word and support a third color", asyn
   await selectAlpha(page);
   await page.getByRole("button", { name: "Gradient", exact: true }).click();
   const tool = page.getByRole("dialog", { name: "Gradient" });
+  // Editing a value must actually change it: Firefox may omit input for the same value.
+  await tool.getByLabel("Gradient position 1").fill("0.1");
   await tool.getByLabel("Gradient position 1").fill("0");
   expect(
     await page.evaluate(() =>
@@ -286,7 +292,9 @@ test("revoking the active field closes its mutating text tool", async ({
 test("returning to automatic version mode removes its editing surface and tools", async ({
   page,
 }) => {
+  await openEntryTool(page, "Version settings");
   await page.getByLabel("Version display").selectOption("always");
+  await page.keyboard.press("Escape");
   const input = page.locator(
     "#editor [data-editor-field=version] .ProseMirror",
   );

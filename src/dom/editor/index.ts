@@ -8,11 +8,11 @@ import { createEditorController } from "./controller.js";
 import { createOverlays } from "./overlays.js";
 import { mountToolbar } from "./toolbar.js";
 import { mountTextTools } from "./text-tools.js";
+import { mountStatusTools } from "./status-tools.js";
 import type {
   EditorOptions,
   EditorHandle,
   Feature,
-  EditableField,
   EditorCommand,
 } from "./types.js";
 export type {
@@ -35,20 +35,14 @@ export function createEditor(
     root = element(doc, "section", "mce-root"),
     chrome = element(doc, "div", "mce-chrome"),
     canvas = element(doc, "div", "mce-canvas"),
-    extras = element(doc, "div", "mce-extras"),
-    hover = element(doc, "div", "mce-hover-editor"),
-    hoverHost = element(doc, "div", "");
+    extras = element(doc, "div", "mce-extras");
   const diagnostics = element(doc, "div", "mce-diagnostics");
   diagnostics.role = "status";
-  hover.append(hoverHost);
-  root.append(chrome, canvas, hover, extras, diagnostics);
+  root.append(chrome, canvas, extras, diagnostics);
   host.append(root);
   const controller = createEditorController(initial),
     entry = createEntry(canvas, initial);
-  const textHosts = new Map<EditableField, HTMLElement>([
-    ["motd", element(doc, "div", "")],
-    ["version", element(doc, "div", "")],
-  ]);
+  const motdHost = element(doc, "div", "");
   let options = initial,
     current = controller.getDocument(),
     destroyed = false,
@@ -91,16 +85,8 @@ export function createEditor(
     return b;
   }
   function fields() {
-    for (const field of ["motd", "version"] as const) {
-      const available =
-        enabled(field) &&
-        (field === "motd" || current.version.mode !== "automatic");
-      const textHost = textHosts.get(field)!;
-      if (available) controller.mountText(field, textHost);
-      entry.bindText(field, available ? textHost : null);
-    }
-    hover.hidden = !enabled("hover") || current.hover.mode !== "custom";
-    if (!hover.hidden) controller.mountText("hover", hoverHost);
+    if (enabled("motd")) controller.mountText("motd", motdHost);
+    entry.bindText("motd", enabled("motd") ? motdHost : null);
   }
   function rebuild() {
     for (const fn of dispose.splice(0)) fn();
@@ -231,7 +217,11 @@ export function createEditor(
   }
   const overlays = createOverlays(root);
   const mount = { root, entry, controller, overlays };
-  const tools = [mountToolbar(mount), mountTextTools(mount)];
+  const tools = [
+    mountToolbar(mount),
+    mountTextTools(mount),
+    mountStatusTools(mount),
+  ];
   const unsubscribe = controller.subscribe((event) => {
     if (event === "selection") return;
     if (event === "diagnostics") {

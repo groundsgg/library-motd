@@ -205,6 +205,13 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
     position();
   }
   const keydown = (event: KeyboardEvent) => {
+    const target = event.target as Node;
+    if (
+      !root.contains(target) &&
+      !toolbar.contains(target) &&
+      !controller.getView(controller.getActiveField())?.dom.contains(target)
+    )
+      return;
     if (event.altKey && event.key === "F10") {
       event.preventDefault();
       event.stopPropagation();
@@ -250,8 +257,7 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
     if (event === "replace") forced = false;
     update();
   });
-  root.addEventListener("keydown", keydown);
-  toolbar.addEventListener("keydown", keydown);
+  doc.addEventListener("keydown", keydown);
   toolbar.addEventListener("keydown", toolbarKeys);
   root.addEventListener("mce-overlay-change", update);
   doc.addEventListener("pointerdown", outside);
@@ -265,8 +271,7 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
       if (destroyed) return;
       destroyed = true;
       unsubscribe();
-      root.removeEventListener("keydown", keydown);
-      toolbar.removeEventListener("keydown", keydown);
+      doc.removeEventListener("keydown", keydown);
       toolbar.removeEventListener("keydown", toolbarKeys);
       root.removeEventListener("mce-overlay-change", update);
       doc.removeEventListener("pointerdown", outside);

@@ -654,3 +654,30 @@
     font-size: 16px;
   }
 }
+
+.mce-tool-hint {
+  color: var(--mce-muted);
+  font-size: 12px;
+}
+.mce-pinned-surface {
+  z-index: 1000;
+  width: 380px;
+}
+.mce-pinned-surface .mce-inline {
+  padding: 10px;
+  border: 1px solid #302040;
+  border-radius: 3px;
+  background: #100010;
+  color: white;
+  font: calc(8px * var(--mce-text-scale, 2))/1.25
+    var(--mcp-font, GroundsMinecraft, monospace);
+  min-height: 48px;
+  overflow-wrap: anywhere;
+}
+.mce-pinned-surface .ProseMirror {
+  outline: none;
+  white-space: pre-wrap;
+}
+.mce-pinned-surface .ProseMirror p {
+  margin: 0;
+}
