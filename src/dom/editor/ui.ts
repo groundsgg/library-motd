@@ -51,3 +51,22 @@ export function activeStyle(mount: ToolMount): TextStyle {
     ...(mark?.attrs.path ?? []).map((part: { style: TextStyle }) => part.style),
   );
 }
+
+export interface EntryToolAction {
+  label: string;
+  enabled: boolean;
+  action(): void;
+}
+/** Private, instance-scoped menu contributions from mounted tools. */
+export function entryToolActions(
+  root: HTMLElement,
+  initial: EntryToolAction[] = [],
+): EntryToolAction[] {
+  root.dispatchEvent(
+    new root.ownerDocument.defaultView!.CustomEvent<EntryToolAction[]>(
+      "mce-entry-menu",
+      { detail: initial },
+    ),
+  );
+  return initial;
+}

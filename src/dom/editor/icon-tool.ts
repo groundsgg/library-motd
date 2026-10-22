@@ -1,7 +1,13 @@
 import type { IconValue } from "../../core/model.js";
 import { normalizeIcon } from "../icon.js";
 import { element } from "../render.js";
-import { toolButton, toolField, toolLabel, toolLocked } from "./ui.js";
+import {
+  toolButton,
+  toolField,
+  toolLabel,
+  toolLocked,
+  type EntryToolAction,
+} from "./ui.js";
 import type { ToolMount, ToolHandle } from "./tool-types.js";
 
 export function mountIconTool(mount: ToolMount): ToolHandle {
@@ -372,6 +378,16 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
       if (overlays.getOpenId() === "icon") overlays.close("cancel");
     }
   }
+  const menu = (event: Event) =>
+    (event as CustomEvent<EntryToolAction[]>).detail.push({
+      label: label("serverIcon", "Server icon"),
+      enabled: allowed(),
+      action() {
+        overlays.close("dismiss");
+        upload.click();
+      },
+    });
+  root.addEventListener("mce-entry-menu", menu);
   const unsubscribe = controller.subscribe((event) => {
     if (event === "replace") invalidate();
     if (event !== "selection") update();
@@ -382,6 +398,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     destroy() {
       destroyed = true;
       unsubscribe();
+      root.removeEventListener("mce-entry-menu", menu);
       if (overlays.getOpenId() === "icon") overlays.close("destroy");
       release();
       file.removeEventListener("change", fileChange);

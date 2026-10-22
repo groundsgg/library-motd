@@ -3,7 +3,13 @@ import { parseText } from "../../core/text/parse.js";
 import type { CountRule } from "../../core/model.js";
 import { element } from "../render.js";
 import { copyToolTheme, positionTool } from "./overlays.js";
-import { toolButton, toolField, toolLabel, toolLocked } from "./ui.js";
+import {
+  entryToolActions,
+  toolButton,
+  toolField,
+  toolLabel,
+  toolLocked,
+} from "./ui.js";
 import type { ToolMount, ToolHandle } from "./tool-types.js";
 
 /** Status settings and pinned text share the controller, never the native tooltip. */
@@ -43,6 +49,7 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
     label("entryTools", "Server entry tools"),
     openMenu,
   );
+  menu.dataset.entryMenu = "true";
   root.querySelector(".mce-entry-actions")!.append(menu);
   function select(
     name: string,
@@ -94,26 +101,52 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
     const body = content(label("entryTools", "Server entry tools"), () =>
       overlays.close("dismiss"),
     );
-    for (const [field, key, title, action] of [
-      ["players", "playerDisplay", "Player display", () => openPlayers(menu)],
-      [
-        "version",
-        "versionSettings",
-        "Version settings",
-        () => openVersion(menu),
-      ],
-      ["hover", "playerHover", "Player hover", () => openPinned("hover")],
-    ] as const) {
-      const button = toolButton(
-        doc,
-        label(key, title),
-        label(key, title),
-        action,
-      );
-      button.disabled = !allowed(field);
+    const buttons = menuActions().map((item) => {
+      const button = toolButton(doc, item.label, item.label, item.action);
+      button.disabled = !item.enabled;
       body.append(button);
-    }
-    open("menu", label("entryTools", "Server entry tools"), menu, body);
+      return button;
+    });
+    open("menu", label("entryTools", "Server entry tools"), menu, body, () => {
+      const items = menuActions();
+      if (items.length !== buttons.length) {
+        overlays.close("dismiss");
+        return;
+      }
+      buttons.forEach((button, index) => {
+        const item = items[index]!;
+        button.disabled = !item.enabled;
+        button.textContent = item.label;
+        button.setAttribute("aria-label", item.label);
+        button.title = item.label;
+      });
+    });
+  }
+  function menuActions() {
+    return entryToolActions(
+      root,
+      (
+        [
+          [
+            "players",
+            "playerDisplay",
+            "Player display",
+            () => openPlayers(menu),
+          ],
+          [
+            "version",
+            "versionSettings",
+            "Version settings",
+            () => openVersion(menu),
+          ],
+          ["hover", "playerHover", "Player hover", () => openPinned("hover")],
+        ] as const
+      ).map(([field, key, title, action]) => ({
+        label: label(key, title),
+        enabled: allowed(field),
+        action,
+      })),
+    );
   }
   function openPlayers(anchor: HTMLElement) {
     if (!allowed("players")) return;
@@ -384,9 +417,7 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
     if (destroyed || updating || controller.isComposing()) return;
     updating = true;
     try {
-      menu.disabled = !["players", "version", "hover"].some((field) =>
-        allowed(field as "players"),
-      );
+      menu.disabled = !menuActions().some((item) => item.enabled);
       menu.setAttribute(
         "aria-label",
         label("entryTools", "Server entry tools"),
@@ -401,7 +432,7 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
       const id = overlays.getOpenId();
       if (
         id?.startsWith("status:") &&
-        (toolLocked(mount) ||
+        ((id === "status:menu" && menu.disabled) ||
           (id !== "status:menu" && !allowed(id.slice(7) as "players")))
       )
         overlays.close("dismiss");
