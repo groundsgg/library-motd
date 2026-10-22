@@ -1,4 +1,7 @@
-import { evaluateStatus } from "../../core/status/evaluate.js";
+import {
+  evaluateStatus,
+  evaluatePlayerCounts,
+} from "../../core/status/evaluate.js";
 import { parseText } from "../../core/text/parse.js";
 import type { CountRule } from "../../core/model.js";
 import { element } from "../render.js";
@@ -170,6 +173,13 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
     body.append(
       toolField(doc, label("hidePlayers", "Hide player count"), hidden),
     );
+    const result = element(doc, "output", "mce-count-preview");
+    result.role = "status";
+    result.setAttribute(
+      "aria-label",
+      label("evaluatedPlayerCounts", "Evaluated player counts"),
+    );
+    body.append(result);
     const syncRules: (() => void)[] = [];
     for (const field of ["online", "maximum"] as const) {
       const title = field === "online" ? "Online players" : "Maximum players";
@@ -239,6 +249,15 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
       () => {
         hidden.checked = controller.getDocument().players.hidden;
         syncRules.forEach((fn) => fn());
+        const counts = evaluatePlayerCounts(
+          controller.getDocument(),
+          controller.getOptions().context,
+        );
+        result.textContent = counts.value
+          ? label("calculatedPreview", "Calculated preview: {online}/{maximum}")
+              .replaceAll("{online}", String(counts.value?.online ?? "?"))
+              .replaceAll("{maximum}", String(counts.value?.max ?? "?"))
+          : counts.diagnostics.map((d) => d.message).join("\n");
       },
     );
   }

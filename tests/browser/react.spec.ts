@@ -52,3 +52,19 @@ test("controlled React toolbar switches preserve editing and dispose floating to
     .click();
   await expect(page.locator(".mce-toolbar,.mce-popout")).toHaveCount(0);
 });
+
+test("controlled props reach the editor before host layout observers run", async ({
+  page,
+}) => {
+  await page.goto("/tests/browser/react.html");
+  await expect(page.locator(".mcp-server-name")).toHaveText("React demo");
+  await page
+    .getByRole("button", { name: "Rename server", exact: true })
+    .click();
+  await expect(page.locator(".mcp-server-name")).toHaveText(
+    "Renamed React server",
+  );
+  expect(await page.evaluate(() => window.observedServerName)).toBe(
+    "Renamed React server",
+  );
+});

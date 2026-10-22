@@ -43,6 +43,35 @@ export function toolField(
 }
 export function activeStyle(mount: ToolMount): TextStyle {
   const view = mount.controller.getView(mount.controller.getActiveField());
+  if (view && !view.state.selection.empty) {
+    // AllSelection starts at the document boundary, whose marks are empty.
+    // Mixed selections are active only for styles shared by editable leaves.
+    const styles: TextStyle[] = [];
+    view.state.doc.nodesBetween(
+      view.state.selection.from,
+      view.state.selection.to,
+      (node) => {
+        const path = node.isText
+          ? node.marks.find((mark) => mark.type.name === "format")?.attrs.path
+          : node.type.name === "token" && node.attrs.node.type === "placeholder"
+            ? node.attrs.path
+            : undefined;
+        if (node.isText || path)
+          styles.push(
+            Object.assign(
+              {},
+              ...(path ?? []).map((part: { style: TextStyle }) => part.style),
+            ),
+          );
+      },
+    );
+    const common = { ...styles[0] };
+    for (const style of styles.slice(1))
+      for (const key of Object.keys(common) as (keyof TextStyle)[])
+        if (JSON.stringify(common[key]) !== JSON.stringify(style[key]))
+          delete common[key];
+    return common;
+  }
   const mark = (
     view?.state.storedMarks ?? view?.state.selection.$from.marks()
   )?.find((mark) => mark.type.name === "format");
