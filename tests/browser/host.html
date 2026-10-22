@@ -51,10 +51,18 @@
         { document, context },
       );
       window.changes = [];
+      window.setEditorOptions = (patch = {}) => {
+        window.editorOptions = {
+          ...window.editorOptions,
+          document: window.doc,
+          ...patch,
+        };
+        window.editor.update(window.editorOptions);
+      };
       if (dom.createEditor)
         window.editor = dom.createEditor(
           window.document.querySelector("#editor"),
-          {
+          (window.editorOptions = {
             document,
             context,
             onChange: (doc, change) => {
@@ -62,7 +70,7 @@
               window.changes.push(change);
               window.preview.update({ document: doc, context });
             },
-          },
+          }),
         );
     </script>
   </body>
