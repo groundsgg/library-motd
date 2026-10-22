@@ -12,6 +12,7 @@ import type {
   ServerListDocument,
   TextDocument,
   TextFormat,
+  TextStyle,
 } from "../../core/model.js";
 import { evaluatePlayerCounts } from "../../core/status/evaluate.js";
 import { validateDocument } from "../../core/document.js";
@@ -516,21 +517,37 @@ export function createEditorController(
           ? (command.field ?? activeField)
           : activeField;
     if (!enabled(field as Feature)) return;
-    if (command.type === "format" || command.type === "gradient") {
+    if (
+      command.type === "format" ||
+      command.type === "gradient" ||
+      command.type === "clear-format"
+    ) {
       const v = views.get(field as EditableField);
       if (!v) return;
       const { from, to } = v.state.selection;
-      const style =
+      const clearKeys =
+        command.type === "clear-format" ? command.styles : undefined;
+      if (clearKeys && !clearKeys.length) return;
+      const clearPath = (path: StylePath[]): StylePath[] =>
+        path.map((part) => {
+          const style = { ...part.style };
+          for (const key of clearKeys ?? []) delete style[key];
+          return { ...part, style };
+        });
+      const style: TextStyle =
           command.type === "gradient"
             ? { gradient: command.stops }
-            : command.style,
+            : command.type === "format"
+              ? command.style
+              : {},
         tr = v.state.tr.setMeta("motd-formatting", true),
         id = nextId();
       const mark = (path: StylePath[], leafId?: string) =>
         v.state.schema.marks.format!.create({
-          path:
-            command.type === "gradient" ||
-            ("rainbow" in style && !!style.rainbow)
+          path: clearKeys
+            ? clearPath(path)
+            : command.type === "gradient" ||
+                ("rainbow" in style && !!style.rainbow)
               ? [
                   { id, style },
                   ...path.map((p) => {
@@ -551,18 +568,44 @@ export function createEditorController(
         return;
       }
       v.state.doc.nodesBetween(from, to, (node, pos) => {
+        // A selected line break also owns a source style path. Clear that path
+        // so multiline removal does not leave an effect around the newline.
+        if (
+          clearKeys &&
+          node.type.name === "paragraph" &&
+          pos > 0 &&
+          from <= pos &&
+          to > pos
+        ) {
+          const previous = node.attrs.breakPath ?? [],
+            next = clearPath(previous);
+          if (JSON.stringify(previous) !== JSON.stringify(next))
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              breakPath: next,
+            });
+        }
         if (
           node.type.name === "token" &&
           node.attrs.node.type === "placeholder"
         ) {
-          tr.setNodeMarkup(pos, undefined, {
-            ...node.attrs,
-            path: mark(node.attrs.path ?? []).attrs.path,
-          });
+          const previous = node.attrs.path ?? [],
+            next = mark(previous).attrs.path;
+          if (!clearKeys || JSON.stringify(previous) !== JSON.stringify(next))
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              path: next,
+            });
           return;
         }
         if (!node.isText) return;
         const old = node.marks.find((m) => m.type.name === "format");
+        if (
+          clearKeys &&
+          JSON.stringify(old?.attrs.path ?? []) ===
+            JSON.stringify(clearPath(old?.attrs.path ?? []))
+        )
+          return;
         tr.addMark(
           Math.max(from, pos),
           Math.min(to, pos + node.nodeSize),
