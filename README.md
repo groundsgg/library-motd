@@ -58,7 +58,7 @@ React: import `ServerListEditor` or `ServerListPreview` from `@groundsgg/motd/re
 - [Client profile and reference evidence](docs/profiles.md)
 - [Known limits](docs/limitations.md)
 
-Develop with Node 24: `npm ci`, `npm run dev`, then open `/examples/dom/` or `/examples/react/`. All fonts are bundled locally. `npm run typecheck`, `npm test`, `npm run build`, `npm run test:browser`, `npm run test:package` and `npm run build:examples` validate the sources, package and examples. Install Chromium with `npx playwright install chromium` before browser tests.
+Develop with Node 24: `npm ci`, `npm run dev`, then open `/examples/dom/` or `/examples/react/`. All fonts are bundled locally. `npm run typecheck`, `npm test`, `npm run build`, `npm run test:browser`, `npm run test:package` and `npm run build:examples` validate the sources, package and examples. Install the engines and dependencies with `npx playwright install --with-deps chromium firefox webkit` before browser tests. The same suite runs in all three engines; see [browser verification](docs/browser-verification.md) for coverage and limits.
 
 See [contributing](CONTRIBUTING.md) for formatting, linting, checks and release conventions. Issue and PR templates come from the shared `groundsgg/.github` repository.
 

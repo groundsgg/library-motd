@@ -42,13 +42,10 @@ test("editing stays local and respects reduced motion, plain paste and two-line 
     const d = new DataTransfer();
     d.setData("text/plain", "<red>literal");
     d.setData("text/html", "<img src=x onerror=alert(1)>");
-    document.activeElement?.dispatchEvent(
-      new ClipboardEvent("paste", {
-        clipboardData: d,
-        bubbles: true,
-        cancelable: true,
-      }),
-    );
+    // Firefox discards constructor-supplied clipboardData on synthetic events.
+    const event = new Event("paste", { bubbles: true, cancelable: true });
+    Object.defineProperty(event, "clipboardData", { value: d });
+    document.activeElement?.dispatchEvent(event);
   });
   await expect(input).toContainText("<red>literal");
   await expect(input.locator("img")).toHaveCount(0);

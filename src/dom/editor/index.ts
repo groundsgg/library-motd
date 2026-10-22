@@ -18,6 +18,7 @@ import { editorSchema, type StylePath } from "./schema.js";
 import { fromEditorNode, nextId, toEditorNode } from "./mapping.js";
 import { mountProperties } from "../properties.js";
 import { EditorHistory, type HistoryEntry } from "./history.js";
+import { inlineEffects } from "./effects.js";
 export type EditableField = "motd" | "version" | "hover";
 export type Feature =
   "motd" | "version" | "icon" | "players" | "hover" | "import" | "export";
@@ -220,17 +221,19 @@ export function createEditor(
     target.dataset.editorField = field;
     target.classList.add("mce-inline");
     const evaluated = evaluatePlayerCounts(current, options.context).value;
-    const schema = editorSchema(doc, {
+    const values = {
       ...options.context.values,
       ...(evaluated?.online !== undefined
         ? { players: String(evaluated.online) }
         : {}),
       ...(evaluated?.max !== undefined ? { max: String(evaluated.max) } : {}),
-    });
+    };
+    const schema = editorSchema(doc, values);
     const state = EditorState.create({
       schema,
       doc: toEditorNode(textFor(field), schema),
       plugins: [
+        inlineEffects(() => textFor(field), values),
         new Plugin({
           filterTransaction(tr, state) {
             return (
