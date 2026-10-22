@@ -68,6 +68,7 @@ export function createEditor(
     entry.bindText("motd", available ? motdHost : null);
     showErrors();
     for (const tool of tools) tool.update();
+    overlays.reposition();
   }
   const unsubscribe = controller.subscribe((event) => {
     if (event === "selection") return;

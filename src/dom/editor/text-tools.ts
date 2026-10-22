@@ -297,10 +297,25 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
       );
     }
     content.append(status);
+    let anchorRect: Pick<DOMRect, "left" | "bottom"> =
+      anchor.getBoundingClientRect();
     overlays.open({
       id: `text:${tool}`,
       label: name,
       anchor,
+      getAnchorRect() {
+        if (controller.getOptions().toolbar !== "selection")
+          return anchor.getBoundingClientRect();
+        const view = controller.getView(selection.field);
+        if (view?.dom.getClientRects().length)
+          anchorRect = view.coordsAtPos(
+            Math.max(
+              1,
+              Math.min(selection.from, view.state.doc.content.size - 1),
+            ),
+          );
+        return anchorRect;
+      },
       content,
       mode: "popover",
       onClose: (reason) => {
