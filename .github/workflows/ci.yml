@@ -91,6 +91,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Prefer official Ubuntu archives for browser dependencies
+        run: |
+          printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' | sudo tee /etc/apt/apt-mirrors.txt
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run test:browser
       - run: npm pack
