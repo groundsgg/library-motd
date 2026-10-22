@@ -1,4 +1,4 @@
-import React, { StrictMode, useState } from "react";
+import React, { StrictMode, useState, useLayoutEffect, useMemo } from "react";
 import { createRoot } from "react-dom/client";
 import { ServerListEditor } from "../../src/react/index.js";
 import { createDocument, parseText, java1211Profile } from "../../src/index.js";
@@ -22,6 +22,16 @@ function App() {
     createDocument(parseText("Editable", "minimessage").value!),
   );
   const [show, setShow] = useState(true);
+  const [serverName, setServerName] = useState(context.serverName);
+  const previewContext = useMemo(
+    () => ({ ...context, serverName }),
+    [serverName],
+  );
+  useLayoutEffect(() => {
+    // A host measuring the rendered editor during this commit must see its props.
+    window.observedServerName =
+      window.document.querySelector(".mcp-server-name")?.textContent;
+  }, [serverName]);
   const [toolbar, setToolbar] = useState<"fixed" | "selection">("fixed");
   return (
     <>
@@ -31,10 +41,13 @@ function App() {
       >
         Toggle toolbar
       </button>
+      <button onClick={() => setServerName("Renamed React server")}>
+        Rename server
+      </button>
       {show && (
         <ServerListEditor
           document={document}
-          context={context}
+          context={previewContext}
           onChange={setDocument}
           toolbar={toolbar}
         />
