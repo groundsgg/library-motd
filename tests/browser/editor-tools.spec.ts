@@ -15,6 +15,7 @@ async function selectAlpha(page: Page) {
     const selection = document.getSelection()!;
     selection.removeAllRanges();
     selection.addRange(range);
+    document.dispatchEvent(new Event("selectionchange"));
     root.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
   });
 }
@@ -38,8 +39,13 @@ test("selection_toolbar_follows_keyboard_selection", async ({ page }) => {
   await expect(toolbar).toBeHidden();
   const input = page.locator("#editor [data-editor-field=motd] .ProseMirror");
   await input.focus();
-  await page.keyboard.press("Control+Home");
-  await page.keyboard.press("Shift+ArrowRight");
+  // Test genuine keyboard selection without depending on OS-specific arrow navigation.
+  await input.press("Control+A");
+  await expect
+    .poll(() =>
+      input.evaluate((root) => root.ownerDocument.getSelection()!.toString()),
+    )
+    .toContain("Grounds");
   await expect(toolbar).toBeVisible();
   await input.evaluate((root) =>
     root.ownerDocument.getSelection()!.collapseToEnd(),
