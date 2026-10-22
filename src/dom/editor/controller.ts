@@ -79,7 +79,8 @@ export function createEditorController(
     generation = 0;
   let activeField: EditableField = "motd",
     errors: string[] = [],
-    pending = false;
+    pending = false,
+    pendingReplacement = false;
   const history = new EditorHistory(),
     views = new Map<EditableField, EditorView>();
   const listeners = new Set<(event: EditorEvent) => void>(),
@@ -87,6 +88,8 @@ export function createEditorController(
     selections = new Set<FieldSelection>();
   const textSnapshots = new Map<EditableField, string>(),
     valueSnapshots = new Map<EditableField, string>();
+  const viewGenerations = new Map<EditableField, number>(),
+    rejectedCompositions = new Set<EditableField>();
   const label = (key: string, fallback: string) =>
     options.labels?.[key] ?? fallback;
   const enabled = (field: Feature) => options.features?.[field] !== false;
@@ -193,6 +196,9 @@ export function createEditorController(
   }
   function refreshViews(selection?: HistoryEntry["selection"]) {
     if (composing.size) {
+      for (const field of composing)
+        if (textSnapshots.get(field) !== JSON.stringify(textFor(field)))
+          rejectedCompositions.add(field);
       pending = true;
       return;
     }
@@ -271,6 +277,8 @@ export function createEditorController(
           "aria-multiline": String(field !== "version"),
         },
       });
+      viewGenerations.set(field, generation);
+      rejectedCompositions.delete(field);
     }
     if (selection) views.get(selection.field as EditableField)?.focus();
   }
@@ -324,10 +332,12 @@ export function createEditorController(
           composing.delete(field);
           queueMicrotask(() => {
             if (destroyed) return;
-            if (pending) {
+            if (pending && !composing.size) {
               pending = false;
+              const replaced = pendingReplacement;
+              pendingReplacement = false;
               refreshViews();
-              emit("options");
+              emit(replaced ? "replace" : "options");
             }
             emit("composition");
           });
@@ -346,6 +356,20 @@ export function createEditorController(
         if (destroyed) return;
         const before = snapshot();
         view.updateState(view.state.apply(tr));
+        if (
+          tr.docChanged &&
+          (locked() ||
+            !enabled(field) ||
+            viewGenerations.get(field) !== generation ||
+            rejectedCompositions.has(field))
+        ) {
+          // Keep native composition alive, but never serialize rejected text into
+          // the committed document. Rebuild from that document once it finishes.
+          textSnapshots.delete(field);
+          rejectedCompositions.add(field);
+          refreshViews();
+          return;
+        }
         for (const saved of selections)
           if (saved.field === field) {
             saved.from = tr.mapping.map(saved.from, 1);
@@ -370,6 +394,7 @@ export function createEditorController(
       },
     });
     views.set(field, view);
+    viewGenerations.set(field, generation);
     textSnapshots.set(field, JSON.stringify(textFor(field)));
     valueSnapshots.set(field, JSON.stringify(resolved));
   }
@@ -696,6 +721,12 @@ export function createEditorController(
       }
       if (composing.size) {
         pending = true;
+        pendingReplacement ||= changed;
+        for (const field of composing)
+          if (locked() || !enabled(field)) {
+            rejectedCompositions.add(field);
+            textSnapshots.delete(field);
+          }
         return;
       }
       refreshViews();
@@ -709,6 +740,8 @@ export function createEditorController(
       listeners.clear();
       selections.clear();
       composing.clear();
+      viewGenerations.clear();
+      rejectedCompositions.clear();
     },
   };
 }
