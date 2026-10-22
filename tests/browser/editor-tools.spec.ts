@@ -40,8 +40,13 @@ test("selection_toolbar_follows_keyboard_selection", async ({ page }) => {
   await expect(toolbar).toBeHidden();
   const input = page.locator("#editor [data-editor-field=motd] .ProseMirror");
   await input.focus();
-  await page.keyboard.press("Control+Home");
-  await page.keyboard.press("Shift+ArrowRight");
+  // Test genuine keyboard selection without depending on OS-specific arrow navigation.
+  await input.press("Control+A");
+  await expect
+    .poll(() =>
+      input.evaluate((root) => root.ownerDocument.getSelection()!.toString()),
+    )
+    .toContain("Grounds");
   await expect(toolbar).toBeVisible();
   await input.evaluate((root) =>
     root.ownerDocument.getSelection()!.collapseToEnd(),
@@ -137,8 +142,12 @@ test("tools_fit_scaled_scrolled_and_iframe_previews", async ({ page }) => {
       "scale(.8)";
     root.focus();
   });
-  await input.press("Control+Home");
-  await input.press("Shift+ArrowRight");
+  await input.press("Control+A");
+  await expect
+    .poll(() =>
+      input.evaluate((root) => root.ownerDocument.getSelection()!.toString()),
+    )
+    .toContain("Grounds");
   const toolbar = frame.getByRole("toolbar", { name: "Text formatting" });
   await expect(toolbar).toBeVisible();
   const bounds = await toolbar.evaluate((el) => {
