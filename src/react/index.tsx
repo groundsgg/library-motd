@@ -1,6 +1,7 @@
 import {
   createElement,
   useEffect,
+  useLayoutEffect,
   useRef,
   type ReactElement,
   CSSProperties,
@@ -17,6 +18,8 @@ import {
   type PreviewOptions,
 } from "../dom/index.js";
 type ContainerProps = { className?: string; style?: CSSProperties };
+const useClientLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 export function ServerListEditor(
   props: EditorOptions & ContainerProps,
 ): ReactElement {
@@ -31,7 +34,9 @@ export function ServerListEditor(
     // Mount once; the effect below applies current props without destroying editor state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => {
+  // Apply a committed render before another native input event can advance the
+  // imperative editor. A passive effect can echo an older document over it.
+  useClientLayoutEffect(() => {
     handle.current?.update(props);
   });
   return createElement("div", {
