@@ -387,7 +387,15 @@ export function createEditorController(
                   ? next.hover.text
                   : textFor(field);
           textSnapshots.set(field, JSON.stringify(nextText));
-          if (commit(next, "visual", field, !tr.storedMarksSet, before))
+          if (
+            commit(
+              next,
+              "visual",
+              field,
+              !tr.storedMarksSet && !tr.getMeta("motd-formatting"),
+              before,
+            )
+          )
             emit("document");
         }
         if (tr.selectionSet || tr.storedMarksSet) emit("selection");
@@ -516,7 +524,7 @@ export function createEditorController(
           command.type === "gradient"
             ? { gradient: command.stops }
             : command.style,
-        tr = v.state.tr,
+        tr = v.state.tr.setMeta("motd-formatting", true),
         id = nextId();
       const mark = (path: StylePath[], leafId?: string) =>
         v.state.schema.marks.format!.create({
