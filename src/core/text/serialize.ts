@@ -162,10 +162,9 @@ export function serializeText(
     const visual = layout.lines.map(() => [] as typeof chars);
     for (const g of layout.glyphs) if (!g.suppressed) visual[g.line]!.push(g);
     chars = visual.flatMap((glyphs, line) => {
-      const pad = Math.round(
-        layout.lines[line]!.padding /
-          (options.layout!.profile.font.advances[" "] ?? 4),
-      );
+      const space = options.layout!.profile.font.advances[" "] ?? 4;
+      const pad =
+        space > 0 ? Math.round(layout.lines[line]!.padding / space) : 0;
       return [
         ...(line ? [synthetic("\n")] : []),
         ...Array.from({ length: pad }, () => synthetic(" ")),

@@ -5,6 +5,7 @@ import type {
 } from "../core/model.js";
 import { evaluateStatus } from "../core/status/evaluate.js";
 import { createPreview, element, type PreviewHandle } from "./preview.js";
+import { entryTextWidth } from "./render.js";
 
 export interface ComparisonClient {
   /** Unique within this comparison; preserved when clients are reordered. */
@@ -77,7 +78,14 @@ export function createComparison(
     diagnostics = new Map();
     differences = new Map();
     const statuses = options.clients.map(
-      (client) => evaluateStatus(options.document, client.context).value,
+      (client) =>
+        evaluateStatus(options.document, {
+          ...client.context,
+          motdLayout: {
+            profile: client.context.profile,
+            width: entryTextWidth(client.context),
+          },
+        }).value,
     );
     const baseline = statuses[0];
     options.clients.forEach((client, index) => {

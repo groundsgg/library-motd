@@ -115,7 +115,13 @@ export function createEntry(
     stop();
     const { document: state, context } = next,
       labels = next.labels ?? {};
-    const evaluated = evaluateStatus(state, context),
+    const evaluated = evaluateStatus(state, {
+        ...context,
+        motdLayout: {
+          profile: context.profile,
+          width: entryTextWidth(context),
+        },
+      }),
       value = evaluated.value ?? context.base;
     diagnostics = [...evaluated.diagnostics];
     const scale = Math.max(0.5, context.guiScale),

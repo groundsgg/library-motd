@@ -88,6 +88,8 @@ export interface RuntimeContext {
   clientProtocol: number;
   compatible?: boolean;
   values: Readonly<Record<string, string>>;
+  /** Profile and logical width used when materializing aligned MOTD output. */
+  motdLayout?: Pick<LayoutOptions, "profile" | "width">;
 }
 export interface FontProfile {
   /** Native ASCII-space wrapping with LTR grapheme metrics; omission keeps legacy wrapping. */

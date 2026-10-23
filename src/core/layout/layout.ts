@@ -16,10 +16,23 @@ export function layoutText(
       remaining = Math.max(0, options.width - x),
       space = options.profile.font.advances[" "] ?? 4;
     const padding =
-      align === "left"
+      align === "left" || space <= 0
         ? 0
-        : Math.round((align === "center" ? remaining / 2 : remaining) / space) *
-          space;
+        : Math.min(
+            Math.round(
+              (align === "center" ? remaining / 2 : remaining) / space,
+            ),
+            Math.floor(remaining / space),
+          ) * space;
+    if (align !== "left" && space <= 0)
+      diagnostics.push(
+        diagnostic(
+          "alignment-unavailable",
+          "motd",
+          "Alignment requires a positive space advance in this font profile",
+          "warning",
+        ),
+      );
     lines.push({ width: x, padding });
     for (let i = lineStart; i < glyphs.length; i++) glyphs[i]!.x += padding;
     lineStart = glyphs.length;
@@ -69,7 +82,6 @@ export function layoutText(
   let start = 0;
   while (start < chars.length) {
     let end = start,
-      next = start,
       width = 0,
       lastSpace = -1,
       hasWidth = false,
@@ -90,7 +102,7 @@ export function layoutText(
       width += advance;
       hasWidth ||= advance !== 0;
     }
-    next = end;
+    let next = end;
     const delimiter = chars[end]?.text;
     if (delimiter === "\n" || (native && wrapped && delimiter === " ")) next++;
     for (let i = start; i < end; i++) {

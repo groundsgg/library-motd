@@ -114,6 +114,75 @@ it("rejects layout that would insert a visual break inside a dynamic token", () 
   );
 });
 
+it("right padding never pushes an otherwise fitting word beyond the line width", () => {
+  const doc = text("MM");
+  const options = {
+    profile: core.java263Profile,
+    width: 26,
+    alignments: ["right" as const],
+  };
+  const result = core.layoutText(doc, options);
+  expect(result.lines[0]).toEqual({ width: 12, padding: 12 });
+  const exported = core.serializeText(
+    doc,
+    { format: "json" },
+    { layout: options },
+  ).value!;
+  expect(
+    core.layoutText(core.parseText(exported, "json").value!, {
+      profile: core.java263Profile,
+      width: 26,
+    }).lines,
+  ).toHaveLength(1);
+});
+
+it("uses the caller's profile and width for aligned runtime MOTD output", () => {
+  const doc = core.createDocument(text("MM MM"));
+  doc.motd.alignments = ["center", "right"];
+  const context = {
+    base: {
+      version: { name: "26.3", protocol: 777 },
+      players: { online: 1, max: 10, sample: [] },
+      description: "",
+    },
+    clientProtocol: 777,
+    values: {},
+    motdLayout: { profile: core.java263Profile, width: 24 },
+  };
+  const status = core.evaluateStatus(doc, context);
+  expect(status.value).not.toBeNull();
+  const parsed = core.parseText(
+    JSON.stringify(status.value!.description),
+    "json",
+  ).value!;
+  expect(
+    core
+      .flattenText(parsed)
+      .map((g) => g.text)
+      .join(""),
+  ).toBe("  MM\n   MM");
+});
+
+it("does not generate invalid padding for a zero-advance custom space", () => {
+  const profile = {
+    ...core.java263Profile,
+    font: {
+      ...core.java263Profile.font,
+      advances: { ...core.java263Profile.font.advances, " ": 0 },
+    },
+  };
+  const result = core.layoutText(text("MM MM"), {
+    profile,
+    width: 20,
+    alignments: ["right", "center"],
+  });
+  expect(result.glyphs.every((g) => Number.isFinite(g.x))).toBe(true);
+  expect(result.lines.every((line) => line.padding === 0)).toBe(true);
+  expect(
+    result.diagnostics.some((d) => d.code === "alignment-unavailable"),
+  ).toBe(true);
+});
+
 it.each(["json", "minimessage", "legacy-section"] as const)(
   "materializes visual line breaks and per-line alignment for %s export",
   (format) => {

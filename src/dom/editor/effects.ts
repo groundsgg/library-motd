@@ -12,6 +12,9 @@ import { fromEditorNode, type EditorSourceRange } from "./mapping.js";
 
 interface DisplayGlyph extends StyledChar {
   hidden: boolean;
+  suppressed?: boolean;
+  breakBefore?: boolean;
+  padding?: number;
 }
 
 function decorations(
@@ -43,15 +46,30 @@ function decorations(
   const positions = new Map<string, EditorSourceRange>();
   const text = fromEditorNode(pm, previous, positions);
   const resolved = resolveText(text, values).value!;
-  const measured = layout ? layoutText(resolved, layout).glyphs : undefined;
-  let measuredIndex = 0;
+  const measured = layout ? layoutText(resolved, layout) : undefined;
+  let measuredIndex = 0,
+    previousLine: number | undefined,
+    explicitBreak = true;
   // Layout omits explicit newlines. Keep them in atomic placeholder display,
   // matching each non-newline grapheme with its measured visibility instead.
   const glyphs: DisplayGlyph[] = flattenText(resolved).map((glyph) => {
-    const line =
-      glyph.text === "\n" ? undefined : measured?.[measuredIndex++]?.line;
+    const metric =
+      glyph.text === "\n" ? undefined : measured?.glyphs[measuredIndex++];
+    const line = metric?.line;
+    const startsLine =
+      line !== undefined && (line !== previousLine || explicitBreak);
+    const breakBefore =
+      startsLine && previousLine !== undefined && !explicitBreak;
+    if (glyph.text === "\n") explicitBreak = true;
+    else {
+      previousLine = line;
+      explicitBreak = false;
+    }
     return {
       ...glyph,
+      suppressed: metric?.suppressed,
+      breakBefore,
+      padding: startsLine ? measured?.lines[line!]?.padding : 0,
       hidden: line !== undefined && line >= (layout?.maxLines ?? 2),
     };
   });
@@ -65,26 +83,59 @@ function decorations(
       const token = tokens.get(glyph.nodeId) ?? [];
       token.push(glyph);
       tokens.set(glyph.nodeId, token);
-    } else if (
-      glyph.text !== "\n" &&
-      (hidden ||
-        glyph.style.gradient ||
-        glyph.style.rainbow ||
-        glyph.style.underlined ||
-        glyph.style.strikethrough)
-    ) {
-      result.push(
-        Decoration.inline(
-          range.from + glyph.offset,
-          range.from + glyph.offset + glyph.text.length,
-          {
-            class: "mce-effect-glyph mce-native-glyph",
-            style: `color: ${glyph.color}; --mcp-shadow-color: ${shadowColor(glyph.color)};${hidden ? "visibility: hidden" : ""}`,
-            ...(glyph.style.underlined ? { "data-underlined": "" } : {}),
-            ...(glyph.style.strikethrough ? { "data-strikethrough": "" } : {}),
-          },
-        ),
-      );
+    } else {
+      const pos = range.from + glyph.offset;
+      if (glyph.breakBefore)
+        result.push(
+          Decoration.widget(
+            pos,
+            (view) => {
+              const br = view.dom.ownerDocument.createElement("br");
+              br.className = "mce-soft-break";
+              br.setAttribute("aria-hidden", "true");
+              return br;
+            },
+            { side: -2, ignoreSelection: true },
+          ),
+        );
+      if (glyph.padding)
+        result.push(
+          Decoration.widget(
+            pos,
+            (view) => {
+              const pad = view.dom.ownerDocument.createElement("span");
+              pad.className = "mce-layout-padding";
+              pad.style.width = glyph.padding + "px";
+              pad.setAttribute("aria-hidden", "true");
+              return pad;
+            },
+            { side: -1, ignoreSelection: true },
+          ),
+        );
+      if (
+        glyph.text !== "\n" &&
+        (hidden ||
+          glyph.suppressed ||
+          glyph.style.gradient ||
+          glyph.style.rainbow ||
+          glyph.style.underlined ||
+          glyph.style.strikethrough)
+      ) {
+        result.push(
+          Decoration.inline(
+            range.from + glyph.offset,
+            range.from + glyph.offset + glyph.text.length,
+            {
+              class: `mce-effect-glyph mce-native-glyph${glyph.suppressed ? " mce-consumed-space" : ""}`,
+              style: `color: ${glyph.color}; --mcp-shadow-color: ${shadowColor(glyph.color)};${hidden ? "visibility: hidden" : ""}`,
+              ...(glyph.style.underlined ? { "data-underlined": "" } : {}),
+              ...(glyph.style.strikethrough
+                ? { "data-strikethrough": "" }
+                : {}),
+            },
+          ),
+        );
+      }
     }
   }
   for (const [id, effectGlyphs] of tokens) {
@@ -154,7 +205,7 @@ export function inlineEffects(
               glyphs.length && glyphs.every((glyph) => glyph.hidden)
                 ? "hidden"
                 : "";
-            if (source.type !== "placeholder" || !glyphs.length) {
+            if (!glyphs.length) {
               span.textContent =
                 source.type === "placeholder"
                   ? (values[source.name] ?? `{{${source.name}}}`)
@@ -162,12 +213,20 @@ export function inlineEffects(
               return;
             }
             for (const glyph of glyphs) {
+              if (glyph.breakBefore)
+                span.append(span.ownerDocument.createElement("br"));
+              if (glyph.padding) {
+                const pad = span.ownerDocument.createElement("span");
+                pad.className = "mce-layout-padding";
+                pad.style.width = glyph.padding + "px";
+                span.append(pad);
+              }
               if (glyph.text === "\n") {
                 span.append("\n");
                 continue;
               }
               const child = span.ownerDocument.createElement("span");
-              child.className = "mce-effect-glyph mce-native-glyph";
+              child.className = `mce-effect-glyph mce-native-glyph${glyph.suppressed ? " mce-consumed-space" : ""}`;
               child.textContent = glyph.text;
               applyTextStyle(child, glyph.style, glyph.color);
               if (glyph.hidden) child.style.visibility = "hidden";

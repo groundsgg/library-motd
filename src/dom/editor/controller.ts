@@ -21,7 +21,6 @@ import { editorSchema, type StylePath } from "./schema.js";
 import { fromEditorNode, nextId, toEditorNode } from "./mapping.js";
 import { EditorHistory, type HistoryEntry } from "./history.js";
 import { inlineEffects } from "./effects.js";
-import { inlineAlignment } from "./alignment.js";
 import { entryTextWidth } from "../render.js";
 import type {
   EditableField,
@@ -166,20 +165,6 @@ export function createEditorController(
             })
           : undefined,
       ),
-      ...(field === "motd"
-        ? [
-            inlineAlignment(
-              () => textFor(field),
-              resolved,
-              () => ({
-                profile: options.context.profile,
-                width: entryTextWidth(options.context),
-                maxLines: 2,
-                alignments: current.motd.alignments,
-              }),
-            ),
-          ]
-        : []),
       new Plugin({
         filterTransaction(tr, state) {
           return (
