@@ -1,0 +1,232 @@
+{
+  "client": "26.1",
+  "protocol": 775,
+  "date": "2026-10-23",
+  "viewport": [
+    854,
+    480
+  ],
+  "guiScale": 2,
+  "resourcePack": "vanilla default",
+  "clientSha1": "191771837687b766537a8c4607cb6fad79c533a1",
+  "region": [
+    194,
+    96,
+    534,
+    42
+  ],
+  "cases": [
+    {
+      "id": "words",
+      "lines": [
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Hello world Z"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Hello world Z",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "words.png",
+          "sha256": "ad46724ad72b5dddd1b50254f9c2227c035eecfc1f38a43bb8501998e91ec68e",
+          "fullScreenshotSha256": "c2b6af932f9e47f82fd9efb088e971ef06f253c4297e3dfb3a389ccf8b376c4f"
+        }
+      ]
+    },
+    {
+      "id": "overflow-space",
+      "lines": [
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM ABC"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM ABC",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "overflow-space.png",
+          "sha256": "01b62f23a139cd50862e1226d24a6331df93ec76722002fbc5d88dc22a24a4a2",
+          "fullScreenshotSha256": "86d05488f2bb0c626422fd29ea5e9db12488a1465a6fba3d13afc25abdbca855"
+        }
+      ]
+    },
+    {
+      "id": "repeated-spaces",
+      "lines": [
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM   Hello world"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM   Hello world",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "repeated-spaces.png",
+          "sha256": "6aa76cafc606211ad9f48c7505e442b6d97285b207d7cb01e86f1475f82dbf49",
+          "fullScreenshotSha256": "306a28b289f8ef1d3634d1c72468376cc671ecf03e503fb0589d2581f63e2630"
+        }
+      ]
+    },
+    {
+      "id": "leading-spaces",
+      "lines": [
+        "   MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "   MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "leading-spaces.png",
+          "sha256": "024f3fa9fd55de7d85d47d982a74434347fd2dbe8163dbddf6460d3bf023cb2c",
+          "fullScreenshotSha256": "a197a7aca0a1989e8f4e60d59ab21c228b689614071b15eb3d4aefbeffa94d5b"
+        }
+      ]
+    },
+    {
+      "id": "long-word",
+      "lines": [
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "long-word.png",
+          "sha256": "8d1cff7f2af9c32b20b9870eab9e2f9b66e4526b75d3bb49372b1e4554c8f341",
+          "fullScreenshotSha256": "f1e2ebf459a8d7860e53fc64f73316d2316c8fe89aad604cef59ae006f043460"
+        }
+      ]
+    },
+    {
+      "id": "explicit-newlines",
+      "lines": [
+        "First\n\nSecond\n"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "First\n\nSecond\n",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "explicit-newlines.png",
+          "sha256": "916ea44bbff48400219867a2da6313c54c6d944dbf152465ccc25c3c2ea7bf40",
+          "fullScreenshotSha256": "235f9525a88478b019e4735d3bc27ebae0051f9e8efde6f7a5a92ff85f317013"
+        }
+      ]
+    },
+    {
+      "id": "trailing-spaces",
+      "lines": [
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM    Z"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM    Z",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "trailing-spaces.png",
+          "sha256": "415eeaee6fd9788276fe946d8d484cff92b51a670254fdcb5a8cc9dc030166b1",
+          "fullScreenshotSha256": "f15cbde50375464949169e1dbbf18e87de7bcc4cebdc96a137849d77f7ad24f4"
+        }
+      ]
+    },
+    {
+      "id": "bold-words",
+      "lines": [
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Hello world Z"
+      ],
+      "style": {
+        "bold": true
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Hello world Z",
+            "color": "gold",
+            "bold": true
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "bold-words.png",
+          "sha256": "581a8594f06e0e80c467769668a61bb1cc766f9df4d79d8589611c366a3442e2",
+          "fullScreenshotSha256": "cf973229244efca9504fabfde4c6b8b4a88e1e1d5435df7f801aab85f2b08bd5"
+        }
+      ]
+    },
+    {
+      "id": "unicode-boundaries",
+      "lines": [
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM é Ä Ω אבג 😀"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM é Ä Ω אבג 😀",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "unicode-boundaries.png",
+          "sha256": "23537ccfe850cbf8026a85c5386182973d0dab036080a7466d71bede4ddd8281",
+          "fullScreenshotSha256": "e305857a812ae309c9e4523e62cc878ddb396ec26586a0ecc84c324385155c11"
+        }
+      ]
+    }
+  ],
+  "kind": "native-wrapping",
+  "platform": "Linux, software OpenGL"
+}

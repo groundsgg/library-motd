@@ -131,33 +131,47 @@ export function serializeText(
   let chars = flattenText(text);
   if (options.layout) {
     const layout = layoutText(text, options.layout);
-    let index = 0;
-    chars = chars.flatMap((c) => {
-      if (index === 0 || chars[index - 1]?.text === "\n") {
-        const line = chars
-          .slice(0, index)
-          .filter((c) => c.text === "\n").length;
-        const pad = Math.round(
-          (layout.lines[line]?.padding ?? 0) /
-            (options.layout!.profile.font.advances[" "] ?? 4),
-        );
-        index++;
-        return [
-          ...Array.from({ length: pad }, () => ({
-            ...c,
-            text: " ",
-            nodeId: "",
-            opaque: undefined,
-            color: "#ffffff",
-            style: {},
-          })),
-          c,
-        ];
-      }
-      index++;
-      return [c];
-    });
     diagnostics.push(...layout.diagnostics);
+    const atomicLines = new Map<string, number>();
+    for (const g of layout.glyphs) {
+      const owner = owners.get(g.nodeId);
+      if (owner?.type !== "placeholder" && owner?.type !== "opaque") continue;
+      const firstLine = atomicLines.get(g.nodeId) ?? g.line;
+      if (g.suppressed || firstLine !== g.line)
+        return {
+          value: null,
+          diagnostics: [
+            ...diagnostics,
+            diagnostic(
+              "protected-layout",
+              g.nodeId,
+              "A visual break falls inside a protected component or placeholder; export without layout or resolve the value first",
+            ),
+          ],
+        };
+      atomicLines.set(g.nodeId, g.line);
+    }
+    const synthetic = (value: string) => ({
+      text: value,
+      nodeId: "",
+      offset: 0,
+      position: 0,
+      color: "#ffffff",
+      style: {},
+    });
+    const visual = layout.lines.map(() => [] as typeof chars);
+    for (const g of layout.glyphs) if (!g.suppressed) visual[g.line]!.push(g);
+    chars = visual.flatMap((glyphs, line) => {
+      const pad = Math.round(
+        layout.lines[line]!.padding /
+          (options.layout!.profile.font.advances[" "] ?? 4),
+      );
+      return [
+        ...(line ? [synthetic("\n")] : []),
+        ...Array.from({ length: pad }, () => synthetic(" ")),
+        ...glyphs,
+      ];
+    });
   }
   if (target.format === "minimessage") {
     if (!options.layout) return { value: mm(text.nodes), diagnostics };

@@ -8,6 +8,7 @@ export const java1211Profile: ClientProfile = {
   background: "panorama",
   verified: false,
   font: {
+    layout: "java-ltr",
     family: "GroundsMinecraft",
     advances,
     fallbackAdvance: 6,
