@@ -435,12 +435,11 @@ export function createEntry(
       maxLines: 2,
       alignments: state.motd.alignments,
     });
-    Object.assign(motd.style, {
-      width: textWidth + "px",
-      height:
-        Math.min(2, layout.lines.length) * context.profile.font.lineHeight +
-        "px",
-    });
+    motd.style.width = textWidth + "px";
+    motd.style.setProperty(
+      "--mcp-shadow-offset",
+      g.motdShadow ? "1px 1px" : "0px 0px",
+    );
     put("motd", motd, () => {
       renderText(
         motd,
@@ -451,6 +450,12 @@ export function createEntry(
         state.motd.alignments,
       );
     });
+    // Descenders, the native underline and its shadow extend below the 9px line.
+    // Keep the line advance fixed while allowing both lines' ink to remain visible.
+    motd.style.height =
+      Math.min(2, layout.lines.length) * context.profile.font.lineHeight +
+      2 +
+      "px";
     diagnostics.push(...layout.diagnostics);
     playerTipEnabled = !!(compatible && value.players?.sample.length);
     if (!playerTipEnabled) playerHover.hidden = true;

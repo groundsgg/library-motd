@@ -1,0 +1,363 @@
+{
+  "client": "26.2",
+  "protocol": 776,
+  "date": "2026-10-23",
+  "viewport": [
+    854,
+    480
+  ],
+  "guiScale": 2,
+  "resourcePack": "vanilla default",
+  "clientSha1": "2dc72797acbc1b63fc16a11c4ac393605f453754",
+  "region": [
+    194,
+    96,
+    440,
+    42
+  ],
+  "cases": [
+    {
+      "id": "ascii",
+      "lines": [
+        "Grounds MiW.",
+        "0123456789"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "Grounds MiW.",
+            "color": "gold"
+          },
+          {
+            "text": "\n0123456789",
+            "color": "aqua"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "ascii.png",
+          "sha256": "65960ec4b51a23b481364b3e0dad28a0cd945634e71ed8e9910a728903fcc810",
+          "fullScreenshotSha256": "b7038ee01e8a5faa33c7c6b0423cee779a668d83bf61e16bd967fffcbc9dfd83"
+        }
+      ]
+    },
+    {
+      "id": "latin1",
+      "lines": [
+        "ÄÖÜ äöü ß",
+        "éèê àç ñø"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "ÄÖÜ äöü ß",
+            "color": "gold"
+          },
+          {
+            "text": "\néèê àç ñø",
+            "color": "aqua"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "latin1.png",
+          "sha256": "24d36d86a0eabf4b2989611ca10ded920dde44be73a02917e7eda4039bb8587e",
+          "fullScreenshotSha256": "5b2ed645b8bd987e3274ca68844c24e3ea4302292f88020fe9ed579e55bd5531"
+        }
+      ]
+    },
+    {
+      "id": "unicode",
+      "lines": [
+        "Ω Ж 中 😀",
+        "← → ✓ ⚡"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "Ω Ж 中 😀",
+            "color": "gold"
+          },
+          {
+            "text": "\n← → ✓ ⚡",
+            "color": "aqua"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "unicode.png",
+          "sha256": "a7e7028226ab3282e2352c80b07a3038002c16ebcbdb0d287e5a4725b36bb786",
+          "fullScreenshotSha256": "f2f7f0b229f4097f9f28dd91dba038a1f29d272268df4193c1ab189368ab1963"
+        }
+      ]
+    },
+    {
+      "id": "combining",
+      "lines": [
+        "é é",
+        "Ä Ä"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "é é",
+            "color": "gold"
+          },
+          {
+            "text": "\nÄ Ä",
+            "color": "aqua"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "combining.png",
+          "sha256": "85265379b40d907f0cc3e11b50abe634f6552f09c9119edf850add23ec3ee76a",
+          "fullScreenshotSha256": "91bebe2f0c507bb9274956c64f14eed1dab88074f8ffbe8d72271b9f0f2c771f"
+        }
+      ]
+    },
+    {
+      "id": "missing",
+      "lines": [
+        "A􏿿B",
+        "A͸B"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "A􏿿B",
+            "color": "gold"
+          },
+          {
+            "text": "\nA͸B",
+            "color": "aqua"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "missing.png",
+          "sha256": "f5a9fa4fdad5e11ab6feed48eaa42cec35bc45cda6adbf609a9d8bec087084b6",
+          "fullScreenshotSha256": "fb843f4754ecdea2cf4a9109f395b4adfd84b89b6eceeafd2c6b4853c08cd1df"
+        }
+      ]
+    },
+    {
+      "id": "bold",
+      "lines": [
+        "Ab iMW 42",
+        "Ab iMW 42"
+      ],
+      "style": {
+        "bold": true
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "Ab iMW 42",
+            "color": "gold",
+            "bold": true
+          },
+          {
+            "text": "\nAb iMW 42",
+            "color": "aqua",
+            "bold": true
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "bold.png",
+          "sha256": "f01ed1fb9e208708671564dddf07a4abafdb230d33d3f7a686422e08d9868217",
+          "fullScreenshotSha256": "c03120a3fb3c8183b2dbd7832285e078bd569b82d796d9e40944e71b512f44a3"
+        }
+      ]
+    },
+    {
+      "id": "italic",
+      "lines": [
+        "Ab iMW 42",
+        "Ab iMW 42"
+      ],
+      "style": {
+        "italic": true
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "Ab iMW 42",
+            "color": "gold",
+            "italic": true
+          },
+          {
+            "text": "\nAb iMW 42",
+            "color": "aqua",
+            "italic": true
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "italic.png",
+          "sha256": "d34cdc43b590b1712339342a04b5cb1ca7de96c535d8f0f724199252303f730e",
+          "fullScreenshotSha256": "0902e2ddbbeaf06183668c11f2af14013c78bdfbc2225da710df3e2855867203"
+        }
+      ]
+    },
+    {
+      "id": "underlined",
+      "lines": [
+        "Ab iMW 42",
+        "Ab iMW 42"
+      ],
+      "style": {
+        "underlined": true
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "Ab iMW 42",
+            "color": "gold",
+            "underlined": true
+          },
+          {
+            "text": "\nAb iMW 42",
+            "color": "aqua",
+            "underlined": true
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "underlined.png",
+          "sha256": "2441c7a3485354a425d5f8f189bfe07f094cc548926136a469223c18275d1f01",
+          "fullScreenshotSha256": "711292b3072676b0e22deb4586a585582ee87ab11d82908fa12047aac5736281"
+        }
+      ]
+    },
+    {
+      "id": "strikethrough",
+      "lines": [
+        "Ab iMW 42",
+        "Ab iMW 42"
+      ],
+      "style": {
+        "strikethrough": true
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "Ab iMW 42",
+            "color": "gold",
+            "strikethrough": true
+          },
+          {
+            "text": "\nAb iMW 42",
+            "color": "aqua",
+            "strikethrough": true
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "strikethrough.png",
+          "sha256": "b568112b55c1b0d9eb4c79f3ae5da8d1a891094d2477b4c97bdfe4a75c05e84a",
+          "fullScreenshotSha256": "f86f98594cf0ecd895ab946f437219e6b67919cb29c1c36bd7623ae017a4d3c5"
+        }
+      ]
+    },
+    {
+      "id": "obfuscated",
+      "lines": [
+        "Ab iMW 42",
+        "Ab iMW 42"
+      ],
+      "style": {
+        "obfuscated": true
+      },
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "Ab iMW 42",
+            "color": "gold",
+            "obfuscated": true
+          },
+          {
+            "text": "\nAb iMW 42",
+            "color": "aqua",
+            "obfuscated": true
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "obfuscated-0.png",
+          "sha256": "8470894d38d7998d8c93c8558d4a2f190c6ed2171ae99e3fbbde3db8909cbb2e",
+          "fullScreenshotSha256": "d53dabdb4b330161cc4f30d4615d7e3eb1a8c2bee21e48d239a444b4e92e6cd1"
+        },
+        {
+          "file": "obfuscated-1.png",
+          "sha256": "866156a4f4ae1b1d65ad8fd07bfcb16f89481ac8bb05c6c5eadbdfdf12806f24",
+          "fullScreenshotSha256": "1709851368de83a9ffb70d2f83e787dd53fbcf522d786286d048425220d0382d"
+        },
+        {
+          "file": "obfuscated-2.png",
+          "sha256": "65921364b8e65abd29b1c9e3b4edd81a875553b53481e44390540ab5339be938",
+          "fullScreenshotSha256": "0a45456860a71744ee535888004c8d87a922291d6e1d5ed6c9fe6a5a01a831b1"
+        },
+        {
+          "file": "obfuscated-3.png",
+          "sha256": "7449acd56f86403cdfed9e8289a09f1304ee87d89ec6fec5054481d513f3b04d",
+          "fullScreenshotSha256": "9d38125aeaf7a934493d4f7ca1a543196aa3636aef2e398627578e25603fa902"
+        }
+      ]
+    },
+    {
+      "id": "shadow",
+      "lines": [
+        "SHADOW Light",
+        "0123456789"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "SHADOW Light",
+            "color": "gold"
+          },
+          {
+            "text": "\n0123456789",
+            "color": "aqua"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "shadow.png",
+          "sha256": "c66a9bb39232f5d516383fa23157f5603c2670dd5c876af95664b23727c7c3bd",
+          "fullScreenshotSha256": "2068c18072d171fefd0ff9b079843e768847d39a9b918b37fe8d05a405964854"
+        }
+      ]
+    }
+  ]
+}

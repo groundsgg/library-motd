@@ -154,7 +154,18 @@ export function createEditorController(
     resolved: Readonly<Record<string, string>>,
   ) {
     return [
-      inlineEffects(() => textFor(field), resolved),
+      inlineEffects(
+        () => textFor(field),
+        resolved,
+        field === "motd"
+          ? () => ({
+              profile: options.context.profile,
+              width: entryTextWidth(options.context),
+              maxLines: 2,
+              alignments: current.motd.alignments,
+            })
+          : undefined,
+      ),
       ...(field === "motd"
         ? [
             inlineAlignment(
@@ -278,6 +289,10 @@ export function createEditorController(
           "aria-multiline": String(field !== "version"),
         },
       });
+      if (field === "motd")
+        view.updateState(
+          view.state.apply(view.state.tr.setMeta("motd-layout", true)),
+        );
       viewGenerations.set(field, generation);
       rejectedCompositions.delete(field);
     }

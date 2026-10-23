@@ -31,18 +31,19 @@ export function layoutText(
     }
     const normalized = c.text.normalize("NFC"),
       font = options.profile.font;
-    if (!font.supported(normalized))
+    if (!font.supported(c.text))
       diagnostics.push(
         diagnostic(
           "missing-glyph",
           c.nodeId,
-          `No glyph for ${c.text}`,
+          `No glyph for ${c.text} in this font profile; fallback rendering and width are approximate`,
           "warning",
         ),
       );
     const advance =
-      (font.advances[normalized] ?? font.fallbackAdvance) +
-      (c.style.bold && c.text !== " " ? font.boldOffset : 0);
+      (font.advances[c.text] ??
+        font.advances[normalized] ??
+        font.fallbackAdvance) + (c.style.bold ? font.boldOffset : 0);
     if (x + advance > options.width && x > 0) {
       diagnostics.push(
         diagnostic(
