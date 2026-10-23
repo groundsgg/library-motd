@@ -295,6 +295,13 @@
 .mce-consumed-space {
   display: none;
 }
+.mce-control-fallback {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  white-space: pre;
+  height: 9px;
+}
 .mce-inline .ProseMirror p {
   font-size: inherit;
   color: inherit;

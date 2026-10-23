@@ -15,6 +15,7 @@ interface DisplayGlyph extends StyledChar {
   suppressed?: boolean;
   breakBefore?: boolean;
   padding?: number;
+  advance?: number;
 }
 
 function decorations(
@@ -68,6 +69,7 @@ function decorations(
     return {
       ...glyph,
       suppressed: metric?.suppressed,
+      advance: metric?.advance,
       breakBefore,
       padding: startsLine ? measured?.lines[line!]?.padding : 0,
       hidden: line !== undefined && line >= (layout?.maxLines ?? 2),
@@ -85,6 +87,7 @@ function decorations(
       tokens.set(glyph.nodeId, token);
     } else {
       const pos = range.from + glyph.offset;
+      const carriageReturn = glyph.text === "\r" && !!layout;
       if (glyph.breakBefore)
         result.push(
           Decoration.widget(
@@ -112,9 +115,28 @@ function decorations(
             { side: -1, ignoreSelection: true },
           ),
         );
+      if (carriageReturn)
+        result.push(
+          Decoration.widget(
+            pos,
+            (view) => {
+              const fallback = view.dom.ownerDocument.createElement("span");
+              fallback.className =
+                "mce-effect-glyph mce-native-glyph mce-control-fallback";
+              fallback.textContent = "?";
+              fallback.setAttribute("aria-hidden", "true");
+              applyTextStyle(fallback, glyph.style, glyph.color);
+              fallback.style.width = glyph.advance + "px";
+              if (hidden) fallback.style.visibility = "hidden";
+              return fallback;
+            },
+            { side: -1, ignoreSelection: true },
+          ),
+        );
       if (
         glyph.text !== "\n" &&
         (hidden ||
+          carriageReturn ||
           glyph.suppressed ||
           glyph.style.gradient ||
           glyph.style.rainbow ||
@@ -126,7 +148,7 @@ function decorations(
             range.from + glyph.offset,
             range.from + glyph.offset + glyph.text.length,
             {
-              class: `mce-effect-glyph mce-native-glyph${glyph.suppressed ? " mce-consumed-space" : ""}`,
+              class: `mce-effect-glyph mce-native-glyph${glyph.suppressed || carriageReturn ? " mce-consumed-space" : ""}`,
               style: `color: ${glyph.color}; --mcp-shadow-color: ${shadowColor(glyph.color)};${hidden ? "visibility: hidden" : ""}`,
               ...(glyph.style.underlined ? { "data-underlined": "" } : {}),
               ...(glyph.style.strikethrough
@@ -227,7 +249,7 @@ export function inlineEffects(
               }
               const child = span.ownerDocument.createElement("span");
               child.className = `mce-effect-glyph mce-native-glyph${glyph.suppressed ? " mce-consumed-space" : ""}`;
-              child.textContent = glyph.text;
+              child.textContent = glyph.text === "\r" ? "?" : glyph.text;
               applyTextStyle(child, glyph.style, glyph.color);
               if (glyph.hidden) child.style.visibility = "hidden";
               span.append(child);

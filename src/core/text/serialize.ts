@@ -132,6 +132,35 @@ export function serializeText(
   if (options.layout) {
     const layout = layoutText(text, options.layout);
     diagnostics.push(...layout.diagnostics);
+    const atomicBoundaries = new Map<
+      string,
+      { count: number; newline: boolean }
+    >();
+    for (const c of chars) {
+      const boundary = atomicBoundaries.get(c.nodeId) ?? {
+        count: 0,
+        newline: false,
+      };
+      boundary.count++;
+      boundary.newline ||= c.text === "\n";
+      atomicBoundaries.set(c.nodeId, boundary);
+    }
+    for (const owner of owners.values()) {
+      if (owner.type !== "opaque" && owner.type !== "placeholder") continue;
+      const boundary = atomicBoundaries.get(owner.id);
+      if (!boundary?.count || boundary.newline)
+        return {
+          value: null,
+          diagnostics: [
+            ...diagnostics,
+            diagnostic(
+              "protected-layout",
+              owner.id,
+              "Empty or multiline protected components cannot be materialized without changing source; export without layout or resolve the value first",
+            ),
+          ],
+        };
+    }
     const atomicLines = new Map<string, number>();
     for (const g of layout.glyphs) {
       const owner = owners.get(g.nodeId);

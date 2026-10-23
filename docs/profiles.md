@@ -64,15 +64,30 @@ eight supported cases have foreground-mask regressions for viewer and inline
 editor; Windows checks the same foreground coverage distinction documented above.
 The Unicode case is evidence of the fallback boundary, not a parity assertion.
 
-Source graphemes remain atomic. Explicitly supported custom cluster metrics take
+Source graphemes remain atomic, except that CRLF is split into the preserved CR
+control and LF line boundary, matching the native client's distinction. Explicitly supported custom cluster metrics take
 precedence over normalization estimates. LTR grapheme metrics do not implement
 ICU contextual shaping or bidi ordering: input requiring those receives
 `unsupported-text-layout`, alongside any `missing-glyph` diagnostics. Text and
 direction-control characters are preserved. This capability does not certify
-native Arabic, Hebrew, Indic, Thai or other complex-script rendering.
+native Arabic, Hebrew, Indic, Thai or other complex-script rendering. The declared
+script coverage permits Latin, Greek, Cyrillic, Han, Hiragana, Katakana, Hangul,
+Common and Inherited graphemes; other scripts and every Unicode `Bidi_Control`
+receive the layout diagnostic even when custom glyph metrics accept them.
+
+An additional independent 26.3 session captured CRLF, LF and bare CR in
+`native-wrapping-controls/26.3/`. It confirms that CR has a visible native control
+glyph and LF breaks the line. The bundled DOM font cannot reproduce that control
+glyph: CR uses a `?` display fallback and `missing-glyph` warning while source and
+clipboard retain the original character. These three captures document the
+unsupported glyph boundary; they do not certify the fallback as native ink.
 
 Suppressed wrap delimiters remain in `LayoutResult.glyphs` with
 `suppressed: true` and zero displayed advance. They are not emitted as viewer ink.
 Inline soft breaks and quantized padding are display decorations: they do not
 insert source newlines, split PM atoms or add undo steps. Imported lines beyond
 the first two stay in the document with `hidden-lines` diagnostics.
+
+Explicit layout export rejects empty or multiline protected fallbacks with
+`protected-layout`, rather than dropping their raw component or duplicating its
+internal newline. Ordinary same-format export still preserves the raw source.

@@ -123,16 +123,23 @@ export function flattenText(document: TextDocument): StyledChar[] {
               ? `{{${node.name}}}`
               : (node.fallback ?? node.raw);
       for (const part of segmenter.segment(value)) {
-        out.push({
-          text: part.segment,
-          color: inherited.color ?? "#aaaaaa",
-          style: { ...inherited },
-          nodeId: node.id,
-          offset: part.index,
-          position,
-          ...(node.type === "opaque" ? { opaque: node } : {}),
-        });
-        position += part.segment.length;
+        // CRLF is one Unicode grapheme, but Java treats CR as a control glyph
+        // and LF as the hard line boundary. Preserve both source offsets.
+        const pieces = part.segment === "\r\n" ? ["\r", "\n"] : [part.segment];
+        let offset = part.index;
+        for (const piece of pieces) {
+          out.push({
+            text: piece,
+            color: inherited.color ?? "#aaaaaa",
+            style: { ...inherited },
+            nodeId: node.id,
+            offset,
+            position,
+            ...(node.type === "opaque" ? { opaque: node } : {}),
+          });
+          position += piece.length;
+          offset += piece.length;
+        }
       }
     }
     return out;

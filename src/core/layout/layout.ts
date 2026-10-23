@@ -47,7 +47,7 @@ export function layoutText(
   if (
     native &&
     chars.some((c) =>
-      /[\p{Script=Hebrew}\p{Script=Arabic}\p{Script=Syriac}\p{Script=Thaana}\p{Script=Nko}\p{Script=Adlam}\p{Script=Devanagari}\p{Script=Bengali}\p{Script=Tamil}\p{Script=Thai}\p{Script=Khmer}\p{Script=Myanmar}\u202a-\u202e\u2066-\u2069]/u.test(
+      /\p{Bidi_Control}|[^\p{Script=Latin}\p{Script=Greek}\p{Script=Cyrillic}\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Common}\p{Script=Inherited}]/u.test(
         c.text,
       ),
     )
@@ -56,7 +56,7 @@ export function layoutText(
       diagnostic(
         "unsupported-text-layout",
         "motd",
-        "This profile supports LTR grapheme layout; contextual shaping and bidirectional ordering are approximate",
+        "Text is outside this profile's LTR script coverage; contextual shaping and bidirectional ordering are approximate",
         "warning",
       ),
     );
@@ -64,12 +64,14 @@ export function layoutText(
     if (c.text === "\n") return 0;
     const normalized = c.text.normalize("NFC"),
       font = options.profile.font;
-    if (!font.supported(c.text))
+    if (c.text === "\r" || !font.supported(c.text))
       diagnostics.push(
         diagnostic(
           "missing-glyph",
           c.nodeId,
-          `No glyph for ${c.text} in this font profile; fallback rendering and width are approximate`,
+          c.text === "\r"
+            ? "Carriage return is displayed as ?; its native control glyph is outside the DOM font capability"
+            : `No glyph for ${c.text} in this font profile; fallback rendering and width are approximate`,
           "warning",
         ),
       );

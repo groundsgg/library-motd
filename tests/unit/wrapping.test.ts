@@ -183,6 +183,79 @@ it("does not generate invalid padding for a zero-advance custom space", () => {
   ).toBe(true);
 });
 
+it("keeps a CR control fallback and LF boundary separate without losing Windows source", () => {
+  const doc = core.parseText(JSON.stringify("M\r\nM"), "json").value!;
+  expect(
+    core.flattenText(doc).map((g) => [g.text, g.position, g.offset]),
+  ).toEqual([
+    ["M", 0, 0],
+    ["\r", 1, 1],
+    ["\n", 2, 2],
+    ["M", 3, 3],
+  ]);
+  const result = core.layoutText(doc, {
+    profile: core.java263Profile,
+    width: 267,
+  });
+  expect(result.lines.map((line) => line.width)).toEqual([12, 6]);
+  expect(result.glyphs.map((g) => g.line)).toEqual([0, 0, 1]);
+  expect(result.diagnostics.some((d) => d.code === "missing-glyph")).toBe(true);
+  const encoded = core.serializeText(
+    doc,
+    { format: "json" },
+    { layout: { profile: core.java263Profile, width: 267 } },
+  );
+  expect(
+    core
+      .flattenText(core.parseText(encoded.value!, "json").value!)
+      .map((g) => g.text)
+      .join(""),
+  ).toBe("M\r\nM");
+});
+
+it.each(["ગુજરાતી", "తెలుగు", "සිංහල", "a\u200fb", "a\u200eb", "a\u061cb"])(
+  "does not certify custom metrics as contextual layout support for %j",
+  (source) => {
+    const profile = {
+      ...core.java263Profile,
+      font: { ...core.java263Profile.font, supported: () => true },
+    };
+    const result = core.layoutText(text(source), { profile, width: 267 });
+    expect(
+      result.diagnostics.some((d) => d.code === "unsupported-text-layout"),
+    ).toBe(true);
+  },
+);
+
+it.each(["M\n", "\n", "", "M\r\nM"])(
+  "rejects protected layout for %j rather than dropping raw or duplicating boundaries",
+  (fallback) => {
+    const raw = "<custom>" + fallback + "</custom>";
+    const doc: core.TextDocument = {
+      revision: 0,
+      nodes: [
+        {
+          id: "protected",
+          type: "opaque",
+          format: "minimessage",
+          raw,
+          fallback,
+        },
+      ],
+    };
+    const result = core.serializeText(
+      doc,
+      { format: "minimessage" },
+      { layout: { profile: core.java263Profile, width: 267 } },
+    );
+    expect(result.value).toBeNull();
+    expect(result.diagnostics.some((d) => d.code === "protected-layout")).toBe(
+      true,
+    );
+    expect(core.serializeText(doc, { format: "minimessage" }).value).toBe(raw);
+  },
+);
+
 it.each(["json", "minimessage", "legacy-section"] as const)(
   "materializes visual line breaks and per-line alignment for %s export",
   (format) => {

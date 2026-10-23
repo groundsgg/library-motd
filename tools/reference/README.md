@@ -56,3 +56,8 @@ The Java 26.3 `StringSplitter.LineBreakFinder` bytecode independently confirms
 that U+0020 is recorded before checking overflow, a single delimiter is consumed,
 and the first nonzero-width character is accepted even when wider than the line.
 The reference cases exercise those rules in all eight independently run clients.
+
+The additional `native-wrapping-controls/26.3/` session used the same isolated
+procedure for `M\r\nM`, `M\nM` and `M\rM`. Its manifest records the source JSON,
+client hash and crop checksums. It establishes the CR control/LF boundary rather
+than certifying browser fallback ink; see the documented `?` rendering limit.

@@ -222,6 +222,8 @@ for (const variant of [
   "center-right",
   "token-newlines",
   "resize",
+  "crlf-json",
+  "crlf-token",
 ])
   test(`shared visual lines handle ${variant} without source changes`, async ({
     page,
@@ -232,16 +234,21 @@ for (const variant of [
       window.context = {
         ...window.context,
         profile: window.api.java263Profile,
-        values: { long: "M".repeat(38) + " Hello\nM" },
+        values: {
+          long:
+            variant === "crlf-token" ? "M\r\nM" : "M".repeat(38) + " Hello\nM",
+        },
       };
       window.doc = window.api.createDocument(
         window.api.parseText(
-          variant === "single-leading-space"
-            ? "<gold> " + "M".repeat(45)
-            : variant === "token-newlines"
-              ? "<gold>{{long}}"
-              : "<gold>" + "M".repeat(38) + " Hello world Z",
-          "minimessage",
+          variant === "crlf-json"
+            ? JSON.stringify({ text: "M\r\nM", color: "gold" })
+            : variant === "single-leading-space"
+              ? "<gold> " + "M".repeat(45)
+              : variant === "token-newlines" || variant === "crlf-token"
+                ? "<gold>{{long}}"
+                : "<gold>" + "M".repeat(38) + " Hello world Z",
+          variant === "crlf-json" ? "json" : "minimessage",
         ).value!,
       );
       if (variant === "center-right")
