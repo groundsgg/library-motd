@@ -65,7 +65,9 @@ test("pinned hover underlines follow the larger tool font", async ({
   page,
 }) => {
   await page.goto("/tests/browser/host.html");
-  await page.waitForFunction(() => !!window.editor);
+  await page.waitForFunction(
+    () => typeof window.editor?.execute === "function",
+  );
   await page.evaluate(() => {
     window.doc.hover = {
       mode: "custom",
@@ -98,7 +100,9 @@ for (const wrapping of [false, true])
     page,
   }) => {
     await page.goto("/tests/browser/host.html");
-    await page.waitForFunction(() => !!window.editor);
+    await page.waitForFunction(
+      () => typeof window.editor?.execute === "function",
+    );
     await page.evaluate((wrapping) => {
       window.context = {
         ...window.context,
@@ -129,7 +133,9 @@ test("inline gradients use the same quarter-brightness shadows as the viewer", a
   page,
 }) => {
   await page.goto("/tests/browser/host.html");
-  await page.waitForFunction(() => !!window.editor);
+  await page.waitForFunction(
+    () => typeof window.editor?.execute === "function",
+  );
   await page.evaluate(() => {
     window.context = { ...window.context, profile: window.api.java263Profile };
     window.setEditorOptions({ context: window.context });
@@ -162,7 +168,9 @@ test("changing the viewport recomputes the editor's visible glyphs", async ({
   page,
 }) => {
   await page.goto("/tests/browser/host.html");
-  await page.waitForFunction(() => !!window.editor);
+  await page.waitForFunction(
+    () => typeof window.editor?.execute === "function",
+  );
   await page.evaluate(() => {
     window.editor.execute({
       type: "replace-source",
@@ -190,7 +198,9 @@ for (const atom of [false, true])
     page,
   }) => {
     await page.goto("/tests/browser/host.html");
-    await page.waitForFunction(() => !!window.editor);
+    await page.waitForFunction(
+      () => typeof window.editor?.execute === "function",
+    );
     await page.evaluate((atom) => {
       window.context = {
         ...window.context,
@@ -243,7 +253,9 @@ test("multiline placeholder values keep line breaks inside one atom", async ({
   page,
 }) => {
   await page.goto("/tests/browser/host.html");
-  await page.waitForFunction(() => !!window.editor);
+  await page.waitForFunction(
+    () => typeof window.editor?.execute === "function",
+  );
   await page.evaluate(() => {
     window.context = {
       ...window.context,
@@ -277,7 +289,9 @@ for (const bold of [false, true])
   }) => {
     await page.clock.install();
     await page.goto("/tests/browser/host.html");
-    await page.waitForFunction(() => !!window.editor);
+    await page.waitForFunction(
+      () => typeof window.editor?.execute === "function",
+    );
     await page.evaluate((bold) => {
       window.editor.execute({
         type: "replace-source",
@@ -336,7 +350,9 @@ for (const [version, profile] of versions) {
       page,
     }) => {
       await page.goto("/tests/browser/host.html");
-      await page.waitForFunction(() => !!window.editor);
+      await page.waitForFunction(
+        () => typeof window.editor?.execute === "function",
+      );
       await page.evaluate(
         ({ profile, description }) => {
           const text = window.api.parseText(

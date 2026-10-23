@@ -33,7 +33,9 @@ for (const version of versions) {
       page,
     }) => {
       await page.goto("/tests/browser/host.html");
-      await page.waitForFunction(() => !!window.editor);
+      await page.waitForFunction(
+        () => typeof window.editor?.execute === "function",
+      );
       await page.evaluate(
         ({ version, description }) => {
           window.doc = window.api.createDocument(
@@ -79,7 +81,9 @@ test("word breaks preserve editable spaces, selection, formatting and undo", asy
   page,
 }) => {
   await page.goto("/tests/browser/host.html");
-  await page.waitForFunction(() => !!window.editor);
+  await page.waitForFunction(
+    () => typeof window.editor?.execute === "function",
+  );
   await page.evaluate(() => {
     window.editor.execute({
       type: "replace-source",
@@ -140,7 +144,9 @@ test("protected JSON fallbacks wrap visually without replacing the source compon
   page,
 }) => {
   await page.goto("/tests/browser/host.html");
-  await page.waitForFunction(() => !!window.editor);
+  await page.waitForFunction(
+    () => typeof window.editor?.execute === "function",
+  );
   await page.evaluate(() => {
     window.context = {
       ...window.context,
@@ -187,7 +193,9 @@ test("resolved atomic values use native visual breaks and retain one source toke
   page,
 }) => {
   await page.goto("/tests/browser/host.html");
-  await page.waitForFunction(() => !!window.editor);
+  await page.waitForFunction(
+    () => typeof window.editor?.execute === "function",
+  );
   await page.evaluate(() => {
     window.context = {
       ...window.context,
@@ -229,7 +237,9 @@ for (const variant of [
     page,
   }) => {
     await page.goto("/tests/browser/host.html");
-    await page.waitForFunction(() => !!window.editor);
+    await page.waitForFunction(
+      () => typeof window.editor?.execute === "function",
+    );
     await page.evaluate((variant) => {
       window.context = {
         ...window.context,
