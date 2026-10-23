@@ -1,6 +1,6 @@
 # Native Java Wrapping Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Match measured Java line breaking in viewer, editor and layout export.
 **Architecture:** Keep source graphemes in the shared layout; mark consumed space
@@ -32,31 +32,32 @@ tests/unit/wrapping.test.ts, tests/fixtures/client/native-wrapping/.
 **Interfaces:** `layoutText(text, options): LayoutResult`; new optional
 `Glyph.suppressed` identifies a retained source delimiter without displayed ink.
 
-- [ ] Capture independent native wrapping cases and record literal reference lines.
-- [ ] Write unit cases for word boundaries, repeated/leading spaces, exact width,
+- [x] Capture independent native wrapping cases and record literal reference lines.
+- [x] Write unit cases for word boundaries, repeated/leading spaces, exact width,
       long words, explicit newlines, style boundaries, custom graphemes, unsupported
       bidi/shaping, and hidden source lines. Observe expected failures.
-- [ ] Implement Java wrapping for `font.layout: "java-ltr"`, suppression metadata,
+- [x] Implement Java wrapping for `font.layout: "java-ltr"`, suppression metadata,
       and capability diagnostics; keep custom legacy wrapping unchanged.
-- [ ] Test and implement explicit layout export using visual line breaks/padding,
+- [x] Test and implement explicit layout export using visual line breaks/padding,
       with ordinary source preservation and protected-token safeguards.
-- [ ] Run `npm test`; expect all unit tests green. Commit conventional fix.
+- [x] Run `npm test`; expect all unit tests green. Commit conventional fix.
 
 ### Task 2: Viewer and inline editing use measured lines
 
 **Files:** src/dom/render.ts, src/dom/editor/effects.ts,
-src/dom/editor/alignment.ts, src/dom/editor/controller.ts, src/dom/styles.css,
-tests/browser/native-wrapping.spec.ts.
+src/dom/editor/alignment.ts (remove), src/dom/editor/controller.ts, src/dom/styles.css,
+tests/browser/native-wrapping.spec.ts, tests/browser/comparison.spec.ts,
+src/core/status/evaluate.ts, src/dom/entry.ts, src/dom/comparison.ts.
 **Interfaces:** Consume `Glyph.line`, `x`, `suppressed`, source ranges and
 `LayoutResult.lines[].padding`; preserve existing editor commands and PM nodes.
 
-- [ ] Add browser references for both hosts and atomic values, alignment, resize,
+- [x] Add browser references for both hosts and atomic values, alignment, resize,
       retained delimiters/newlines, selection, undo and formatting. Observe failures.
-- [ ] Skip suppressed ink in viewer and use display decorations for deterministic
+- [x] Skip suppressed ink in viewer and use display decorations for deterministic
       inline soft breaks and padding, with composition guards and atomic node views.
-- [ ] Run targeted tests in Chromium/Firefox/WebKit and Windows Chromium when
+- [x] Run targeted tests in Chromium/Firefox/WebKit and Windows Chromium when
       applicable; expect all new reference and editing regressions green.
-- [ ] Run full unit suite and commit conventional fix.
+- [x] Run full unit suite and commit conventional fix.
 
 ### Task 3: Documentation, package verification and PR
 
