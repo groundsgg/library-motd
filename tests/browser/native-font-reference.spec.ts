@@ -3,6 +3,47 @@ import { readFileSync } from "node:fs";
 import { PNG } from "pngjs";
 import { openEntryTool } from "./editor-actions.js";
 
+test.use({ screenshot: "only-on-failure" });
+const windows = process.platform === "win32";
+// DirectWrite softens the horizontal edges even at integer GUI scale. Compare
+// occupied foreground cells separately from that platform-specific fringe.
+function coverage(image: PNG, color: number[]) {
+  return Array.from({ length: image.width * image.height }, (_, i) => {
+    const [r, g, b] = image.data.subarray(i * 4, i * 4 + 3);
+    return color[0] === 255
+      ? Number(r! > 200 && g! > 130 && b! < 40)
+      : color[2] === 85
+        ? Number(g! > 200 && r! < 110 && b! < 110)
+        : Number(g! > 200 && b! > 200 && r! < 110);
+  });
+}
+const shadowAnchors: Record<string, number[][]> = {
+  ascii: [
+    [65, 13],
+    [49, 30],
+  ],
+  bold: [
+    [28, 14],
+    [28, 32],
+  ],
+  latin1: [
+    [81, 12],
+    [24, 31],
+  ],
+  underlined: [
+    [91, 16],
+    [21, 38],
+  ],
+  strikethrough: [
+    [23, 12],
+    [23, 30],
+  ],
+  shadow: [
+    [113, 12],
+    [49, 30],
+  ],
+};
+
 const versions = [
   ["1.20.4", "java1204Profile"],
   ["1.21.1", "java1211Profile"],
@@ -44,8 +85,8 @@ test("pinned hover underlines follow the larger tool font", async ({
   );
   const bottom = (color: number[]) =>
     Math.max(
-      ...mask(im, color).flatMap((value, index) =>
-        value ? [Math.floor(index / im.width)] : [],
+      ...(windows ? coverage(im, color) : mask(im, color)).flatMap(
+        (value, index) => (value ? [Math.floor(index / im.width)] : []),
       ),
     );
   expect(bottom([255, 170, 0])).toBeGreaterThan(0);
@@ -326,18 +367,33 @@ for (const [version, profile] of versions) {
         );
         const crop = new PNG({ width: 440, height: 42 });
         PNG.bitblt(row, crop, 68, 22, 440, 42, 0, 0);
-        for (const color of [
+        for (const [colorIndex, color] of [
           [255, 170, 0],
           [85, 255, 255],
           [63, 42, 0],
           [21, 63, 63],
-        ]) {
+        ].entries()) {
           const reference = mask(native, color);
+          if (windows && colorIndex >= 2 && reference.some(Boolean)) {
+            const [x, y] = shadowAnchors[id]![colorIndex - 2]!;
+            const offset = (y! * native.width + x!) * 4;
+            expect([...native.data.subarray(offset, offset + 3)]).toEqual(
+              color,
+            );
+            expect
+              .soft(
+                [...crop.data.subarray(offset, offset + 3)],
+                `${host} shadow anchor`,
+              )
+              .toEqual(color);
+            continue;
+          }
           expect
             .soft(
-              mask(crop, color).filter(
-                (value, index) => value !== reference[index],
-              ).length,
+              (windows && colorIndex < 2
+                ? coverage(crop, color)
+                : mask(crop, color)
+              ).filter((value, index) => value !== reference[index]).length,
               `${host} ${color} mismatched pixels`,
             )
             .toBe(0);
