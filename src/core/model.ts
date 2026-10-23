@@ -111,11 +111,16 @@ export interface ClientProfile {
     rowTop?: number;
     titleTop?: number;
     listTop?: number;
+    /** Legacy list-edge fade height in logical GUI pixels. */
+    listFade?: number;
+    selectionCenterRounding?: "floor";
     footerHeight?: number;
     footerBottom?: number;
     iconSize: number;
     iconGap: number;
     rightInset: number;
+    /** Logical gap between status text and the right edge of entry content. */
+    statusRight?: number;
     lineHeight: number;
   };
 }

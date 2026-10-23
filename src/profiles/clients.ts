@@ -8,6 +8,13 @@ export const java1204Profile: ClientProfile = {
   clientVersion: "1.20.4",
   protocol: 765,
   background: "dirt",
+  geometry: {
+    ...java1211Profile.geometry,
+    statusRight: 17,
+    listTop: 32,
+    listFade: 4,
+    selectionCenterRounding: "floor",
+  },
 };
 export const java12111Profile: ClientProfile = {
   ...java1211Profile,
@@ -21,7 +28,7 @@ export const java12111Profile: ClientProfile = {
     titleTop: 11,
     listTop: 32,
     footerHeight: 59,
-    footerBottom: 7,
+    footerBottom: 8,
   },
 };
 /** Protocols read from the official client jars' version.json, 2026-10-21. */
