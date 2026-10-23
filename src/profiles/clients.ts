@@ -29,6 +29,7 @@ export const java12111Profile: ClientProfile = {
     listTop: 32,
     footerHeight: 59,
     footerBottom: 8,
+    motdShadow: true,
   },
 };
 /** Protocols read from the official client jars' version.json, 2026-10-21. */

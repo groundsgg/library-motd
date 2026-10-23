@@ -44,6 +44,18 @@ export const element = <K extends keyof HTMLElementTagNameMap>(
   if (text !== undefined) e.textContent = text;
   return e;
 };
+export function shadowColor(color: string): string {
+  return (
+    "#" +
+    [1, 3, 5]
+      .map((p) =>
+        Math.floor(parseInt(color.slice(p, p + 2), 16) / 4)
+          .toString(16)
+          .padStart(2, "0"),
+      )
+      .join("")
+  );
+}
 export function applyTextStyle(
   span: HTMLElement,
   style: TextStyle,
@@ -51,15 +63,13 @@ export function applyTextStyle(
 ): void {
   const fg = color ?? style.color ?? "#aaaaaa";
   span.style.color = fg;
-  span.style.textShadow = "none";
+  span.style.setProperty("--mcp-shadow-color", shadowColor(fg));
+  span.style.textShadow =
+    "var(--mcp-shadow-offset, 0px 0px) var(--mcp-shadow-color)";
   span.style.fontWeight = style.bold ? "700" : "400";
   span.style.fontStyle = style.italic ? "italic" : "normal";
-  span.style.textDecoration = [
-    style.underlined ? "underline" : "",
-    style.strikethrough ? "line-through" : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  span.toggleAttribute("data-underlined", !!style.underlined);
+  span.toggleAttribute("data-strikethrough", !!style.strikethrough);
 }
 export function renderText(
   root: HTMLElement,

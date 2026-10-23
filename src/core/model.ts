@@ -121,6 +121,8 @@ export interface ClientProfile {
     rightInset: number;
     /** Logical gap between status text and the right edge of entry content. */
     statusRight?: number;
+    /** Draw a one-pixel, quarter-brightness MOTD shadow (modern Java menu). */
+    motdShadow?: boolean;
     lineHeight: number;
   };
 }

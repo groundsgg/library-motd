@@ -1,17 +1,24 @@
 import type { Node as PMNode } from "prosemirror-model";
 import { Plugin, PluginKey } from "prosemirror-state";
 import { Decoration, DecorationSet, type NodeView } from "prosemirror-view";
-import type { TextDocument } from "../../core/model.js";
+import type { LayoutOptions, TextDocument } from "../../core/model.js";
+import { layoutText } from "../../core/layout/layout.js";
 import { flattenText, type StyledChar } from "../../core/text/colors.js";
 import { resolveText } from "../../core/text/placeholders.js";
 import { applyTextStyle } from "../preview.js";
+import { shadowColor } from "../render.js";
 import type { StylePath } from "./schema.js";
 import { fromEditorNode, type EditorSourceRange } from "./mapping.js";
+
+interface DisplayGlyph extends StyledChar {
+  hidden: boolean;
+}
 
 function decorations(
   pm: PMNode,
   previous: TextDocument,
   values: Readonly<Record<string, string>>,
+  layout?: LayoutOptions,
 ): DecorationSet {
   let hasEffects = false;
   pm.descendants((node) => {
@@ -20,32 +27,62 @@ function decorations(
         ? node.marks.find((mark) => mark.type.name === "format")?.attrs.path
         : node.attrs.path
     ) as StylePath[] | undefined;
-    if (path?.some((part) => part.style.gradient || part.style.rainbow))
+    if (
+      path?.some(
+        (part) =>
+          part.style.gradient ||
+          part.style.rainbow ||
+          part.style.underlined ||
+          part.style.strikethrough,
+      )
+    )
       hasEffects = true;
     return !hasEffects;
   });
-  if (!hasEffects) return DecorationSet.empty;
+  if (!hasEffects && !layout) return DecorationSet.empty;
   const positions = new Map<string, EditorSourceRange>();
   const text = fromEditorNode(pm, previous, positions);
-  const glyphs = flattenText(resolveText(text, values).value!);
+  const resolved = resolveText(text, values).value!;
+  const measured = layout ? layoutText(resolved, layout).glyphs : undefined;
+  let measuredIndex = 0;
+  // Layout omits explicit newlines. Keep them in atomic placeholder display,
+  // matching each non-newline grapheme with its measured visibility instead.
+  const glyphs: DisplayGlyph[] = flattenText(resolved).map((glyph) => {
+    const line =
+      glyph.text === "\n" ? undefined : measured?.[measuredIndex++]?.line;
+    return {
+      ...glyph,
+      hidden: line !== undefined && line >= (layout?.maxLines ?? 2),
+    };
+  });
   const result: Decoration[] = [];
-  const tokens = new Map<string, StyledChar[]>();
+  const tokens = new Map<string, DisplayGlyph[]>();
   for (const glyph of glyphs) {
     const range = positions.get(glyph.nodeId);
     if (!range) continue;
+    const { hidden } = glyph;
     if (range.atom) {
       const token = tokens.get(glyph.nodeId) ?? [];
       token.push(glyph);
       tokens.set(glyph.nodeId, token);
     } else if (
       glyph.text !== "\n" &&
-      (glyph.style.gradient || glyph.style.rainbow)
+      (hidden ||
+        glyph.style.gradient ||
+        glyph.style.rainbow ||
+        glyph.style.underlined ||
+        glyph.style.strikethrough)
     ) {
       result.push(
         Decoration.inline(
           range.from + glyph.offset,
           range.from + glyph.offset + glyph.text.length,
-          { class: "mce-effect-glyph", style: `color: ${glyph.color}` },
+          {
+            class: "mce-effect-glyph mce-native-glyph",
+            style: `color: ${glyph.color}; --mcp-shadow-color: ${shadowColor(glyph.color)};${hidden ? "visibility: hidden" : ""}`,
+            ...(glyph.style.underlined ? { "data-underlined": "" } : {}),
+            ...(glyph.style.strikethrough ? { "data-strikethrough": "" } : {}),
+          },
         ),
       );
     }
@@ -61,6 +98,7 @@ function decorations(
 export function inlineEffects(
   text: () => TextDocument,
   values: Readonly<Record<string, string>>,
+  layout?: () => LayoutOptions,
 ): Plugin<DecorationSet> {
   const key = new PluginKey<DecorationSet>("motd-inline-effects");
   let composing = false;
@@ -68,10 +106,13 @@ export function inlineEffects(
   return new Plugin({
     key,
     state: {
-      init: (_, state) => decorations(state.doc, text(), values),
+      init: (_, state) => decorations(state.doc, text(), values, layout?.()),
       apply: (tr, previous) => {
-        if (!composing && (tr.docChanged || tr.getMeta(key)))
-          return decorations(tr.doc, text(), values);
+        if (
+          !composing &&
+          (tr.docChanged || tr.getMeta(key) || tr.getMeta("motd-layout"))
+        )
+          return decorations(tr.doc, text(), values, layout?.());
         return previous.map(tr.mapping, tr.doc);
       },
     },
@@ -106,9 +147,13 @@ export function inlineEffects(
                 : "Protected source construct; edit in source mode";
             const glyphs = currentDecorations.flatMap(
               (decoration) =>
-                (decoration.spec.effectGlyphs ?? []) as StyledChar[],
+                (decoration.spec.effectGlyphs ?? []) as DisplayGlyph[],
             );
             span.replaceChildren();
+            span.style.visibility =
+              glyphs.length && glyphs.every((glyph) => glyph.hidden)
+                ? "hidden"
+                : "";
             if (source.type !== "placeholder" || !glyphs.length) {
               span.textContent =
                 source.type === "placeholder"
@@ -117,10 +162,15 @@ export function inlineEffects(
               return;
             }
             for (const glyph of glyphs) {
+              if (glyph.text === "\n") {
+                span.append("\n");
+                continue;
+              }
               const child = span.ownerDocument.createElement("span");
-              child.className = "mce-effect-glyph";
+              child.className = "mce-effect-glyph mce-native-glyph";
               child.textContent = glyph.text;
               applyTextStyle(child, glyph.style, glyph.color);
+              if (glyph.hidden) child.style.visibility = "hidden";
               span.append(child);
             }
           }

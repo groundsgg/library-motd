@@ -130,15 +130,54 @@
   position: absolute;
   left: 34.5px;
   top: 11px;
+  /* Leave room for native decoration quads extending half a pixel left.
+     Padding also works in WebKit, which does not implement overflow-clip-margin. */
+  padding-left: 1px;
+  margin-left: -1px;
   overflow: hidden;
+}
+.mcp-motd > .mcp-glyph {
+  margin-left: 1px;
+}
+.mce-effect-glyph {
+  text-shadow: var(--mcp-shadow-offset, 0px 0px)
+    var(--mcp-shadow-color, #2a2a2a);
 }
 .mcp-glyph {
   position: absolute;
+  z-index: 0;
   display: inline-block;
   white-space: pre;
   height: 9px;
   font-size: 9px;
   line-height: 9px;
+}
+.mce-native-glyph {
+  position: relative;
+  z-index: 0;
+}
+.mcp-glyph[data-underlined]::after,
+.mcp-glyph[data-strikethrough]::before,
+.mce-native-glyph[data-underlined]::after,
+.mce-native-glyph[data-strikethrough]::before {
+  content: "";
+  position: absolute;
+  left: -0.5px;
+  width: calc(100% + 1px);
+  height: 1px;
+  background: currentColor;
+  box-shadow: var(--mcp-shadow-offset, 0px 0px) var(--mcp-shadow-color, #2a2a2a);
+  z-index: 1;
+  pointer-events: none;
+}
+.mcp-glyph[data-underlined]::after,
+.mce-native-glyph[data-underlined]::after {
+  top: 9px;
+}
+.mcp-glyph[data-strikethrough]::before,
+.mce-native-glyph[data-strikethrough]::before {
+  top: 5px;
+  transform: translateY(-0.5px);
 }
 .mcp-tooltip {
   position: fixed;
@@ -236,10 +275,17 @@
   word-break: break-word;
   font: 9px/9px var(--mcp-font, GroundsMinecraft, monospace);
   color: #aaa;
+  text-shadow: var(--mcp-shadow-offset, 0px 0px)
+    var(--mcp-shadow-color, #2a2a2a);
   min-height: 9px;
   caret-color: #fff;
   -webkit-user-select: text;
   user-select: text;
+}
+.mce-inline[data-editor-field="motd"] .ProseMirror {
+  /* Follow the shared glyph layout until native word wrapping is modeled. */
+  white-space: break-spaces;
+  word-break: break-all;
 }
 .mce-inline .ProseMirror p {
   font-size: inherit;
@@ -257,6 +303,9 @@
 .mce-token {
   background: #ffffff14;
   white-space: pre;
+}
+.mce-inline[data-editor-field="motd"] .mce-token {
+  white-space: inherit;
 }
 .mce-diagnostics {
   padding: 8px 12px;
@@ -736,6 +785,19 @@
 .mce-pinned-surface .ProseMirror p {
   line-height: inherit;
   min-height: 1em;
+}
+.mce-pinned-surface [data-underlined] {
+  text-decoration: underline;
+}
+.mce-pinned-surface [data-strikethrough] {
+  text-decoration: line-through;
+}
+.mce-pinned-surface [data-underlined][data-strikethrough] {
+  text-decoration: underline line-through;
+}
+.mce-pinned-surface .mce-native-glyph::before,
+.mce-pinned-surface .mce-native-glyph::after {
+  content: none;
 }
 
 .mcp-list-fade {

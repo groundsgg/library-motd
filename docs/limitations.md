@@ -1,6 +1,7 @@
 # Known limits
 
-- Bundled client profiles span the selected releases 1.20.4–26.3. Six actual client captures verify included Latin text cases, and modern references cover the uncolored version sample. Full profile validation remains pending; old version-field positioning, other glyphs, custom fonts and Bedrock are not claimed pixel exact.
+- Bundled client profiles span the selected releases 1.20.4–26.3. Independent launches of all eight presets verify selected menu geometry and ASCII/Latin-1 MOTD cases, including bold, underline, strikethrough and version-specific shadows. Other glyphs, italic, arbitrary style combinations, custom fonts and Bedrock are not claimed pixel exact. See [profiles.md](profiles.md) for the measured scope and references.
+- Unsupported Unicode and decomposed combining sequences produce `missing-glyph` warnings for the bundled font. Browser fallback glyphs and their width estimates can differ from the client. Graphemes remain atomic while editing; this does not certify native shaping. Synthetic italic remains approximate (#68).
 - Default background/icon/button illustrations approximate the client appearance. Original release panoramas and game textures are not shipped. Host-provided assets allow separate configuration; they do not by themselves establish complete pixel accuracy or redistribution permission.
 - The preview wraps by glyph width. Minecraft word wrapping and complex-script shaping need additional profile work. Extra imported lines are retained and warned about; only two MOTD lines are visible.
 - Inline gradients and rainbows share the preview's per-glyph color evaluation; see [inline-effects.md](inline-effects.md). Protected unknown components still use their existing approximate visual fallback.
