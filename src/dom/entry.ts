@@ -38,7 +38,8 @@ export function createEntry(
     stage = element(doc, "div", "mcp-stage"),
     scene = element(doc, "div", "mcp-scene");
   const backdrop = element(doc, "div", "mcp-background"),
-    listBackground = element(doc, "div", "mcp-list-background");
+    listBackground = element(doc, "div", "mcp-list-background"),
+    listFade = element(doc, "div", "mcp-list-fade");
   const title = element(doc, "div", "mcp-menu-title"),
     footer = element(doc, "div", "mcp-menu-footer"),
     selection = element(doc, "div", "mcp-selection");
@@ -75,7 +76,15 @@ export function createEntry(
   footer.setAttribute("aria-hidden", "true");
   status.append(statusAction);
   row.append(icon, name, status, ping, motd);
-  scene.append(backdrop, listBackground, title, footer, selection, row);
+  scene.append(
+    backdrop,
+    listBackground,
+    title,
+    footer,
+    selection,
+    row,
+    listFade,
+  );
   stage.append(scene);
   wrapper.append(stage);
   host.append(wrapper);
@@ -118,12 +127,12 @@ export function createEntry(
     const contentWidth = Math.min(width, g.contentWidth ?? width),
       full = context.presentation !== "row";
     const sceneWidth = full
-      ? Math.max(width, Math.floor(context.viewportWidth / scale))
+      ? Math.max(width, Math.ceil(context.viewportWidth / scale))
       : width + 4;
     const height = full
       ? Math.max(
           132,
-          Math.floor((context.viewportHeight ?? 180 * scale) / scale),
+          Math.ceil((context.viewportHeight ?? 180 * scale) / scale),
         )
       : 40;
     const rowX = full
@@ -142,14 +151,20 @@ export function createEntry(
           ? (context.profile.background ?? "panorama")
           : background;
     stage.dataset.clientProfile = context.profile.id;
-    wrapper.style.width = sceneWidth * scale + "px";
+    const stageWidth = full
+        ? Math.max(width * scale, context.viewportWidth)
+        : sceneWidth * scale,
+      stageHeight = full
+        ? Math.max(132 * scale, context.viewportHeight ?? 180 * scale)
+        : height * scale;
+    wrapper.style.width = stageWidth + "px";
     wrapper.style.setProperty(
       "--mcp-font",
       `'${assets?.fontFamily ?? context.profile.font.family}',monospace`,
     );
     Object.assign(stage.style, {
-      width: sceneWidth * scale + "px",
-      height: height * scale + "px",
+      width: stageWidth + "px",
+      height: stageHeight + "px",
     });
     Object.assign(scene.style, {
       width: sceneWidth + "px",
@@ -157,6 +172,10 @@ export function createEntry(
       transform: `scale(${scale})`,
     });
     scene.style.setProperty("--mcp-title-top", (g.titleTop ?? 19) + "px");
+    scene.style.setProperty(
+      "--mcp-menu-center",
+      Math.floor(sceneWidth / 2) + "px",
+    );
     scene.style.setProperty("--mcp-list-top", (g.listTop ?? 31) + "px");
     scene.style.setProperty(
       "--mcp-footer-height",
@@ -164,13 +183,15 @@ export function createEntry(
     );
     scene.style.setProperty(
       "--mcp-footer-bottom",
-      (g.footerBottom ?? 9) + "px",
+      (g.footerBottom ?? 10) + "px",
     );
     backdrop.style.backgroundImage =
       typeof background === "object"
         ? `url(${JSON.stringify(background.imageUrl)})`
         : "";
     title.hidden = listBackground.hidden = footer.hidden = !full;
+    listFade.hidden = !full || !g.listFade || background === "none";
+    scene.style.setProperty("--mcp-list-fade", (g.listFade ?? 0) + "px");
     title.textContent = labels.multiplayerTitle ?? "Play Multiplayer";
     footer.replaceChildren();
     for (const decoration of [listBackground, title, footer]) {
@@ -187,19 +208,41 @@ export function createEntry(
         ["deleteServer", "Delete"],
         ["refreshServers", "Refresh"],
         ["back", "Back"],
-      ]) {
-        const b = element(
-          doc,
-          "span",
-          "mcp-menu-button",
-          labels[key!] ?? fallback,
+      ] as const) {
+        const b = element(doc, "span", "mcp-menu-button");
+        const disabled =
+          !context.selected &&
+          ["joinServer", "editServer", "deleteServer"].includes(key!);
+        b.dataset.disabled = String(disabled);
+        const label = labels[key!] ?? fallback,
+          text = element(doc, "span", "mcp-button-label"),
+          textWidth = [...label].reduce(
+            (width, glyph) =>
+              width +
+              (context.profile.font.advances[glyph] ??
+                context.profile.font.fallbackAdvance),
+            0,
+          );
+        renderText(
+          text,
+          {
+            revision: 0,
+            nodes: [{ id: "menu-label", type: "text", value: label }],
+          },
+          context,
+          textWidth,
+          1,
+          undefined,
+          disabled ? "#a0a0a0" : "#ffffff",
         );
+        text.style.left = `calc(50% - ${Math.floor(textWidth / 2)}px)`;
+        for (const glyph of text.querySelectorAll<HTMLElement>(".mcp-glyph"))
+          glyph.style.textShadow = "inherit";
+        b.append(text);
         if (assets?.buttons) {
-          const source =
-            !context.selected &&
-            ["joinServer", "editServer", "deleteServer"].includes(key!)
-              ? (assets.buttons.disabled ?? assets.buttons.normal)
-              : assets.buttons.normal;
+          const source = disabled
+            ? (assets.buttons.disabled ?? assets.buttons.normal)
+            : assets.buttons.normal;
           Object.assign(b.style, {
             background: "transparent",
             boxShadow: "none",
@@ -215,7 +258,10 @@ export function createEntry(
       scene.insertBefore(selection, row);
     if (!context.selected) selection.remove();
     Object.assign(selection.style, {
-      left: rowX - 2 + "px",
+      left:
+        (full && g.selectionCenterRounding === "floor"
+          ? Math.floor((sceneWidth - width) / 2)
+          : rowX - 2) + "px",
       top: rowY - 2 + "px",
       width: width + "px",
     });
@@ -257,6 +303,7 @@ export function createEntry(
         ? false
         : (context.compatible ??
           context.clientProtocol === value.version.protocol);
+    status.style.right = (g.statusRight ?? 20) + "px";
     status.classList.toggle("mcp-incompatible", !compatible);
     ping.classList.toggle("mcp-incompatible", !compatible);
     statusAction.setAttribute(
@@ -272,52 +319,101 @@ export function createEntry(
       custom.hidden = false;
     } else if (custom) custom.hidden = true;
     statusAction.replaceChildren();
-    if (compatible)
-      statusAction.textContent = value.players
-        ? `${value.players.online}/${value.players.max}`
-        : "???";
-    else {
-      const text = parseText(value.version.name, "legacy-section").value;
-      if (text) {
-        const content = element(doc, "span", "mcp-version-text"),
-          size = layoutText(text, {
-            profile: context.profile,
-            width: contentWidth - 42,
-            maxLines: 1,
-          });
-        renderText(
-          content,
-          text,
-          context,
-          Math.min(contentWidth - 42, size.lines[0]?.width ?? 0),
-          1,
-          undefined,
-          "#ff5555",
-        );
-        content.style.display = "block";
-        statusAction.append(content);
-      }
+    const statusText = compatible
+      ? value.players
+        ? `§7${value.players.online}§8/§7${value.players.max}`
+        : "§7???"
+      : value.version.name;
+    const text = parseText(statusText, "legacy-section").value;
+    if (text) {
+      const content = element(
+          doc,
+          "span",
+          compatible ? "mcp-player-count-text" : "mcp-version-text",
+        ),
+        size = layoutText(text, {
+          profile: context.profile,
+          width: contentWidth - 42,
+          maxLines: 1,
+        });
+      renderText(
+        content,
+        text,
+        context,
+        Math.min(contentWidth - 42, size.lines[0]?.width ?? 0),
+        1,
+        undefined,
+        compatible ? "#aaaaaa" : "#ff5555",
+      );
+      content.style.display = "block";
+      statusAction.append(content);
     }
     ping.replaceChildren();
-    if (compatible) {
-      const active =
-        context.pingMs < 150
-          ? 5
-          : context.pingMs < 300
-            ? 4
-            : context.pingMs < 600
-              ? 3
-              : context.pingMs < 1000
-                ? 2
-                : 1;
-      for (let i = 0; i < 5; i++) {
-        const bar = element(doc, "i", "");
-        bar.style.left = i * 2 + "px";
-        bar.style.height = i + 2 + "px";
-        if (i >= active) bar.style.background = "#555";
-        ping.append(bar);
+    const active = !compatible
+      ? 0
+      : context.pingMs < 150
+        ? 5
+        : context.pingMs < 300
+          ? 4
+          : context.pingMs < 600
+            ? 3
+            : context.pingMs < 1000
+              ? 2
+              : 1;
+    for (let i = 0; i < 5; i++) {
+      const bar = element(doc, "i", "");
+      bar.style.left = i * 2 + "px";
+      bar.style.height = i + 2 + "px";
+      if (i >= active) {
+        bar.style.background = "#5b5b5b";
+        bar.style.boxShadow = "1px 1px #383838";
       }
-    } else ping.textContent = "✕";
+      ping.append(bar);
+    }
+    if (!compatible) {
+      // Draw the bars and diagonal mark procedurally, without a game texture.
+      const pixels = new Map<string, string>();
+      for (let bar = 0; bar < 5; bar++)
+        for (let y = 5 - bar; y <= 6; y++) {
+          pixels.set(`${bar * 2},${y}`, "#5b5b5b");
+          pixels.set(`${bar * 2 + 1},${y + 1}`, "#383838");
+        }
+      for (let y = 1; y <= 7; y++) {
+        const x = 8 - y;
+        for (const [offset, opacity] of [
+          [1, 63],
+          [2, 127],
+        ] as const) {
+          const key = `${x + offset},${y + 1}`,
+            color = pixels.get(key);
+          if (color) {
+            const channel = Math.floor(
+              (parseInt(color.slice(1, 3), 16) * opacity) / 255,
+            )
+              .toString(16)
+              .padStart(2, "0");
+            pixels.set(key, `#${channel.repeat(3)}`);
+          }
+        }
+      }
+      for (let y = 1; y <= 7; y++) {
+        const edge = `${7 - y},${y}`;
+        if (pixels.get(edge) === "#5b5b5b") pixels.set(edge, "#2d2d2d");
+      }
+      for (let y = 1; y <= 7; y++)
+        for (const x of new Set([y, 8 - y])) {
+          pixels.set(`${x},${y}`, "#ff0000");
+          pixels.set(`${x + 1},${y}`, "#820000");
+        }
+      const cross = element(doc, "span", "mcp-ping-cross");
+      cross.style.boxShadow = [...pixels]
+        .map(([position, color]) => {
+          const [x, y] = position.split(",");
+          return `${x}px ${y}px ${color}`;
+        })
+        .join(",");
+      ping.replaceChildren(cross);
+    }
     ping.setAttribute(
       "aria-label",
       labels.connectionStatus ?? "Connection status",

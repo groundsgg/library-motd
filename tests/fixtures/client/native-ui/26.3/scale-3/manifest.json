@@ -1,0 +1,24 @@
+{
+  "client": "26.3",
+  "protocol": 777,
+  "viewport": [
+    1280,
+    720
+  ],
+  "guiScale": 3,
+  "resourcePack": "vanilla default",
+  "clientSha1": "e877b6a07acd633fb3bb475002175cec036e7b87",
+  "rowOrigin": [
+    189,
+    111
+  ],
+  "date": "2026-10-23",
+  "capture": "Unmodified official client, isolated offline Xvfb session; local status-only fixture, no resource packs. Original game resources are not included in the package.",
+  "sha256": {
+    "incompatible.png": "a39c4121bd3698f28c0f06e6f537744c70ca450392c5eff1161fa18731a83ee8",
+    "selected.png": "2d16928db4a9c779e2ac303ec59cf68b1684c89d76bdff9fdce5e426058d638c",
+    "compatible.png": "7c79641fd76a9b0a23fdc5f2dcacb0bbe5b0e758f46267132d22fd2ec73b950b",
+    "players-hover.png": "b440bc450e3dbd3c7976cf6e8f7d54bdef93465779f27aac0a008997a7785952",
+    "ping-hover.png": "f30055c73cedbdfc9190c8ede9706faded115536777a28338c3a48bacbfb9cd4"
+  }
+}
