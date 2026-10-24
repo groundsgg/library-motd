@@ -221,6 +221,34 @@ test("an imported cluster and placeholder remain intact until explicitly cleared
   await expect.poll(() => sourceText(page)).toBe("");
 });
 
+test("a visually shorter replacement can recover imported placeholder overflow", async ({
+  page,
+}) => {
+  await setup(page, "M".repeat(120) + "{{long}}");
+  await page.evaluate(() => {
+    window.context = { ...window.context, values: { long: "M".repeat(1000) } };
+    window.setEditorOptions({ context: window.context });
+    window.changes = [];
+  });
+  await field(page).focus();
+  await field(page).press("Control+End");
+  await field(page).press("Shift+ArrowLeft");
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document.getSelection()?.getRangeAt(0).cloneContents().textContent,
+      ),
+    )
+    .toBe("M".repeat(1000));
+  await paste(page, "MM");
+  await expect.poll(() => sourceText(page)).toBe("M".repeat(122));
+  expect(await page.evaluate(() => window.changes.length)).toBe(1);
+  await field(page).press("Control+End");
+  await page.keyboard.type("M");
+  expect(await sourceText(page)).toBe("M".repeat(122));
+});
+
 test("native composition at the visual boundary cannot commit hidden overflow", async ({
   page,
   browserName,

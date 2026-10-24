@@ -193,9 +193,7 @@ export function createEditorController(
           return (
             previous.lines > 2 &&
             next.lines <= previous.lines &&
-            (tr.doc.content.size < state.doc.content.size ||
-              (tr.doc.content.size === state.doc.content.size &&
-                next.advance <= previous.advance))
+            next.advance <= previous.advance
           );
         },
       }),
@@ -375,6 +373,7 @@ export function createEditorController(
       handlePaste(view, event) {
         const plain = event.clipboardData?.getData("text/plain");
         if (plain !== undefined) {
+          if (!syncNativeSelection(view)) return true;
           view.dispatch(view.state.tr.insertText(plain));
           return true;
         }
@@ -673,6 +672,32 @@ export function createEditorController(
       rebuild();
   }
 
+  function syncNativeSelection(view: EditorView): boolean {
+    const native = view.dom.ownerDocument.getSelection();
+    if (
+      native?.anchorNode &&
+      native.focusNode &&
+      view.dom.contains(native.anchorNode) &&
+      view.dom.contains(native.focusNode)
+    ) {
+      try {
+        const selection = TextSelection.between(
+          view.state.doc.resolve(
+            view.posAtDOM(native.anchorNode, native.anchorOffset),
+          ),
+          view.state.doc.resolve(
+            view.posAtDOM(native.focusNode, native.focusOffset),
+          ),
+        );
+        if (!selection.eq(view.state.selection))
+          view.dispatch(view.state.tr.setSelection(selection));
+      } catch {
+        return false;
+      }
+    }
+    return true;
+  }
+
   function restoreSelection(saved: FieldSelection): boolean {
     if (destroyed || saved.generation !== generation || !selections.has(saved))
       return false;
@@ -734,26 +759,7 @@ export function createEditorController(
     captureSelection() {
       const view = views.get(activeField);
       if (!view) return null;
-      const native = view.dom.ownerDocument.getSelection();
-      if (
-        native?.anchorNode &&
-        native.focusNode &&
-        view.dom.contains(native.anchorNode) &&
-        view.dom.contains(native.focusNode)
-      ) {
-        try {
-          const anchor = view.posAtDOM(native.anchorNode, native.anchorOffset),
-            head = view.posAtDOM(native.focusNode, native.focusOffset);
-          const selection = TextSelection.between(
-            view.state.doc.resolve(anchor),
-            view.state.doc.resolve(head),
-          );
-          if (!selection.eq(view.state.selection))
-            view.dispatch(view.state.tr.setSelection(selection));
-        } catch {
-          return null;
-        }
-      }
+      if (!syncNativeSelection(view)) return null;
       const saved = {
         field: activeField,
         from: Math.max(1, view.state.selection.from),
