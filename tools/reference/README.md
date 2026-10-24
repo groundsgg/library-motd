@@ -75,3 +75,25 @@ actual Windows Java-client session remains outstanding in #70. Mixed styles at
 GUI1–3/DPR1–2 compare viewer/editor parity, not new native client captures.
 Unsupported/non-grid glyphs, custom fonts and text outside the per-glyph path
 retain browser font rendering. No new game fonts or textures were added.
+
+## Static status-icon study, 2026-10-24
+
+The official 26.3 client bytecode audit and an isolated STB decoder probe establish
+the normal favicon path as a static 64×64 PNG texture. The original fixtures in
+`tests/fixtures/icons/` deliberately separate the red default image from blue
+animation frames, preserving partial alpha. No game icon/code/runtime is shipped.
+See `docs/icon-animation.md` and the fixture manifest for scope and checksums.
+
+To rerun the optional decoder probe from the repository root (C compiler needed):
+
+```sh
+icon_probe_dir="$(mktemp -d)"
+curl -fsSL https://raw.githubusercontent.com/nothings/stb/013ac3beddff3dbffafd5177e7972067cd2b5083/stb_image.h -o "$icon_probe_dir/stb_image.h"
+cc -O2 -I"$icon_probe_dir" tools/reference/status-icon-probe.c -lm -o "$icon_probe_dir/status-icon-probe"
+"$icon_probe_dir/status-icon-probe" tests/fixtures/icons/default-included.png
+"$icon_probe_dir/status-icon-probe" tests/fixtures/icons/default-excluded.png
+```
+
+Both runs report 64×64, center RGBA 255,0,0,128 and corner alpha 0. This is a decoder
+probe matching the API used by NativeImage, not a complete client screenshot
+session or historical/modded-client certification.

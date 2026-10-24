@@ -1,5 +1,6 @@
 import type { IconValue, Outcome } from "../core/model.js";
 import { failure } from "../core/diagnostics.js";
+import { staticIconSource } from "./icon-source.js";
 export interface IconOptions {
   crop?: { x: number; y: number; width: number; height: number };
   maxBytes?: number;
@@ -38,7 +39,7 @@ export async function normalizeIcon(
 ): Promise<Outcome<IconValue>> {
   if (input.size > (options.maxBytes ?? 10 * 1024 * 1024))
     return failure("image-limit", "icon", { key: "diagnostic.imageBytes" });
-  if (!["image/png", "image/jpeg"].includes(input.type))
+  if (!["image/png", "image/apng", "image/jpeg"].includes(input.type))
     return failure("invalid-image", "icon", { key: "diagnostic.imageFormat" });
   const bytes = new Uint8Array(await input.arrayBuffer()),
     size = dimensions(bytes);
@@ -48,7 +49,8 @@ export async function normalizeIcon(
     return failure("image-limit", "icon", { key: "diagnostic.imagePixels" });
   let image: ImageBitmap | undefined;
   try {
-    image = await createImageBitmap(input);
+    const prepared = staticIconSource(input, bytes);
+    image = await createImageBitmap(prepared.source);
     const side = Math.min(image.width, image.height),
       crop = options.crop ?? {
         x: Math.floor((image.width - side) / 2),
@@ -84,7 +86,7 @@ export async function normalizeIcon(
     );
     return {
       value: { pngBase64: canvas.toDataURL("image/png").split(",")[1]! },
-      diagnostics: [],
+      diagnostics: prepared.diagnostics,
     };
   } catch {
     return failure("invalid-image", "icon", { key: "diagnostic.imageDecode" });

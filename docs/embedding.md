@@ -34,6 +34,12 @@ Preview defaults to a complete menu excerpt. `presentation: "row"` embeds just t
 
 PNG uploads preserve alpha. The editor offers a pixel-art image-plus action on icon hover and keyboard focus, and accepts dropped PNG/JPEG files. Uploading opens a local crop draft: move the square or enter crop coordinates, then Apply or Cancel. Replacement and reset are staged too; one Apply is one undoable change. Pending decoding can be cancelled, and stale uploads cannot overwrite a newer draft or replacement document. Read-only/disabled instances and plain previews have no upload action.
 
+APNG inputs use their static/default PNG image, including when it differs from
+the animation's first frame. A localized notice explains the projection; viewer,
+crop preview and status output agree without adding animation playback.
+See [icon-animation.md](icon-animation.md) for the native audit, pure core helper
+and host-asset distinction.
+
 To keep assets independent from the npm package, provide a synchronous resolver:
 
 ```ts

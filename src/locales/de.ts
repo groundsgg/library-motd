@@ -260,4 +260,8 @@ export const germanLabels = {
   "assistanceField.hover": "Hovertext",
   "assistanceKind.gradient": "Farbverlauf: {field}",
   "assistanceKind.alignment": "Ausrichtung: {field}",
+  "diagnostic.staticIcon":
+    "PNG-Animationen werden vom Java-Status-Icon nicht unterstützt; es wird das statische Standardbild verwendet.",
+  "diagnostic.inheritedIcon":
+    "Das geerbte Server-Icon ist kein unterstütztes 64×64-PNG; das Standard-Icon wird verwendet.",
 } satisfies Readonly<Record<keyof typeof englishLabels, string>>;

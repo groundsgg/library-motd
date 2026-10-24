@@ -57,6 +57,7 @@ React: import `ServerListEditor` or `ServerListPreview` from `@groundsgg/motd/re
 - [Embedding and configuration](docs/embedding.md)
 - [Localization, catalogs and diagnostics](docs/localization.md)
 - [Opt-in gradient and alignment import assistance](docs/import-assistance.md)
+- [Static server icons and animation limits](docs/icon-animation.md)
 - [Client profile and reference evidence](docs/profiles.md)
 - [Known limits](docs/limitations.md)
 
