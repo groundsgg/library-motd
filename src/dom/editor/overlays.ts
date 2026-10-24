@@ -1,8 +1,9 @@
+import { setLabelAttribute, type LabelText } from "../localization.js";
 export type OverlayClose =
   "dismiss" | "cancel" | "apply" | "replace" | "destroy";
 interface OverlayOptions {
   id: string;
-  label: string;
+  label: LabelText;
   anchor: HTMLElement;
   getAnchorRect?: () => Pick<DOMRect, "left" | "bottom">;
   content: HTMLElement;
@@ -87,7 +88,7 @@ export function createOverlays(root: HTMLElement): OverlayController {
         : "dialog"
       : "popover";
     pane.setAttribute("role", "dialog");
-    pane.setAttribute("aria-label", current.label);
+    setLabelAttribute(pane, "aria-label", current.label);
     pane.setAttribute("aria-modal", String(modal));
     copyToolTheme(root, pane);
     pane.append(current.content);

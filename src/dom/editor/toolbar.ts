@@ -1,3 +1,4 @@
+import { setLabelAttribute } from "../localization.js";
 import { element } from "../render.js";
 import { copyToolTheme } from "./overlays.js";
 import {
@@ -116,7 +117,7 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
   );
   const show = toolButton(
     doc,
-    "Text tools",
+    toolLabel(mount, "textTools", "Text tools"),
     toolLabel(mount, "textTools", "Text tools"),
     () => {
       forced = true;
@@ -163,7 +164,8 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
     if (toolbar.parentElement !== parent) parent.append(toolbar);
     toolbar.dataset.placement = selection ? "selection" : "fixed";
     copyToolTheme(root, toolbar);
-    toolbar.setAttribute(
+    setLabelAttribute(
+      toolbar,
       "aria-label",
       toolLabel(mount, "formatting", "Text formatting"),
     );
@@ -181,22 +183,32 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
     }
     const style = activeStyle(mount);
     for (const item of controls) {
-      item.button.setAttribute(
+      setLabelAttribute(
+        item.button,
         "aria-label",
         toolLabel(mount, item.key, item.fallback),
       );
-      item.button.title = toolLabel(mount, item.key, item.fallback);
+      setLabelAttribute(
+        item.button,
+        "title",
+        toolLabel(mount, item.key, item.fallback),
+      );
       item.button.disabled =
         !editable() ||
         (!!item.motdOnly && controller.getActiveField() !== "motd");
       if (item.style)
-        item.button.setAttribute("aria-pressed", String(!!style[item.style]));
+        setLabelAttribute(
+          item.button,
+          "aria-pressed",
+          String(!!style[item.style]),
+        );
     }
     undo.disabled = redo.disabled = toolLocked(mount);
     show.disabled = !editable();
-    undo.setAttribute("aria-label", toolLabel(mount, "undo", "Undo"));
-    redo.setAttribute("aria-label", toolLabel(mount, "redo", "Redo"));
-    show.setAttribute(
+    setLabelAttribute(undo, "aria-label", toolLabel(mount, "undo", "Undo"));
+    setLabelAttribute(redo, "aria-label", toolLabel(mount, "redo", "Redo"));
+    setLabelAttribute(
+      show,
       "aria-label",
       toolLabel(mount, "textTools", "Text tools"),
     );

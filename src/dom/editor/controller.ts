@@ -24,6 +24,7 @@ import { fromEditorNode, nextId, toEditorNode } from "./mapping.js";
 import { EditorHistory, type HistoryEntry } from "./history.js";
 import { inlineEffects } from "./effects.js";
 import { entryTextWidth } from "../render.js";
+import { formatLabel } from "../../core/localization.js";
 import type {
   EditableField,
   Feature,
@@ -80,7 +81,7 @@ export function createEditorController(
     destroyed = false,
     generation = 0;
   let activeField: EditableField = "motd",
-    errors: string[] = [],
+    errors: Diagnostic[] = [],
     pending = false,
     pendingReplacement = false;
   const history = new EditorHistory(),
@@ -93,7 +94,7 @@ export function createEditorController(
   const viewGenerations = new Map<EditableField, number>(),
     rejectedCompositions = new Set<EditableField>();
   const label = (key: string, fallback: string) =>
-    options.labels?.[key] ?? fallback;
+    formatLabel(key, {}, options.labels, fallback);
   const enabled = (field: Feature) => options.features?.[field] !== false;
   const locked = () => !!options.readOnly || !!options.disabled;
   const emit = (event: EditorEvent) => {
@@ -459,7 +460,7 @@ export function createEditorController(
       : next;
     const valid = validateDocument(mapped);
     if (!valid.value) {
-      errors = valid.diagnostics.map((d) => d.message);
+      errors = valid.diagnostics;
       showErrors();
       return false;
     }
@@ -655,7 +656,7 @@ export function createEditorController(
     else if (command.type === "replace-source") {
       const parsed = parseText(command.source, command.format ?? "minimessage");
       if (!parsed.value) {
-        errors = parsed.diagnostics.map((d) => d.message);
+        errors = parsed.diagnostics;
         showErrors();
         return;
       }
@@ -722,13 +723,7 @@ export function createEditorController(
     getGeneration: () => generation,
     getActiveField: () => activeField,
     getView: (field) => views.get(field),
-    getDiagnostics: () =>
-      errors.map((message) => ({
-        code: "editor",
-        severity: "error" as const,
-        path: "",
-        message,
-      })),
+    getDiagnostics: () => structuredClone(errors),
     isComposing: () => composing.size > 0,
     mountText,
     applySources(sources) {
@@ -743,7 +738,7 @@ export function createEditorController(
           return;
         const result = parseText(source, format);
         if (!result.value) {
-          errors = result.diagnostics.map((d) => d.message);
+          errors = result.diagnostics;
           showErrors();
           return;
         }

@@ -1,3 +1,8 @@
+import {
+  setLabelText,
+  setLabelAttribute,
+  type LabelText,
+} from "../localization.js";
 import type {
   ServerListDocument,
   TextDocument,
@@ -43,7 +48,7 @@ interface SourceDraft {
   source: string;
   format: TextFormat;
   text: TextDocument | null;
-  error: string;
+  error: LabelText;
   dirty: boolean;
 }
 
@@ -54,6 +59,11 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
     active: TransferState | null = null;
   const label = (key: string, fallback: string) =>
     toolLabel(mount, key, fallback);
+  const formatItems = (): [string, LabelText][] =>
+    formats.map(([value, caption]) => [
+      value,
+      label("format." + value, caption),
+    ]);
   const textFor = (field: EditableField): TextDocument | null => {
     const current = controller.getDocument();
     return field === "motd"
@@ -88,8 +98,8 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
           : "Hover source",
     );
   function select(
-    name: string,
-    items: [string, string][],
+    name: LabelText,
+    items: [string, LabelText][],
     value: string,
     onChange: (value: string) => void,
   ) {
@@ -103,7 +113,7 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
     input.addEventListener("change", () => onChange(input.value));
     return { input, field: toolField(doc, name, input) };
   }
-  function begin(kind: Kind, title: string): TransferState | null {
+  function begin(kind: Kind, title: LabelText): TransferState | null {
     if (destroyed || !allowed(kind)) return null;
     overlays.close("dismiss");
     const body = element(doc, "div", "mce-tool-content"),
@@ -124,7 +134,7 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
     active = state;
     return state;
   }
-  function show(state: TransferState, title: string) {
+  function show(state: TransferState, title: LabelText) {
     const cancel = toolButton(
       doc,
       label(
@@ -162,9 +172,12 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
     if (state.invalidated) return;
     state.invalidated = true;
     state.abort?.abort();
-    state.status.textContent = label(
-      "draftInvalidated",
-      "The document or editor configuration changed. This draft can no longer be applied. Close and reopen the tool.",
+    setLabelText(
+      state.status,
+      label(
+        "draftInvalidated",
+        "The document or editor configuration changed. This draft can no longer be applied. Close and reopen the tool.",
+      ),
     );
     for (const control of state.body.querySelectorAll<
       | HTMLInputElement
@@ -192,7 +205,7 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
         source: serialized.value ?? text.source?.value ?? "",
         format,
         text: serialized.value !== null ? text : null,
-        error: serialized.diagnostics.map((d) => d.message).join("\n"),
+        error: mount.localization.diagnostics(serialized.diagnostics),
         dirty: false,
       });
     }
@@ -211,13 +224,13 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
     );
     const chooseFormat = select(
       label("sourceFormat", "Source format"),
-      formats,
+      formatItems(),
       drafts.get(field)!.format,
       (value) => {
         const draft = drafts.get(field)!;
         if (!draft.text) {
           chooseFormat.input.value = draft.format;
-          state.status.textContent = draft.error;
+          setLabelText(state.status, draft.error);
           return;
         }
         const format = value as TextFormat,
@@ -227,16 +240,17 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
           });
         if (result.value === null) {
           chooseFormat.input.value = draft.format;
-          state.status.textContent = result.diagnostics
-            .map((d) => d.message)
-            .join("\n");
+          setLabelText(
+            state.status,
+            mount.localization.diagnostics(result.diagnostics),
+          );
           return;
         }
         draft.source = result.value;
         draft.format = format;
         draft.text = parseText(result.value, format).value;
         draft.dirty = true;
-        draft.error = result.diagnostics.map((d) => d.message).join("\n");
+        draft.error = mount.localization.diagnostics(result.diagnostics);
         render();
       },
     );
@@ -246,7 +260,7 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
         result = parseText(source.value, draft.format);
       draft.source = source.value;
       draft.text = result.value;
-      draft.error = result.diagnostics.map((d) => d.message).join("\n");
+      draft.error = mount.localization.diagnostics(result.diagnostics);
       draft.dirty = true;
       validate();
     });
@@ -268,7 +282,7 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
       },
     );
     const validate = () => {
-      state.status.textContent = drafts.get(field)!.error;
+      setLabelText(state.status, drafts.get(field)!.error);
       state.apply!.disabled =
         state.invalidated ||
         ![...drafts.values()].some((draft) => draft.dirty) ||
@@ -278,7 +292,7 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
       const draft = drafts.get(field)!;
       chooseFormat.input.value = draft.format;
       source.value = draft.source;
-      source.setAttribute("aria-label", fieldName(field));
+      setLabelAttribute(source, "aria-label", fieldName(field));
       validate();
     };
     state.body.append(chooseField.field, chooseFormat.field, source);
@@ -296,7 +310,11 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
     const output = element(doc, "textarea", "mce-tool-source");
     output.rows = 7;
     output.readOnly = true;
-    output.setAttribute("aria-label", label("exportOutput", "Export output"));
+    setLabelAttribute(
+      output,
+      "aria-label",
+      label("exportOutput", "Export output"),
+    );
     const chooseField = select(
       label("exportField", "Export field"),
       fields(false).map((field) => [field, fieldName(field)]),
@@ -308,7 +326,7 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
     );
     const chooseFormat = select(
       label("exportFormat", "Export format"),
-      formats,
+      formatItems(),
       format,
       (value) => {
         format = value as TextFormat;
@@ -327,9 +345,12 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
           if (active === state) {
             output.focus();
             output.select();
-            state.status.textContent = label(
-              "copyFallback",
-              "Copy the selected output using your browser.",
+            setLabelText(
+              state.status,
+              label(
+                "copyFallback",
+                "Copy the selected output using your browser.",
+              ),
             );
           }
         }
@@ -348,9 +369,10 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
       outputValue = result.value;
       output.value = result.value ?? "";
       copy.disabled = result.value === null;
-      state.status.textContent = result.diagnostics
-        .map((d) => d.message)
-        .join("\n");
+      setLabelText(
+        state.status,
+        mount.localization.diagnostics(result.diagnostics),
+      );
     };
     state.refresh = render;
     state.body.append(chooseField.field, chooseFormat.field, output);
@@ -366,11 +388,12 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
       address = element(doc, "input", ""),
       result = element(doc, "textarea", "mce-tool-source");
     address.type = "text";
-    address.placeholder = "play.example.net";
+    setLabelAttribute(address, "placeholder", "play.example.net");
     result.rows = 6;
     result.readOnly = true;
     result.hidden = true;
-    result.setAttribute(
+    setLabelAttribute(
+      result,
       "aria-label",
       label("importPreview", "Imported server status"),
     );
@@ -405,9 +428,9 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
         staged = null;
         state.apply!.disabled = true;
         result.hidden = true;
-        state.status.textContent = label(
-          "importLoading",
-          "Loading server status…",
+        setLabelText(
+          state.status,
+          label("importLoading", "Loading server status…"),
         );
         let timer: ReturnType<typeof setTimeout> | undefined;
         const valid = () =>
@@ -444,15 +467,19 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
             return;
           }
           staged = imported.value;
-          state.status.textContent = imported.diagnostics
-            .map((d) => d.message)
-            .join("\n");
+          setLabelText(
+            state.status,
+            mount.localization.diagnostics(imported.diagnostics),
+          );
           if (staged) {
             result.hidden = false;
             result.value = JSON.stringify(staged, null, 2);
-            state.status.textContent = label(
-              "importReady",
-              "Review the imported status, then Apply. Disabled fields will be kept.",
+            setLabelText(
+              state.status,
+              label(
+                "importReady",
+                "Review the imported status, then Apply. Disabled fields will be kept.",
+              ),
             );
             state.apply!.disabled = false;
           }
@@ -464,10 +491,12 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
             !state.invalidated &&
             state.abort === request
           )
-            state.status.textContent =
+            setLabelText(
+              state.status,
               error instanceof Error && error.message.trim()
                 ? error.message
-                : label("importFailed", "Import failed");
+                : label("importFailed", "Import failed"),
+            );
         } finally {
           clearTimeout(timer);
         }

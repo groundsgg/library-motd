@@ -7,6 +7,7 @@ import { mountTextTools } from "./text-tools.js";
 import { mountStatusTools } from "./status-tools.js";
 import { mountIconTool } from "./icon-tool.js";
 import { mountTransferTools } from "./transfer-tools.js";
+import { DomLocalization, setLabelText } from "../localization.js";
 import type { EditorOptions, EditorHandle } from "./types.js";
 export type {
   EditableField,
@@ -33,19 +34,17 @@ export function createEditor(
   root.append(canvas, diagnostics);
   host.append(root);
   const controller = createEditorController(initial),
+    localization = new DomLocalization(() => controller.getOptions().labels),
     entry = createEntry(canvas, initial),
     overlays = createOverlays(root),
-    mount = { root, entry, controller, overlays };
+    mount = { root, entry, controller, overlays, localization };
   let destroyed = false;
   function showErrors() {
     const messages = [
-      ...new Set(
-        [...controller.getDiagnostics(), ...entry.getDiagnostics()].map(
-          (d) => d.message,
-        ),
-      ),
+      ...controller.getDiagnostics(),
+      ...entry.getDiagnostics(),
     ];
-    diagnostics.textContent = messages.join("\n");
+    setLabelText(diagnostics, localization.diagnostics(messages));
     diagnostics.hidden = !messages.length;
   }
   const tools = [
@@ -68,6 +67,7 @@ export function createEditor(
     entry.bindText("motd", available ? motdHost : null);
     showErrors();
     for (const tool of tools) tool.update();
+    localization.update();
     overlays.reposition();
   }
   const unsubscribe = controller.subscribe((event) => {
@@ -88,6 +88,7 @@ export function createEditor(
       for (const tool of tools) tool.destroy();
       overlays.destroy();
       controller.destroy();
+      localization.destroy();
       entry.destroy();
       root.remove();
     },

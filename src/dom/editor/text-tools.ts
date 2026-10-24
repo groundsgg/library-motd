@@ -1,3 +1,4 @@
+import { setLabelText, setLabelAttribute } from "../localization.js";
 import type { GradientStop, TextStyle } from "../../core/model.js";
 import { element } from "../render.js";
 import {
@@ -49,10 +50,13 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
         !fieldEditable(mount, selection.field) ||
         !controller.restoreSelection(selection)
       ) {
-        status.textContent = toolLabel(
-          mount,
-          "selectionExpired",
-          "The selection is no longer available.",
+        setLabelText(
+          status,
+          toolLabel(
+            mount,
+            "selectionExpired",
+            "The selection is no longer available.",
+          ),
         );
         return;
       }
@@ -119,14 +123,17 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
           n < -1 ||
           n > 1
         ) {
-          status.textContent = toolLabel(
-            mount,
-            "invalidGradient",
-            "Use distinct stop positions between 0 and 1.",
+          setLabelText(
+            status,
+            toolLabel(
+              mount,
+              "invalidGradient",
+              "Use distinct stop positions between 0 and 1.",
+            ),
           );
           return;
         }
-        status.textContent = "";
+        setLabelText(status, "");
         const signature = JSON.stringify([sorted, n]);
         if (signature === applied) return;
         applied = signature;
@@ -156,19 +163,32 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
           row.append(
             toolField(
               doc,
-              `${toolLabel(mount, "gradientColor", "Gradient color")} ${index + 1}`,
+              toolLabel(mount, "gradientColorNumber", "{label} {index}", {
+                label: toolLabel(mount, "gradientColor", "Gradient color"),
+                index: index + 1,
+              }),
               color,
             ),
             toolField(
               doc,
-              `${toolLabel(mount, "gradientPosition", "Gradient position")} ${index + 1}`,
+              toolLabel(mount, "gradientPositionNumber", "{label} {index}", {
+                label: toolLabel(
+                  mount,
+                  "gradientPosition",
+                  "Gradient position",
+                ),
+                index: index + 1,
+              }),
               position,
             ),
           );
           const remove = toolButton(
             doc,
             "−",
-            `${toolLabel(mount, "removeStop", "Remove stop")} ${index + 1}`,
+            toolLabel(mount, "removeStopNumber", "{label} {index}", {
+              label: toolLabel(mount, "removeStop", "Remove stop"),
+              index: index + 1,
+            }),
             () => {
               stops.splice(index, 1);
               renderStops();
@@ -193,7 +213,9 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
       content.append(
         toolButton(
           doc,
-          "+ " + toolLabel(mount, "addStop", "Add color stop"),
+          toolLabel(mount, "addStopButton", "+ {label}", {
+            label: toolLabel(mount, "addStop", "Add color stop"),
+          }),
           toolLabel(mount, "addStop", "Add color stop"),
           () => {
             const sorted = [...stops].sort((a, b) => a.position - b.position);
@@ -215,7 +237,7 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
     } else if (tool === "placeholder") {
       const input = element(doc, "input", "");
       input.type = "text";
-      input.placeholder = "players";
+      setLabelAttribute(input, "placeholder", "players");
       input.pattern = "[\\w.-]+";
       content.append(
         toolField(
