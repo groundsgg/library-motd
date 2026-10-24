@@ -206,6 +206,31 @@ test("the controlled React editor enforces the same soft-wrap boundary", async (
   await expect(input).toHaveText("M".repeat(88));
 });
 
+test("moving to a far imported caret cannot scroll the client canvas", async ({
+  page,
+}) => {
+  await setup(page, "M".repeat(1200));
+  await page.evaluate(() => {
+    window.context = { ...window.context, background: "auto" };
+    window.setEditorOptions({ context: window.context });
+  });
+  await field(page).focus();
+  await field(page).press("Control+End");
+  const scrolling = await page.evaluate(() =>
+    [".mcp-motd", ".mcp-row", ".mcp-scene", ".mcp-stage"].map((selector) => {
+      const el = document.querySelector<HTMLElement>("#editor " + selector)!;
+      return [el.scrollTop, el.scrollLeft];
+    }),
+  );
+  expect(scrolling).toEqual([
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0],
+  ]);
+  expect(await sourceText(page)).toBe("M".repeat(1200));
+});
+
 test("an imported cluster and placeholder remain intact until explicitly cleared", async ({
   page,
 }) => {
