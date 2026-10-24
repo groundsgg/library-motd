@@ -11,6 +11,8 @@ import type { StylePath } from "./schema.js";
 import { fromEditorNode, type EditorSourceRange } from "./mapping.js";
 
 interface DisplayGlyph extends StyledChar {
+  // Transparent clipped text retains native caret/deletion geometry. Using
+  // visibility:hidden here can make imported overflow impossible to shorten.
   hidden: boolean;
   suppressed?: boolean;
   breakBefore?: boolean;
@@ -127,7 +129,7 @@ function decorations(
               fallback.setAttribute("aria-hidden", "true");
               applyTextStyle(fallback, glyph.style, glyph.color);
               fallback.style.width = glyph.advance + "px";
-              if (hidden) fallback.style.visibility = "hidden";
+              if (hidden) fallback.style.opacity = "0";
               return fallback;
             },
             { side: -1, ignoreSelection: true },
@@ -149,7 +151,7 @@ function decorations(
             range.from + glyph.offset + glyph.text.length,
             {
               class: `mce-effect-glyph mce-native-glyph${glyph.suppressed || carriageReturn ? " mce-consumed-space" : ""}`,
-              style: `color: ${glyph.color}; --mcp-shadow-color: ${shadowColor(glyph.color)};${hidden ? "visibility: hidden" : ""}`,
+              style: `color: ${glyph.color}; --mcp-shadow-color: ${shadowColor(glyph.color)};${hidden ? "opacity: 0" : ""}`,
               ...(glyph.style.underlined ? { "data-underlined": "" } : {}),
               ...(glyph.style.strikethrough
                 ? { "data-strikethrough": "" }
@@ -223,10 +225,8 @@ export function inlineEffects(
                 (decoration.spec.effectGlyphs ?? []) as DisplayGlyph[],
             );
             span.replaceChildren();
-            span.style.visibility =
-              glyphs.length && glyphs.every((glyph) => glyph.hidden)
-                ? "hidden"
-                : "";
+            span.style.opacity =
+              glyphs.length && glyphs.every((glyph) => glyph.hidden) ? "0" : "";
             if (!glyphs.length) {
               span.textContent =
                 source.type === "placeholder"
@@ -251,7 +251,7 @@ export function inlineEffects(
               child.className = `mce-effect-glyph mce-native-glyph${glyph.suppressed ? " mce-consumed-space" : ""}`;
               child.textContent = glyph.text === "\r" ? "?" : glyph.text;
               applyTextStyle(child, glyph.style, glyph.color);
-              if (glyph.hidden) child.style.visibility = "hidden";
+              if (glyph.hidden) child.style.opacity = "0";
               span.append(child);
             }
           }
