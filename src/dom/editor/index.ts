@@ -7,6 +7,7 @@ import { mountTextTools } from "./text-tools.js";
 import { mountStatusTools } from "./status-tools.js";
 import { mountIconTool } from "./icon-tool.js";
 import { mountTransferTools } from "./transfer-tools.js";
+import { mountImportAssistance } from "./import-assistance.js";
 import { setLabelText } from "../localization.js";
 import type { EditorOptions, EditorHandle } from "./types.js";
 export type {
@@ -53,6 +54,7 @@ export function createEditor(
     mountStatusTools(mount),
     mountIconTool(mount),
     mountTransferTools(mount),
+    mountImportAssistance(mount),
   ];
   function render() {
     if (destroyed || controller.isComposing()) return;

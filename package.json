@@ -20,7 +20,8 @@
     "docs/images/inline-gradient.png",
     "docs/browser-verification.md",
     "docs/comparison.md",
-    "docs/localization.md"
+    "docs/localization.md",
+    "docs/import-assistance.md"
   ],
   "exports": {
     ".": {

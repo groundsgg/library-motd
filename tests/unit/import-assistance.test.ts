@@ -112,3 +112,21 @@ it("requires explicit bounded tolerances and reports position deviation", () => 
     api.suggestImportAssistance(document, { ...options, positionTolerance: 5 }),
   ).toEqual([]);
 });
+
+it("rejects oversized grouped fields before flattening them", () => {
+  const document = api.createDocument({
+    revision: 0,
+    nodes: [
+      {
+        id: "large-group",
+        type: "group",
+        style: { color: "#ff0000" },
+        children: [
+          { id: "large-text", type: "text", value: "A".repeat(130000) },
+        ],
+      },
+    ],
+  });
+  expect(api.validateDocument(document).value).not.toBeNull();
+  expect(api.suggestImportAssistance(document, options)).toEqual([]);
+});

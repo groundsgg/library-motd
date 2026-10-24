@@ -6,6 +6,10 @@
 adapters accept partial `labels` overrides. See [localization.md](localization.md)
 for named parameters, live updates and structured diagnostic fallbacks.
 
+`suggestImportAssistance(document, options)` returns detached gradient/alignment
+proposals with measured color/position deviations, explicit tolerances and no
+automatic application. See [import-assistance.md](import-assistance.md).
+
 `@groundsgg/motd` exports the types in `src/core/model.ts` and these functions:
 
 | Function                                        | Purpose                                                               |

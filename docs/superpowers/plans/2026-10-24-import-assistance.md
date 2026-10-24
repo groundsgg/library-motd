@@ -46,18 +46,18 @@ tests/browser/import-assistance.spec.ts.
 **Interface:** mountImportAssistance(mount:ToolMount):ToolHandle uses existing
 entry-menu contributions, overlay controller, createPreview and replace-document.
 
-- [ ] Add failing browser cases for opt-in behavior, before/after/source/metrics,
+- [x] Add failing browser cases for opt-in behavior, before/after/source/metrics,
       Apply+one-step Undo, Cancel, permissions/staleness, language, iframe ownership.
-- [ ] Implement conservative dialog with per-proposal selection and input bounds;
+- [x] Implement conservative dialog with per-proposal selection and input bounds;
       retain controls on language changes and destroy all preview instances.
-- [ ] Run all engines and existing transfer/status/text regressions; commit.
+- [x] Run all engines and existing transfer/status/text regressions; commit.
 
 ### Task 3: Documentation, final review and PR
 
 **Files:** docs/import-assistance.md, docs/api.md, README.md, package.json,
 .github/workflows/ci.yml.
 
-- [ ] Document public API, units and conservative omissions; include docs in package.
-- [ ] Full quality/unit/browser/package/example checks and Windows cases.
-- [ ] One fresh whole-feature review; Important fixes RED→GREEN plus suite.
+- [x] Document public API, units and conservative omissions; include docs in package.
+- [x] Full quality/unit/browser/package/example checks and Windows cases.
+- [x] One fresh whole-feature review; Important fixes RED→GREEN plus suite.
 - [ ] Create English PR for #15, verify CI, leave open.

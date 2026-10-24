@@ -26,17 +26,35 @@ export interface ImportAssistanceProposal {
   maximumPositionError: number;
   removedPadding: number;
 }
-const safeNodes = (nodes: TextNode[]): boolean =>
-  nodes.every(
-    (node) =>
-      node.type === "text" ||
-      node.type === "newline" ||
-      (node.type === "group" &&
-        !node.style.gradient &&
-        !node.style.rainbow &&
-        !node.style.obfuscated &&
-        safeNodes(node.children)),
-  );
+const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+/** Bound traversal and segmentation before flattenText allocates styled glyphs. */
+function safeNodes(nodes: TextNode[]): boolean {
+  const pending = [{ nodes, depth: 0 }];
+  let count = 0,
+    visited = 0;
+  while (pending.length) {
+    const current = pending.pop()!;
+    for (const node of current.nodes) {
+      if (++visited > 4096) return false;
+      if (node.type === "group") {
+        if (
+          current.depth >= 32 ||
+          node.style.gradient ||
+          node.style.rainbow ||
+          node.style.obfuscated
+        )
+          return false;
+        pending.push({ nodes: node.children, depth: current.depth + 1 });
+      } else if (node.type === "text") {
+        for (const part of segmenter.segment(node.value)) {
+          count += part.segment === "\r\n" ? 2 : 1;
+          if (count > 2048) return false;
+        }
+      } else if (node.type !== "newline" || ++count > 2048) return false;
+    }
+  }
+  return true;
+}
 
 /** Rebuild only static, unprotected text; retain inherited styles and trailing spaces. */
 function fromChars(chars: StyledChar[], revision: number): TextDocument {

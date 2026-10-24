@@ -6,7 +6,14 @@ import type {
 } from "../../core/model.js";
 export type EditableField = "motd" | "version" | "hover";
 export type Feature =
-  "motd" | "version" | "icon" | "players" | "hover" | "import" | "export";
+  | "motd"
+  | "version"
+  | "icon"
+  | "players"
+  | "hover"
+  | "import"
+  | "export"
+  | "assistance";
 export interface EditorChange {
   origin: "visual" | "source" | "import" | "history";
   changedFields: (keyof Pick<
