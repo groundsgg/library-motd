@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { PNG } from "pngjs";
+import { placeCaretAtTextEnd } from "./editor-actions.js";
 
 const field = (page: Page) =>
   page.getByRole("textbox", { name: "MOTD inline editor", exact: true });
@@ -60,7 +61,7 @@ test("focusing text adds no underline decoration to the rendered MOTD", async ({
   await setup(page, "<gold><u>Alpha<newline>Beta</u>");
   const box = page.locator("#editor .mcp-motd");
   const before = PNG.sync.read(await box.screenshot({ caret: "hide" }));
-  await field(page).focus();
+  await placeCaretAtTextEnd(field(page));
   const after = PNG.sync.read(await box.screenshot({ caret: "hide" }));
   expect(after.data.equals(before.data)).toBe(true);
 });
@@ -178,8 +179,12 @@ test("imported overflow stays intact and cannot scroll the visible rows or grow 
   expect(await sourceText(page)).toBe("M".repeat(120));
   await page.keyboard.type("M");
   expect(await sourceText(page)).toBe("M".repeat(120));
+  // Rejected native DOM input is redrawn asynchronously by ProseMirror. Wait
+  // for that observable redraw before testing the next recovery action.
+  await expect(field(page)).toHaveText("M".repeat(120));
+  await expect(field(page)).toBeFocused();
   await field(page).press("Backspace");
-  expect(await sourceText(page)).toBe("M".repeat(119));
+  await expect.poll(() => sourceText(page)).toBe("M".repeat(119));
 });
 
 test("the controlled React editor enforces the same soft-wrap boundary", async ({
@@ -214,7 +219,7 @@ test("moving to a far imported caret cannot scroll the client canvas", async ({
     window.context = { ...window.context, background: "auto" };
     window.setEditorOptions({ context: window.context });
   });
-  await field(page).focus();
+  await placeCaretAtTextEnd(field(page));
   await field(page).press("Control+End");
   const scrolling = await page.evaluate(() =>
     [".mcp-motd", ".mcp-row", ".mcp-scene", ".mcp-stage"].map((selector) => {
