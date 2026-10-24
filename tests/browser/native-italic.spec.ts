@@ -272,7 +272,21 @@ test("italic display defers updates during composition and refreshes without rem
   );
   const input = page.locator("#editor [data-editor-field=motd] .ProseMirror");
   await input.focus();
-  await input.press("Control+End");
+  // This case tests synthetic composition, independently of platform-specific
+  // End-key navigation. Establish its starting caret in the actual source text.
+  await input.evaluate((root) => {
+    const doc = root.ownerDocument;
+    const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let text: Node | null, last: Node | undefined;
+    while ((text = walker.nextNode())) last = text;
+    const range = doc.createRange();
+    range.setStart(last!, last!.textContent!.length);
+    range.collapse(true);
+    const selection = doc.getSelection()!;
+    selection.removeAllRanges();
+    selection.addRange(range);
+    doc.dispatchEvent(new Event("selectionchange"));
+  });
   await expect
     .poll(() =>
       input.evaluate((root) => {
@@ -284,8 +298,7 @@ test("italic display defers updates during composition and refreshes without rem
       }),
     )
     .toBe("Ab");
-  // Starting synthetic composition in the same frame as the native key can
-  // precede Firefox's selectionchange delivery. Await the pending frame first.
+  // Deliver the pending selectionchange before starting synthetic composition.
   await input.evaluate(
     (root) =>
       new Promise<void>((resolve) =>
