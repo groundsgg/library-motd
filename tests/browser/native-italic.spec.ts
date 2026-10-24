@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { PNG } from "pngjs";
-import { openEntryTool } from "./editor-actions.js";
+import { openEntryTool, placeCaretAtTextEnd } from "./editor-actions.js";
 
 function mask(image: PNG, color: number[]) {
   return Array.from({ length: image.width * image.height }, (_, i) =>
@@ -271,40 +271,7 @@ test("italic display defers updates during composition and refreshes without rem
     }),
   );
   const input = page.locator("#editor [data-editor-field=motd] .ProseMirror");
-  await input.focus();
-  // This case tests synthetic composition, independently of platform-specific
-  // End-key navigation. Establish its starting caret in the actual source text.
-  await input.evaluate((root) => {
-    const doc = root.ownerDocument;
-    const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    let text: Node | null, last: Node | undefined;
-    while ((text = walker.nextNode())) last = text;
-    const range = doc.createRange();
-    range.setStart(last!, last!.textContent!.length);
-    range.collapse(true);
-    const selection = doc.getSelection()!;
-    selection.removeAllRanges();
-    selection.addRange(range);
-    doc.dispatchEvent(new Event("selectionchange"));
-  });
-  await expect
-    .poll(() =>
-      input.evaluate((root) => {
-        const selection = root.ownerDocument.getSelection()!;
-        const range = root.ownerDocument.createRange();
-        range.selectNodeContents(root);
-        range.setEnd(selection.anchorNode!, selection.anchorOffset);
-        return range.toString();
-      }),
-    )
-    .toBe("Ab");
-  // Deliver the pending selectionchange before starting synthetic composition.
-  await input.evaluate(
-    (root) =>
-      new Promise<void>((resolve) =>
-        root.ownerDocument.defaultView!.requestAnimationFrame(() => resolve()),
-      ),
-  );
+  await placeCaretAtTextEnd(input);
   const original = await input.elementHandle();
   await input.evaluate((root) =>
     root.dispatchEvent(
