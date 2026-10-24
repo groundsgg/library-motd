@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { PNG } from "pngjs";
-import { openEntryTool } from "./editor-actions.js";
+import { openEntryTool, placeCaretAtTextEnd } from "./editor-actions.js";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/tests/browser/host.html");
@@ -68,8 +68,7 @@ for (const field of ["version", "hover"] as const)
       exact: true,
     });
     await expect(input).toBeVisible();
-    await input.focus();
-    await input.press("Control+End");
+    await placeCaretAtTextEnd(input);
     await page.keyboard.type("M");
     await expect(input).toHaveText("AbMWM");
     const oldSize = await input
