@@ -8,8 +8,12 @@ workers. A browser failure blocks the shared validation and publishing jobs.
 
 A focused Chromium job on Windows also checks regular/bold baselines, mixed
 and fully bold two-line MOTDs, descenders, and the React formatting toggle.
-Windows uses different font metrics from Linux; passing the Ubuntu matrix
-alone does not establish correct Windows text geometry.
+Supported per-glyph bundled text uses locally generated pixel masks to avoid
+OS antialiasing differences. The Windows job checks complete native reference
+foreground/shadow masks at GUI scale 2 as well as editing behavior. Custom fonts
+and text outside that renderer retain browser rasterization. Passing the Ubuntu
+matrix alone does not establish correct Windows text geometry or certify an
+actual Windows Java client; that capture remains outstanding in #70.
 
 ```sh
 npx playwright install --with-deps chromium firefox webkit

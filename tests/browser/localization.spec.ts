@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { openEntryTool } from "./editor-actions.js";
+import { openEntryTool, selectRenderedText } from "./editor-actions.js";
 import { PNG } from "pngjs";
 
 test.beforeEach(async ({ page }) => {
@@ -47,19 +47,7 @@ test("changing language in an open color tool preserves its control, draft selec
     name: "MOTD inline editor",
     exact: true,
   });
-  await input.focus();
-  await input.evaluate((root) => {
-    const text = root.ownerDocument
-      .createTreeWalker(root, NodeFilter.SHOW_TEXT)
-      .nextNode()!;
-    const range = root.ownerDocument.createRange();
-    range.setStart(text, 0);
-    range.setEnd(text, 5);
-    const selection = root.ownerDocument.getSelection()!;
-    selection.removeAllRanges();
-    selection.addRange(range);
-    root.ownerDocument.dispatchEvent(new Event("selectionchange"));
-  });
+  await selectRenderedText(input, 0, 5);
   await expect
     .poll(() => page.evaluate(() => document.getSelection()?.toString()))
     .toBe("Alpha");

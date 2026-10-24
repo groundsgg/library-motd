@@ -76,7 +76,7 @@ for (const field of ["version", "hover"] as const)
       .locator(".mcp-pixel-italic")
       .first()
       .evaluate((e) =>
-        (e as HTMLElement).style.getPropertyValue("--mcp-italic-size"),
+        (e as HTMLElement).style.getPropertyValue("--mcp-ink-size"),
       );
     const oldDocument = await page.evaluate(() => JSON.stringify(window.doc));
     const original = await input.elementHandle();
@@ -90,7 +90,7 @@ for (const field of ["version", "hover"] as const)
           .locator(".mcp-pixel-italic")
           .first()
           .evaluate((e) =>
-            (e as HTMLElement).style.getPropertyValue("--mcp-italic-size"),
+            (e as HTMLElement).style.getPropertyValue("--mcp-ink-size"),
           ),
       )
       .not.toBe(oldSize);

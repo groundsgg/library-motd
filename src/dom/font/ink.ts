@@ -10,27 +10,40 @@ export function usesBundledPixelFont(context: PreviewContext): boolean {
 }
 
 const caches = new WeakMap<Document, Map<string, string>>();
+/** Align the bitmap box to the native half-pixel-centered label origins. */
+export function pixelInkOrigin(element: HTMLElement): number {
+  return element.closest(
+    ".mcp-version-text, .mcp-player-count-text, .mcp-button-label",
+  )
+    ? 4
+    : 4.5;
+}
 /** Paint only ink; the real DOM text retains its advances and editing behavior. */
-export function italicStyle(
+export function pixelInkStyle(
   doc: Document,
   text: string,
   style: TextStyle,
   scale: number,
   advance: number,
   color: string,
+  decorationShadow = false,
+  origin = 4.5,
 ): string | undefined {
   const rows = pixelFaces[style.bold ? 1 : 0]![text];
-  if (!style.italic || !rows) return undefined;
+  if (!rows) return undefined;
   // Bound work for arbitrary embedding zoom values. Native GUI scales are small.
   scale = Math.min(16, Math.max(0.5, scale));
   const key = JSON.stringify([
     text,
     !!style.bold,
+    !!style.italic,
     !!style.underlined,
     !!style.strikethrough,
     scale,
     advance,
     color,
+    decorationShadow,
+    origin,
   ]);
   let cache = caches.get(doc);
   if (!cache) caches.set(doc, (cache = new Map()));
@@ -45,58 +58,70 @@ export function italicStyle(
   const ctx = canvas.getContext("2d");
   if (!ctx) return undefined;
   const image = ctx.createImageData(width, size);
-  // The HTML box begins half a GUI pixel before the native draw origin.
-  // An integer GUI origin prevents browsers snapping background images right.
+  const shadowImage = ctx.createImageData(width, size);
+  // Align each bitmap box with its label/MOTD origin. Integral paint positions
+  // avoid browsers rounding fractional background origins in opposite directions.
   ctx.fillStyle = color;
   ctx.fillRect(0, 0, 1, 1);
   const rgb = [...ctx.getImageData(0, 0, 1, 1).data.slice(0, 3)];
+  const shade = rgb.map((value) => Math.floor(value / 4));
+  const decorated = (x: number, y: number) =>
+    x >= -0.5 &&
+    x < advance + 0.5 &&
+    ((style.underlined && y >= 9 && y < 10) ||
+      (style.strikethrough && y >= 4.5 && y < 5.5));
   for (let py = 0; py < size; py++) {
     const y = (py + 0.5) / scale - 4;
     const bits = rows[Math.floor(y) - pixelTop] ?? 0;
     // Native textured quad: shearTop/Bottom = 1 - nativeY * 0.25.
-    const shear = 1.25 - y * 0.25;
+    const shear = style.italic ? 1.25 - y * 0.25 : 0;
     for (let px = 0; px < width; px++) {
-      const x = (px + 0.5) / scale - 4.5;
+      const x = (px + 0.5) / scale - origin;
       const cell = Math.floor(x - 0.5 - shear);
       const glyph = cell >= 0 && cell < pixelColumns && !!(bits & (1 << cell));
-      const decoration =
-        x >= -0.5 &&
-        x < advance + 0.5 &&
-        ((style.underlined && y >= 9 && y < 10) ||
-          (style.strikethrough && y >= 4.5 && y < 5.5));
-      if (!glyph && !decoration) continue;
+      const decoration = decorated(x, y);
+      const effectShadow = decorationShadow && decorated(x - 1, y - 1);
+      if (!glyph && !decoration && !effectShadow) continue;
       const offset = (py * width + px) * 4;
-      image.data.set([...rgb, 255], offset);
+      // Native effects are drawn after glyphs: their shadow can cover glyph ink.
+      image.data.set(
+        [...(decoration || !effectShadow ? rgb : shade), 255],
+        offset,
+      );
+      if (glyph || decoration) shadowImage.data.set([...shade, 255], offset);
     }
   }
   ctx.putImageData(image, 0, 0);
   const foreground = canvas.toDataURL();
-  for (let i = 0; i < image.data.length; i += 4)
-    for (let c = 0; c < 3; c++)
-      image.data[i + c] = Math.floor(image.data[i + c]! / 4);
-  ctx.putImageData(image, 0, 0);
+  ctx.putImageData(shadowImage, 0, 0);
   const shadow = canvas.toDataURL();
-  const result = `font-style:normal;--mcp-italic-foreground:url("${foreground}");--mcp-italic-shadow:url("${shadow}");--mcp-italic-left:-0.5em;--mcp-italic-width:${width / 9}em;--mcp-italic-size:${size / 9}em;--mcp-italic-inverse-scale:${1 / scale}`;
+  const result = `font-style:normal;--mcp-ink-foreground:url("${foreground}");--mcp-ink-shadow:url("${shadow}");--mcp-ink-left:${-origin / 9}em;--mcp-ink-width:${width / 9}em;--mcp-ink-size:${size / 9}em;--mcp-ink-inverse-scale:${1 / scale}`;
   if (cache.size >= 512) cache.delete(cache.keys().next().value!);
   cache.set(key, result);
   return result;
 }
 
-export function applyPixelItalic(
+export function applyPixelInk(
   span: HTMLElement,
   text: string,
   style: TextStyle,
   scale: number,
   advance: number,
+  decorationShadow = false,
+  origin = 4.5,
 ): void {
-  const css = italicStyle(
+  const css = pixelInkStyle(
     span.ownerDocument,
     text,
     style,
     scale,
     advance,
     span.style.color || "#aaaaaa",
+    decorationShadow,
+    origin,
   );
-  span.classList.toggle("mcp-pixel-italic", !!css);
+  span.classList.toggle("mcp-pixel-glyph", !!css);
+  span.classList.toggle("mcp-pixel-italic", !!css && !!style.italic);
   if (css) span.style.cssText += ";" + css;
+  else span.style.fontStyle = style.italic ? "italic" : "normal";
 }

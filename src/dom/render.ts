@@ -7,7 +7,11 @@ import type {
   TextStyle,
 } from "../core/model.js";
 import { layoutText } from "../core/layout/layout.js";
-import { applyPixelItalic, usesBundledPixelFont } from "./font/italic.js";
+import {
+  applyPixelInk,
+  pixelInkOrigin,
+  usesBundledPixelFont,
+} from "./font/ink.js";
 import { appendLabelText, type LabelText } from "./localization.js";
 export interface PreviewOptions {
   document: ServerListDocument;
@@ -118,12 +122,15 @@ export function renderText(
         : glyph.color,
     );
     if (pixelFont)
-      applyPixelItalic(
+      applyPixelInk(
         span,
         span.textContent!,
         glyph.style,
         pixelScale,
         glyph.advance,
+        !!context.profile.geometry.motdShadow &&
+          root.classList.contains("mcp-motd"),
+        pixelInkOrigin(root),
       );
     if (glyph.style.obfuscated && glyph.text.trim()) {
       span.dataset.obfuscated = "";

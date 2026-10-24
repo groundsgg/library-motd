@@ -11,7 +11,7 @@ import { flattenText, type StyledChar } from "../../core/text/colors.js";
 import { resolveText } from "../../core/text/placeholders.js";
 import { applyTextStyle } from "../preview.js";
 import { shadowColor } from "../render.js";
-import { italicStyle, usesBundledPixelFont } from "../font/italic.js";
+import { pixelInkStyle, usesBundledPixelFont } from "../font/ink.js";
 import { setLabelAttribute, type DomLocalization } from "../localization.js";
 import type { StylePath } from "./schema.js";
 import { fromEditorNode, type EditorSourceRange } from "./mapping.js";
@@ -24,7 +24,7 @@ interface DisplayGlyph extends StyledChar {
   breakBefore?: boolean;
   padding?: number;
   advance?: number;
-  italicCSS?: string;
+  inkCSS?: string;
 }
 
 function decorations(
@@ -35,6 +35,7 @@ function decorations(
   context?: PreviewContext,
   doc?: Document,
 ): DecorationSet {
+  const pixelFont = context && doc && usesBundledPixelFont(context);
   let hasEffects = false;
   pm.descendants((node) => {
     const path = (
@@ -55,12 +56,11 @@ function decorations(
       hasEffects = true;
     return !hasEffects;
   });
-  if (!hasEffects && !layout) return DecorationSet.empty;
+  if (!hasEffects && !layout && !pixelFont) return DecorationSet.empty;
   const positions = new Map<string, EditorSourceRange>();
   const text = fromEditorNode(pm, previous, positions);
   const resolved = resolveText(text, values).value!;
   const measured = layout ? layoutText(resolved, layout) : undefined;
-  const pixelFont = context && doc && usesBundledPixelFont(context);
   const dpr = doc?.defaultView?.devicePixelRatio ?? 1;
   let measuredIndex = 0,
     previousLine: number | undefined,
@@ -87,11 +87,11 @@ function decorations(
       breakBefore,
       padding: startsLine ? measured?.lines[line!]?.padding : 0,
       hidden: line !== undefined && line >= (layout?.maxLines ?? 2),
-      italicCSS:
+      inkCSS:
         pixelFont &&
         !metric?.suppressed &&
         (line === undefined || line < (layout?.maxLines ?? 2))
-          ? italicStyle(
+          ? pixelInkStyle(
               doc,
               glyph.text === "\r" ? "?" : glyph.text,
               glyph.style,
@@ -101,6 +101,7 @@ function decorations(
                   context.profile.font.fallbackAdvance) +
                   (glyph.style.bold ? context.profile.font.boldOffset : 0),
               glyph.color,
+              !!layout?.profile.geometry.motdShadow,
             )
           : undefined,
     };
@@ -156,9 +157,11 @@ function decorations(
               fallback.textContent = "?";
               fallback.setAttribute("aria-hidden", "true");
               applyTextStyle(fallback, glyph.style, glyph.color);
-              if (glyph.italicCSS) {
-                fallback.classList.add("mcp-pixel-italic");
-                fallback.style.cssText += ";" + glyph.italicCSS;
+              if (glyph.inkCSS) {
+                fallback.classList.add("mcp-pixel-glyph");
+                if (glyph.style.italic)
+                  fallback.classList.add("mcp-pixel-italic");
+                fallback.style.cssText += ";" + glyph.inkCSS;
               }
               fallback.style.width = glyph.advance + "px";
               if (hidden) fallback.style.opacity = "0";
@@ -176,15 +179,15 @@ function decorations(
           glyph.style.rainbow ||
           glyph.style.underlined ||
           glyph.style.strikethrough ||
-          glyph.italicCSS)
+          glyph.inkCSS)
       ) {
         result.push(
           Decoration.inline(
             range.from + glyph.offset,
             range.from + glyph.offset + glyph.text.length,
             {
-              class: `mce-effect-glyph mce-native-glyph${glyph.italicCSS ? " mcp-pixel-italic" : ""}${glyph.suppressed || carriageReturn ? " mce-consumed-space" : ""}`,
-              style: `color: ${glyph.color}; --mcp-shadow-color: ${shadowColor(glyph.color)};${hidden ? "opacity: 0;" : ""}${glyph.italicCSS ?? ""}`,
+              class: `mce-effect-glyph mce-native-glyph${glyph.inkCSS ? ` mcp-pixel-glyph${glyph.style.italic ? " mcp-pixel-italic" : ""}` : ""}${glyph.suppressed || carriageReturn ? " mce-consumed-space" : ""}`,
+              style: `color: ${glyph.color}; --mcp-shadow-color: ${shadowColor(glyph.color)};${hidden ? "opacity: 0;" : ""}${glyph.inkCSS ?? ""}`,
               ...(glyph.style.underlined ? { "data-underlined": "" } : {}),
               ...(glyph.style.strikethrough
                 ? { "data-strikethrough": "" }
@@ -238,14 +241,18 @@ export function inlineEffects(
     props: {
       decorations: (state) => key.getState(state),
       handleDOMEvents: {
-        compositionstart() {
+        compositionstart(view) {
           composing = true;
+          view.dom.setAttribute("data-pixel-composing", "");
           return false;
         },
         compositionend(view) {
           composing = false;
           queueMicrotask(() => {
-            if (!destroyed) view.dispatch(view.state.tr.setMeta(key, true));
+            if (!destroyed) {
+              view.dispatch(view.state.tr.setMeta(key, true));
+              view.dom.removeAttribute("data-pixel-composing");
+            }
           });
           return false;
         },
@@ -301,9 +308,10 @@ export function inlineEffects(
               child.className = `mce-effect-glyph mce-native-glyph${glyph.suppressed ? " mce-consumed-space" : ""}`;
               child.textContent = glyph.text === "\r" ? "?" : glyph.text;
               applyTextStyle(child, glyph.style, glyph.color);
-              if (glyph.italicCSS) {
-                child.classList.add("mcp-pixel-italic");
-                child.style.cssText += ";" + glyph.italicCSS;
+              if (glyph.inkCSS) {
+                child.classList.add("mcp-pixel-glyph");
+                if (glyph.style.italic) child.classList.add("mcp-pixel-italic");
+                child.style.cssText += ";" + glyph.inkCSS;
               }
               if (glyph.hidden) child.style.opacity = "0";
               span.append(child);
