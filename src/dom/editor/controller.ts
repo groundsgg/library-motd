@@ -153,6 +153,7 @@ export function createEditorController(
   function plugins(
     field: EditableField,
     resolved: Readonly<Record<string, string>>,
+    doc: Document,
   ) {
     const measure = (doc: EditorState["doc"]) => {
       const source = fromEditorNode(doc, textFor(field));
@@ -181,6 +182,8 @@ export function createEditorController(
               alignments: current.motd.alignments,
             })
           : undefined,
+        () => options.context,
+        doc,
       ),
       new Plugin({
         filterTransaction(tr, state) {
@@ -260,7 +263,7 @@ export function createEditorController(
             doc: node,
             selection: nextSelection,
             storedMarks: marks,
-            plugins: plugins(field, resolved),
+            plugins: plugins(field, resolved, view.dom.ownerDocument),
           }),
         );
         textSnapshots.set(field, textSnapshot);
@@ -298,10 +301,10 @@ export function createEditorController(
           spellcheck: "false",
         },
       });
-      if (field === "motd")
-        view.updateState(
-          view.state.apply(view.state.tr.setMeta("motd-layout", true)),
-        );
+      // Display-only glyphs in version/hover also depend on font and GUI scale.
+      view.updateState(
+        view.state.apply(view.state.tr.setMeta("motd-layout", true)),
+      );
       viewGenerations.set(field, generation);
       rejectedCompositions.delete(field);
     }
@@ -327,7 +330,7 @@ export function createEditorController(
       state: EditorState.create({
         schema,
         doc: toEditorNode(textFor(field), schema),
-        plugins: plugins(field, resolved),
+        plugins: plugins(field, resolved, host.ownerDocument),
       }),
       editable: () => !locked() && enabled(field),
       attributes: {

@@ -24,11 +24,12 @@ test("disabled fields resist programmatic document replacement", async ({
 });
 test("editing stays local and respects reduced motion, plain paste and two-line boundary", async ({
   page,
+  baseURL,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   const remote: string[] = [];
   await page.route("**/*", (route) => {
-    if (new URL(route.request().url()).origin !== "http://127.0.0.1:4173") {
+    if (new URL(route.request().url()).origin !== new URL(baseURL!).origin) {
       remote.push(route.request().url());
       return route.abort();
     }

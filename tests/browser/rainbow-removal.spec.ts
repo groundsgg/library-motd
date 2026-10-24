@@ -1,3 +1,4 @@
+import { placeCaretAtTextEnd } from "./editor-actions.js";
 import { expect, test, type Page } from "@playwright/test";
 
 async function removeRainbow(page: Page) {
@@ -137,6 +138,7 @@ test("clearing rainbow at a caret affects future typing without changing existin
   page,
 }) => {
   const input = await setup(page, "<rainbow><b>Alpha</b></rainbow>");
+  await placeCaretAtTextEnd(input);
   await input.press("Control+End");
   const before = await page.evaluate(() => JSON.stringify(window.doc));
   await removeRainbow(page);
@@ -144,18 +146,20 @@ test("clearing rainbow at a caret affects future typing without changing existin
   await page.keyboard.press("Escape");
   await input.focus();
   await page.keyboard.type("!");
-  expect(
-    await page.evaluate(() =>
-      window.api.flattenText(window.doc.motd.text).map((glyph) => ({
-        text: glyph.text,
-        rainbow: !!glyph.style.rainbow,
-        bold: !!glyph.style.bold,
-      })),
-    ),
-  ).toEqual([
-    ...[..."Alpha"].map((text) => ({ text, rainbow: true, bold: true })),
-    { text: "!", rainbow: false, bold: true },
-  ]);
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        window.api.flattenText(window.doc.motd.text).map((glyph) => ({
+          text: glyph.text,
+          rainbow: !!glyph.style.rainbow,
+          bold: !!glyph.style.bold,
+        })),
+      ),
+    )
+    .toEqual([
+      ...[..."Alpha"].map((text) => ({ text, rainbow: true, bold: true })),
+      { text: "!", rainbow: false, bold: true },
+    ]);
 });
 
 test("clear-format respects permissions", async ({ page }) => {

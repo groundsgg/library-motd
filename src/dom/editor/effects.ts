@@ -1,12 +1,17 @@
 import type { Node as PMNode } from "prosemirror-model";
 import { Plugin, PluginKey } from "prosemirror-state";
 import { Decoration, DecorationSet, type NodeView } from "prosemirror-view";
-import type { LayoutOptions, TextDocument } from "../../core/model.js";
+import type {
+  LayoutOptions,
+  PreviewContext,
+  TextDocument,
+} from "../../core/model.js";
 import { layoutText } from "../../core/layout/layout.js";
 import { flattenText, type StyledChar } from "../../core/text/colors.js";
 import { resolveText } from "../../core/text/placeholders.js";
 import { applyTextStyle } from "../preview.js";
 import { shadowColor } from "../render.js";
+import { italicStyle, usesBundledPixelFont } from "../font/italic.js";
 import type { StylePath } from "./schema.js";
 import { fromEditorNode, type EditorSourceRange } from "./mapping.js";
 
@@ -18,6 +23,7 @@ interface DisplayGlyph extends StyledChar {
   breakBefore?: boolean;
   padding?: number;
   advance?: number;
+  italicCSS?: string;
 }
 
 function decorations(
@@ -25,6 +31,8 @@ function decorations(
   previous: TextDocument,
   values: Readonly<Record<string, string>>,
   layout?: LayoutOptions,
+  context?: PreviewContext,
+  doc?: Document,
 ): DecorationSet {
   let hasEffects = false;
   pm.descendants((node) => {
@@ -39,7 +47,8 @@ function decorations(
           part.style.gradient ||
           part.style.rainbow ||
           part.style.underlined ||
-          part.style.strikethrough,
+          part.style.strikethrough ||
+          part.style.italic,
       )
     )
       hasEffects = true;
@@ -50,6 +59,8 @@ function decorations(
   const text = fromEditorNode(pm, previous, positions);
   const resolved = resolveText(text, values).value!;
   const measured = layout ? layoutText(resolved, layout) : undefined;
+  const pixelFont = context && doc && usesBundledPixelFont(context);
+  const dpr = doc?.defaultView?.devicePixelRatio ?? 1;
   let measuredIndex = 0,
     previousLine: number | undefined,
     explicitBreak = true;
@@ -75,6 +86,22 @@ function decorations(
       breakBefore,
       padding: startsLine ? measured?.lines[line!]?.padding : 0,
       hidden: line !== undefined && line >= (layout?.maxLines ?? 2),
+      italicCSS:
+        pixelFont &&
+        !metric?.suppressed &&
+        (line === undefined || line < (layout?.maxLines ?? 2))
+          ? italicStyle(
+              doc,
+              glyph.text === "\r" ? "?" : glyph.text,
+              glyph.style,
+              context.guiScale * dpr,
+              metric?.advance ??
+                (context.profile.font.advances[glyph.text] ??
+                  context.profile.font.fallbackAdvance) +
+                  (glyph.style.bold ? context.profile.font.boldOffset : 0),
+              glyph.color,
+            )
+          : undefined,
     };
   });
   const result: Decoration[] = [];
@@ -128,6 +155,10 @@ function decorations(
               fallback.textContent = "?";
               fallback.setAttribute("aria-hidden", "true");
               applyTextStyle(fallback, glyph.style, glyph.color);
+              if (glyph.italicCSS) {
+                fallback.classList.add("mcp-pixel-italic");
+                fallback.style.cssText += ";" + glyph.italicCSS;
+              }
               fallback.style.width = glyph.advance + "px";
               if (hidden) fallback.style.opacity = "0";
               return fallback;
@@ -143,15 +174,16 @@ function decorations(
           glyph.style.gradient ||
           glyph.style.rainbow ||
           glyph.style.underlined ||
-          glyph.style.strikethrough)
+          glyph.style.strikethrough ||
+          glyph.italicCSS)
       ) {
         result.push(
           Decoration.inline(
             range.from + glyph.offset,
             range.from + glyph.offset + glyph.text.length,
             {
-              class: `mce-effect-glyph mce-native-glyph${glyph.suppressed || carriageReturn ? " mce-consumed-space" : ""}`,
-              style: `color: ${glyph.color}; --mcp-shadow-color: ${shadowColor(glyph.color)};${hidden ? "opacity: 0" : ""}`,
+              class: `mce-effect-glyph mce-native-glyph${glyph.italicCSS ? " mcp-pixel-italic" : ""}${glyph.suppressed || carriageReturn ? " mce-consumed-space" : ""}`,
+              style: `color: ${glyph.color}; --mcp-shadow-color: ${shadowColor(glyph.color)};${hidden ? "opacity: 0;" : ""}${glyph.italicCSS ?? ""}`,
               ...(glyph.style.underlined ? { "data-underlined": "" } : {}),
               ...(glyph.style.strikethrough
                 ? { "data-strikethrough": "" }
@@ -174,6 +206,8 @@ export function inlineEffects(
   text: () => TextDocument,
   values: Readonly<Record<string, string>>,
   layout?: () => LayoutOptions,
+  context?: () => PreviewContext,
+  doc?: Document,
 ): Plugin<DecorationSet> {
   const key = new PluginKey<DecorationSet>("motd-inline-effects");
   let composing = false;
@@ -181,13 +215,21 @@ export function inlineEffects(
   return new Plugin({
     key,
     state: {
-      init: (_, state) => decorations(state.doc, text(), values, layout?.()),
+      init: (_, state) =>
+        decorations(state.doc, text(), values, layout?.(), context?.(), doc),
       apply: (tr, previous) => {
         if (
           !composing &&
           (tr.docChanged || tr.getMeta(key) || tr.getMeta("motd-layout"))
         )
-          return decorations(tr.doc, text(), values, layout?.());
+          return decorations(
+            tr.doc,
+            text(),
+            values,
+            layout?.(),
+            context?.(),
+            doc,
+          );
         return previous.map(tr.mapping, tr.doc);
       },
     },
@@ -251,6 +293,10 @@ export function inlineEffects(
               child.className = `mce-effect-glyph mce-native-glyph${glyph.suppressed ? " mce-consumed-space" : ""}`;
               child.textContent = glyph.text === "\r" ? "?" : glyph.text;
               applyTextStyle(child, glyph.style, glyph.color);
+              if (glyph.italicCSS) {
+                child.classList.add("mcp-pixel-italic");
+                child.style.cssText += ";" + glyph.italicCSS;
+              }
               if (glyph.hidden) child.style.opacity = "0";
               span.append(child);
             }

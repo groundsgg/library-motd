@@ -1,6 +1,6 @@
 # Embedding
 
-Import `@groundsgg/motd/styles.css` once. Package CSS references included fonts; editing makes no external requests. Use DOM handles for Vue/Svelte/custom elements or the optional React entry point. One host per instance; dispose on unmount.
+Import `@groundsgg/motd/styles.css` once. Package CSS references included fonts; editing makes no external requests. Bundled italic glyphs and server icons use locally generated PNG data URLs; allow `data:` in `img-src` when the host supplies a Content Security Policy. Use DOM handles for Vue/Svelte/custom elements or the optional React entry point. One host per instance; dispose on unmount.
 
 Viewer and editor are separate: use `createPreview` / `ServerListPreview` for display-only content, and `createEditor` / `ServerListEditor` for editing. Set `context.presentation: "row"` for a compact entry, or `"server-list"` for the client menu. Omitting presentation retains the existing full-menu default.
 
