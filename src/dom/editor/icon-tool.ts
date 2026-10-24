@@ -4,7 +4,9 @@ import {
   type LabelText,
 } from "../localization.js";
 import type { IconValue } from "../../core/model.js";
+import { normalizeStatusIcon } from "../../core/image/icon.js";
 import { normalizeIcon } from "../icon.js";
+import { staticIconSource } from "../icon-source.js";
 import { element } from "../render.js";
 import {
   toolButton,
@@ -22,13 +24,13 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     file = element(doc, "input", ""),
     loading = element(doc, "div", "mce-tool-status");
   file.type = "file";
-  file.accept = "image/png,image/jpeg";
+  file.accept = "image/png,image/apng,image/jpeg";
   file.hidden = true;
   loading.role = "status";
   root.append(file, loading);
   let destroyed = false,
     request = 0,
-    original: File | undefined,
+    original: Blob | undefined,
     bitmap: ImageBitmap | undefined,
     draft: IconValue | null | undefined,
     crop = { x: 0, y: 0, size: 64 },
@@ -59,8 +61,14 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
   root.append(cancelPending);
   const upload = toolButton(doc, "", "", () => {
     if (!allowed()) return;
-    if (controller.getDocument().icon) open(controller.getDocument().icon);
-    else file.click();
+    const current = controller.getDocument().icon;
+    if (current) {
+      const normalized = normalizeStatusIcon(current);
+      open(
+        normalized.value ?? undefined,
+        mount.localization.diagnostics(normalized.diagnostics),
+      );
+    } else file.click();
   });
   upload.className = "mce-icon-upload";
   const glyph = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -320,19 +328,27 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
         open(undefined, mount.localization.diagnostics(normalized.diagnostics));
         return;
       }
-      image = await createImageBitmap(uploaded);
+      const prepared = staticIconSource(
+        uploaded,
+        new Uint8Array(await uploaded.arrayBuffer()),
+      );
+      if (!valid()) return;
+      image = await createImageBitmap(prepared.source);
       if (!valid()) return;
       if (overlays.getOpenId() === "icon") overlays.close("cancel");
       bitmap = image;
       image = undefined;
-      original = uploaded;
+      original = prepared.source;
       const size = Math.min(bitmap.width, bitmap.height);
       crop = {
         x: Math.floor((bitmap.width - size) / 2),
         y: Math.floor((bitmap.height - size) / 2),
         size,
       };
-      open(normalized.value);
+      open(
+        normalized.value,
+        mount.localization.diagnostics(normalized.diagnostics),
+      );
     } catch {
       if (valid())
         open(undefined, label("imageError", "Invalid image: decoding failed"));

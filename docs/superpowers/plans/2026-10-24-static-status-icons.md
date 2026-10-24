@@ -36,7 +36,7 @@ Private inspectPng(bytes) returns dimensions/default bytes/animation marker/end.
 - [x] RED tests for source-preserving status/template/import projection,
       inherited formats, byte/alpha identity, malformed limits and fallback-frame semantics.
 - [x] Implement bounded scanner, shared validator, diagnostics and core integration.
-- [ ] Run all units/types/tooling/Node and commit the pure contract.
+- [x] Run all units/types/tooling/Node and commit the pure contract.
 
 ### Task2: Static viewer/upload/crop behavior and evidence
 
@@ -44,11 +44,11 @@ Private inspectPng(bytes) returns dimensions/default bytes/animation marker/end.
 tests/browser/static-icons.spec.ts, docs/icon-animation.md,
 docs/api.md, README.md, package.json, .github/workflows/ci.yml.
 
-- [ ] RED browser proof of APNG/default-image mismatch; tests for viewer,
+- [x] RED browser proof of APNG/default-image mismatch; tests for viewer,
       upload/crop, diagnostics, transparency and unchanged source.
-- [ ] Share static PNG preparation in decoder and crop source; retain limits/guards.
-- [ ] Verify same decoder behavior using original APNG fixtures and STB API;
+- [x] Share static PNG preparation in decoder and crop source; retain limits/guards.
+- [x] Verify same decoder behavior using original APNG fixtures and STB API;
       document PNG formats/refresh/native-versus-host scope without new game assets.
-- [ ] Full quality/unit/browser/package/examples/Windows checks.
-- [ ] One fresh correctness review; Important findings RED→GREEN plus suite.
+- [x] Full quality/unit/browser/package/examples/Windows checks.
+- [x] One fresh correctness review; Important findings RED→GREEN plus suite.
 - [ ] English PR for #13 and final CI green; leave open.

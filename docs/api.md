@@ -10,6 +10,10 @@ for named parameters, live updates and structured diagnostic fallbacks.
 proposals with measured color/position deviations, explicit tolerances and no
 automatic application. See [import-assistance.md](import-assistance.md).
 
+`normalizeStatusIcon(icon)` projects PNG data to its static/default 64×64 image
+without a DOM or pixel decoder. Status evaluation, runtime templates and imports
+share this projection; saved source stays unchanged. See [icon-animation.md](icon-animation.md).
+
 `@groundsgg/motd` exports the types in `src/core/model.ts` and these functions:
 
 | Function                                        | Purpose                                                               |
