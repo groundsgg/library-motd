@@ -283,9 +283,24 @@
   user-select: text;
 }
 .mce-inline[data-editor-field="motd"] .ProseMirror {
-  /* Follow the shared glyph layout until native word wrapping is modeled. */
-  white-space: break-spaces;
-  word-break: break-all;
+  /* The shared layout supplies display-only soft breaks, including Java spaces. */
+  white-space: pre;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+.mce-layout-padding {
+  display: inline-block;
+  height: 1px;
+}
+.mce-consumed-space {
+  display: none;
+}
+.mce-control-fallback {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  white-space: pre;
+  height: 9px;
 }
 .mce-inline .ProseMirror p {
   font-size: inherit;

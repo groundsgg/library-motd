@@ -37,8 +37,57 @@ Custom geometry can optionally set `statusRight` (status-text inset), `listFade`
 
 The Unicode references also establish limits rather than claiming additional bundled glyphs. `Ω Ж 中 😀`, arrows/checkmark/lightning, U+0378 and U+10FFFF are outside this font profile; browser fallback shapes and widths differ from the native client. For example, native missing-glyph advances are not represented by a universal six-pixel fallback. Decomposed `e`+U+0301 and `A`+U+0308 differ from their precomposed forms in the client. They remain atomic editor graphemes, but now produce `missing-glyph` warnings instead of being certified through NFC normalization. Exact custom-profile grapheme metrics take precedence; otherwise an NFC metric can only be an approximate width estimate.
 
-Browser-synthesized italic rendering differs from the native textured slant, including its ink bounds and antialiasing. The captured italic cases are evidence of that gap; [#68](https://github.com/groundsgg/library-motd/issues/68) tracks the rendering correction. Complex scripts and wrapping remain in #7, and resource-pack font import in #8. No additional Mojang font or texture data is bundled, and every preset remains `verified: false`.
+Browser-synthesized italic rendering differs from the native textured slant, including its ink bounds and antialiasing. The captured italic cases are evidence of that gap; [#68](https://github.com/groundsgg/library-motd/issues/68) tracks the rendering correction. Resource-pack font import remains in #8. No additional Mojang font or texture data is bundled, and every preset remains `verified: false`.
 
 Windows DirectWrite antialiasing differs from the native bitmap raster. At GUI scale 2 the Windows tests compare exact foreground **cell coverage** after excluding the softened fringe (gold R>200/G>130/B<40; aqua G>200/B>200/R<110), plus literal native shadow interior anchors and viewer/editor parity. They do not certify full raw-pixel equality of the antialiased edges or shadow masks. Linux Chromium/Firefox/WebKit retain exact foreground and shadow mask comparisons. [#70](https://github.com/groundsgg/library-motd/issues/70) tracks deterministic cross-platform rasterization and an actual Windows-client capture. The eight native sessions in this corpus ran on Linux with software OpenGL.
 
 The font derivatives now align both `hmtx` and CFF charstring widths; correcting only `hmtx` left 191 regular and 190 bold glyph advances inconsistent, which Windows exposed as wider inline text. `tools/build-fonts.py` reproduces the OFL derivatives with fontTools 4.60.1, preserving outlines and rebuilding charstrings without glyph hints. This is a maintainer operation; npm consumers and ordinary package builds do not require Python.
+
+## Word wrapping and text capabilities, 2026-10-23
+
+All eight presets declare `font.layout: "java-ltr"`. The shared layout breaks at
+the last U+0020 space when the next advance exceeds the line width; the overflowing
+character may itself be that space. Exactly one delimiter space is suppressed in
+the displayed line. Other leading, repeated and trailing spaces remain. With no
+space available an oversized word splits at grapheme boundaries, consuming at
+least one nonzero-width grapheme even in a very narrow viewport. Explicit empty
+lines and a trailing newline are retained. Custom profiles omitting `font.layout`
+keep the preceding glyph-by-glyph wrap behavior.
+
+`tests/fixtures/client/native-wrapping/<version>/` records nine additional cases
+from independent official-client sessions: ordinary words, overflowing spaces,
+repeated spaces, leading spaces, long words, explicit empty/trailing lines,
+trailing spaces, bold words and unsupported Unicode at a boundary. GUI scale is
+2 with vanilla resources, 854×480, Linux software OpenGL. Each manifest records
+exact JSON, client SHA-1, crop coordinates and screenshot checksums. The first
+eight supported cases have foreground-mask regressions for viewer and inline
+editor; Windows checks the same foreground coverage distinction documented above.
+The Unicode case is evidence of the fallback boundary, not a parity assertion.
+
+Source graphemes remain atomic, except that CRLF is split into the preserved CR
+control and LF line boundary, matching the native client's distinction. Explicitly supported custom cluster metrics take
+precedence over normalization estimates. LTR grapheme metrics do not implement
+ICU contextual shaping or bidi ordering: input requiring those receives
+`unsupported-text-layout`, alongside any `missing-glyph` diagnostics. Text and
+direction-control characters are preserved. This capability does not certify
+native Arabic, Hebrew, Indic, Thai or other complex-script rendering. The declared
+script coverage permits Latin, Greek, Cyrillic, Han, Hiragana, Katakana, Hangul,
+Common and Inherited graphemes; other scripts and every Unicode `Bidi_Control`
+receive the layout diagnostic even when custom glyph metrics accept them.
+
+An additional independent 26.3 session captured CRLF, LF and bare CR in
+`native-wrapping-controls/26.3/`. It confirms that CR has a visible native control
+glyph and LF breaks the line. The bundled DOM font cannot reproduce that control
+glyph: CR uses a `?` display fallback and `missing-glyph` warning while source and
+clipboard retain the original character. These three captures document the
+unsupported glyph boundary; they do not certify the fallback as native ink.
+
+Suppressed wrap delimiters remain in `LayoutResult.glyphs` with
+`suppressed: true` and zero displayed advance. They are not emitted as viewer ink.
+Inline soft breaks and quantized padding are display decorations: they do not
+insert source newlines, split PM atoms or add undo steps. Imported lines beyond
+the first two stay in the document with `hidden-lines` diagnostics.
+
+Explicit layout export rejects empty or multiline protected fallbacks with
+`protected-layout`, rather than dropping their raw component or duplicating its
+internal newline. Ordinary same-format export still preserves the raw source.

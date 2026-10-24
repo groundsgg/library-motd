@@ -90,8 +90,8 @@ export function evaluateStatus(
       document.motd.alignments.some((a) => a !== "left")
         ? {
             layout: {
-              profile: java1211Profile,
-              width: 271,
+              profile: context.motdLayout?.profile ?? java1211Profile,
+              width: context.motdLayout?.width ?? 271,
               maxLines: 2,
               alignments: document.motd.alignments,
             },

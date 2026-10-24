@@ -39,3 +39,25 @@ Only the cropped references are checked in for these sessions. Their manifest ch
 To regenerate the bundled derivatives, install `fontTools==4.60.1` in an isolated Python environment and run `python3 tools/build-fonts.py`. The original checked-in OFL fonts are the inputs. The script corrects both width tables, verifies every CFF advance against hmtx and updates derivative checksums while preserving source timestamps. Native game fonts are never inputs.
 
 Windows browser validation additionally distinguishes DirectWrite antialiasing from the native foreground cell geometry. See `docs/profiles.md` for the literal coverage thresholds and shadow anchors; the Linux mask comparisons remain exact. This distinction is recorded rather than hiding the platform gap, which remains #70.
+
+## Word-wrap sessions, 2026-10-23
+
+The `native-wrapping` corpus uses another isolated launch of every preset and the
+same status-only setup. Serve each manifest's exact JSON description. Mark case
+readiness with the same generated favicon RGB `(20 + caseIndex * 15, 40, 220)`;
+refresh until that icon is displayed, then move the pointer outside the row.
+Crop at `[194,94,542,42]` for 1.20.4/1.21.1 and `[194,96,534,42]` for modern
+clients. Those widths cover the entire 271/267-logical-pixel MOTD, including the
+left decoration extent. Capture files and all eight runtime jars are checksum
+verified. The Unicode-boundary capture documents unsupported shaping/fallback;
+the other eight cases are compared against both display modes.
+
+The Java 26.3 `StringSplitter.LineBreakFinder` bytecode independently confirms
+that U+0020 is recorded before checking overflow, a single delimiter is consumed,
+and the first nonzero-width character is accepted even when wider than the line.
+The reference cases exercise those rules in all eight independently run clients.
+
+The additional `native-wrapping-controls/26.3/` session used the same isolated
+procedure for `M\r\nM`, `M\nM` and `M\rM`. Its manifest records the source JSON,
+client hash and crop checksums. It establishes the CR control/LF boundary rather
+than certifying browser fallback ink; see the documented `?` rendering limit.

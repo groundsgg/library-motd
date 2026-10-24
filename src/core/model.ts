@@ -88,8 +88,12 @@ export interface RuntimeContext {
   clientProtocol: number;
   compatible?: boolean;
   values: Readonly<Record<string, string>>;
+  /** Profile and logical width used when materializing aligned MOTD output. */
+  motdLayout?: Pick<LayoutOptions, "profile" | "width">;
 }
 export interface FontProfile {
+  /** Native ASCII-space wrapping with LTR grapheme metrics; omission keeps legacy wrapping. */
+  layout?: "java-ltr";
   family: string;
   advances: Readonly<Record<string, number>>;
   fallbackAdvance: number;
@@ -173,6 +177,8 @@ export interface LayoutOptions {
   alignments?: Alignment[];
 }
 export interface Glyph {
+  /** Source space consumed at a native soft break; retained for editor/source mapping. */
+  suppressed?: boolean;
   text: string;
   color: string;
   style: TextStyle;

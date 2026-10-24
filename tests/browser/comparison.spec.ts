@@ -112,3 +112,28 @@ test("keeps wide client canvases inside their own viewport on narrow screens", a
     ),
   ).toBe(true);
 });
+
+test("compares aligned runtime output at each client's actual MOTD width", async ({
+  page,
+}) => {
+  await page.goto("/tests/browser/comparison.html");
+  await page.evaluate(() => {
+    const options = window.comparisonOptions;
+    options.document.motd.text = {
+      revision: 0,
+      nodes: [{ id: "width-test", type: "text", value: "MM MM" }],
+    };
+    options.document.motd.alignments = ["right"];
+    options.document.version = { mode: "automatic" };
+    for (const client of options.clients) {
+      client.context.compatible = true;
+      client.context.values = {};
+      client.context.viewportWidth = 854;
+      client.context.guiScale = 2;
+    }
+    window.comparison.update(options);
+  });
+  expect(
+    await page.evaluate(() => window.comparison.getDifferences().get("new")),
+  ).toContain("description");
+});

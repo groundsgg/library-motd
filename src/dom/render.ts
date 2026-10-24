@@ -92,8 +92,13 @@ export function renderText(
     "px";
   root.setAttribute("aria-label", layout.glyphs.map((g) => g.text).join(""));
   for (const glyph of layout.glyphs) {
-    if (glyph.line >= maxLines) continue;
-    const span = element(root.ownerDocument, "span", "mcp-glyph", glyph.text);
+    if (glyph.suppressed || glyph.line >= maxLines) continue;
+    const span = element(
+      root.ownerDocument,
+      "span",
+      "mcp-glyph",
+      glyph.text === "\r" ? "?" : glyph.text,
+    );
     span.style.left = glyph.x + "px";
     span.style.top = glyph.line * context.profile.font.lineHeight + "px";
     span.style.width = glyph.advance + "px";

@@ -1,0 +1,91 @@
+{
+  "client": "26.3",
+  "protocol": 777,
+  "date": "2026-10-23",
+  "viewport": [
+    854,
+    480
+  ],
+  "guiScale": 2,
+  "resourcePack": "vanilla default",
+  "clientSha1": "e877b6a07acd633fb3bb475002175cec036e7b87",
+  "region": [
+    194,
+    96,
+    550,
+    42
+  ],
+  "cases": [
+    {
+      "id": "crlf",
+      "lines": [
+        "M\r\nM"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "M\r\nM",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "crlf.png",
+          "sha256": "ec964a474349d4809151d799a77d38e6f8c287c4c8ab0d65bfe0a58f5b19d713",
+          "fullScreenshotSha256": "e57d54258d224a3c3e775967d406a141da64bfc8d3f1b5f93f5eb13586dcc43f"
+        }
+      ]
+    },
+    {
+      "id": "lf",
+      "lines": [
+        "M\nM"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "M\nM",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "lf.png",
+          "sha256": "7397aadd723f2cc40b118192d83acd546a253082bcb792f87ce1ecd0b9560986",
+          "fullScreenshotSha256": "9ac204ea6e2255cb09162f606fcce6ceb0ec74eb751f886f48709024943dfa20"
+        }
+      ]
+    },
+    {
+      "id": "cr",
+      "lines": [
+        "M\rM"
+      ],
+      "style": {},
+      "description": {
+        "text": "",
+        "extra": [
+          {
+            "text": "M\rM",
+            "color": "gold"
+          }
+        ]
+      },
+      "frames": [
+        {
+          "file": "cr.png",
+          "sha256": "cfbad7750c373442844a24ea24f4f45ccb28cc802d0a0dbb1e96199c19894a37",
+          "fullScreenshotSha256": "a4a0cc0ac1372bc312e3c37a47bbcffeef1a5d6dbf129c754394f45b6dac033b"
+        }
+      ]
+    }
+  ],
+  "kind": "native-wrapping-controls",
+  "platform": "Linux, software OpenGL"
+}
