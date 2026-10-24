@@ -14,7 +14,10 @@ export function resolveText(
           diagnostic(
             "unknown-placeholder",
             n.id,
-            `No value for {{${n.name}}}`,
+            {
+              key: "diagnostic.unknownPlaceholder",
+              parameters: { name: n.name },
+            },
             "warning",
           ),
         );

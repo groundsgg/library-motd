@@ -9,10 +9,14 @@ export function importStatus(status: JavaStatus): Outcome<ServerListDocument> {
       typeof status.version?.name !== "string" ||
       !Number.isInteger(status.version.protocol)
     )
-      return failure("invalid-status", "", "Invalid server version");
+      return failure("invalid-status", "", {
+        key: "diagnostic.invalidStatusVersion",
+      });
     const source = JSON.stringify(status.description);
     if (source.length > 65536)
-      return failure("text-limit", "motd", "Server MOTD exceeds import limit");
+      return failure("text-limit", "motd", {
+        key: "diagnostic.statusTextLimit",
+      });
     const text = parseText(source, "json");
     if (!text.value) return { value: null, diagnostics: text.diagnostics };
     const doc = createDocument(text.value);
@@ -31,11 +35,9 @@ export function importStatus(status: JavaStatus): Outcome<ServerListDocument> {
         !Number.isInteger(p.max) ||
         p.max < 0
       )
-        return failure(
-          "invalid-status",
-          "players",
-          "Invalid server player counts",
-        );
+        return failure("invalid-status", "players", {
+          key: "diagnostic.invalidStatusPlayers",
+        });
       doc.players.online = { mode: "fixed", value: p.online };
       doc.players.maximum = { mode: "fixed", value: p.max };
       if (p.sample?.length) {
@@ -50,15 +52,13 @@ export function importStatus(status: JavaStatus): Outcome<ServerListDocument> {
     }
     if (status.favicon) {
       if (!status.favicon.startsWith("data:image/png;base64,"))
-        return failure(
-          "invalid-icon",
-          "icon",
-          "Server icon must be a PNG data URI",
-        );
+        return failure("invalid-icon", "icon", {
+          key: "diagnostic.iconDataUri",
+        });
       doc.icon = { pngBase64: status.favicon.slice(22) };
     }
     return validateDocument(doc);
   } catch {
-    return failure("invalid-status", "", "Invalid server status response");
+    return failure("invalid-status", "", { key: "diagnostic.invalidStatus" });
   }
 }

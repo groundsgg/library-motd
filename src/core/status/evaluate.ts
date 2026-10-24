@@ -27,11 +27,9 @@ export function evaluatePlayerCounts(
     const input = rule.mode === "headroom" ? online : base;
     if (rule.mode !== "fixed" && input === undefined) {
       diagnostics.push(
-        diagnostic(
-          "missing-players",
-          "players",
-          "A calculation requires missing base player data",
-        ),
+        diagnostic("missing-players", "players", {
+          key: "diagnostic.missingPlayers",
+        }),
       );
       return undefined;
     }
@@ -49,7 +47,7 @@ export function evaluatePlayerCounts(
         diagnostic(
           "count-clamped",
           "players",
-          "Player count was clamped to the supported integer range",
+          { key: "diagnostic.countClamped" },
           "warning",
         ),
       );
@@ -132,7 +130,7 @@ export function evaluateStatus(
         diagnostic(
           "hidden-hover",
           "hover",
-          "Hidden player data has no player-list hover",
+          { key: "diagnostic.hiddenHover" },
           "warning",
         ),
       );
@@ -162,7 +160,7 @@ export function evaluateStatus(
           diagnostic(
             "unreachable-hover",
             "hover",
-            "The incompatible status replaces the player-count hover target",
+            { key: "diagnostic.unreachableHover" },
             "warning",
           ),
         );

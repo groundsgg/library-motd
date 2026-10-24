@@ -51,7 +51,7 @@ export function serializeText(
       diagnostic(
         "unsupported-export",
         "",
-        "Protected constructs cannot be represented in this format",
+        { key: "diagnostic.unsupportedExport" },
         options.lossy === "reduce" ? "warning" : "error",
       ),
     );
@@ -153,11 +153,9 @@ export function serializeText(
           value: null,
           diagnostics: [
             ...diagnostics,
-            diagnostic(
-              "protected-layout",
-              owner.id,
-              "Empty or multiline protected components cannot be materialized without changing source; export without layout or resolve the value first",
-            ),
+            diagnostic("protected-layout", owner.id, {
+              key: "diagnostic.protectedLayoutMultiline",
+            }),
           ],
         };
     }
@@ -171,11 +169,9 @@ export function serializeText(
           value: null,
           diagnostics: [
             ...diagnostics,
-            diagnostic(
-              "protected-layout",
-              g.nodeId,
-              "A visual break falls inside a protected component or placeholder; export without layout or resolve the value first",
-            ),
+            diagnostic("protected-layout", g.nodeId, {
+              key: "diagnostic.protectedLayoutBreak",
+            }),
           ],
         };
       atomicLines.set(g.nodeId, g.line);
@@ -242,7 +238,7 @@ export function serializeText(
             diagnostic(
               "protected-effect",
               node.id,
-              "Protected component preserved; its enclosing color effect cannot be evaluated",
+              { key: "diagnostic.protectedEffect" },
               "warning",
             ),
           );
@@ -265,11 +261,9 @@ export function serializeText(
         value: null,
         diagnostics: [
           ...diagnostics,
-          diagnostic(
-            "protected-layout",
-            "",
-            "JSON layout of protected components is unavailable; export without layout",
-          ),
+          diagnostic("protected-layout", "", {
+            key: "diagnostic.protectedLayoutJson",
+          }),
         ],
       };
     return {
@@ -292,11 +286,9 @@ export function serializeText(
             value: null,
             diagnostics: [
               ...diagnostics,
-              diagnostic(
-                "unsupported-color",
-                "",
-                "Target does not support RGB colors",
-              ),
+              diagnostic("unsupported-color", "", {
+                key: "diagnostic.unsupportedColor",
+              }),
             ],
           };
         const channels = rgb(color);
@@ -308,7 +300,7 @@ export function serializeText(
           diagnostic(
             "reduced-color",
             "",
-            "RGB reduced to the closest legacy color",
+            { key: "diagnostic.reducedColor" },
             "warning",
           ),
         );

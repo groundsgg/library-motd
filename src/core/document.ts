@@ -181,17 +181,13 @@ function validRule(rule: unknown, online: boolean): rule is CountRule {
 }
 export function validateDocument(input: unknown): Outcome<ServerListDocument> {
   if (!jsonSafe(input) || !record(input))
-    return failure(
-      "invalid-document",
-      "",
-      "Expected bounded, acyclic JSON data",
-    );
+    return failure("invalid-document", "", {
+      key: "diagnostic.invalidDocument",
+    });
   if (input.schemaVersion !== 1)
-    return failure(
-      "unsupported-schema",
-      "schemaVersion",
-      "Only document schema 1 is supported",
-    );
+    return failure("unsupported-schema", "schemaVersion", {
+      key: "diagnostic.unsupportedSchema",
+    });
   const diagnostics = [];
   if (
     !record(input.motd) ||
@@ -200,7 +196,7 @@ export function validateDocument(input: unknown): Outcome<ServerListDocument> {
     !input.motd.alignments.every((a) => ["left", "center", "right"].includes(a))
   )
     diagnostics.push(
-      diagnostic("invalid-text", "motd", "Invalid MOTD text or alignment"),
+      diagnostic("invalid-text", "motd", { key: "diagnostic.invalidMotd" }),
     );
   if (
     !record(input.version) ||
@@ -210,21 +206,29 @@ export function validateDocument(input: unknown): Outcome<ServerListDocument> {
     (input.version.mode !== "automatic" && !validText(input.version.text))
   )
     diagnostics.push(
-      diagnostic("invalid-version", "version", "Invalid version rule"),
+      diagnostic("invalid-version", "version", {
+        key: "diagnostic.invalidVersion",
+      }),
     );
   if (!record(input.players))
     diagnostics.push(
-      diagnostic("invalid-players", "players", "Missing player rules"),
+      diagnostic("invalid-players", "players", {
+        key: "diagnostic.missingPlayerRules",
+      }),
     );
   else {
     if (typeof input.players.hidden !== "boolean")
       diagnostics.push(
-        diagnostic("invalid-players", "players.hidden", "Expected boolean"),
+        diagnostic("invalid-players", "players.hidden", {
+          key: "diagnostic.expectedBoolean",
+        }),
       );
     for (const field of ["online", "maximum"])
       if (!validRule(input.players[field], field === "online"))
         diagnostics.push(
-          diagnostic("invalid-count", `players.${field}`, "Invalid count rule"),
+          diagnostic("invalid-count", `players.${field}`, {
+            key: "diagnostic.invalidCount",
+          }),
         );
   }
   if (
@@ -233,23 +237,17 @@ export function validateDocument(input: unknown): Outcome<ServerListDocument> {
     (input.hover.mode === "custom" && !validText(input.hover.text))
   )
     diagnostics.push(
-      diagnostic("invalid-hover", "hover", "Invalid player hover"),
+      diagnostic("invalid-hover", "hover", { key: "diagnostic.invalidHover" }),
     );
   if (input.icon !== null && !validIcon(input.icon))
     diagnostics.push(
-      diagnostic(
-        "invalid-icon",
-        "icon",
-        "Expected a complete bounded 64×64 PNG",
-      ),
+      diagnostic("invalid-icon", "icon", { key: "diagnostic.invalidIcon" }),
     );
   if (!record(input.extensions))
     diagnostics.push(
-      diagnostic(
-        "invalid-extensions",
-        "extensions",
-        "Expected extension object",
-      ),
+      diagnostic("invalid-extensions", "extensions", {
+        key: "diagnostic.invalidExtensions",
+      }),
     );
   if (diagnostics.length) return { value: null, diagnostics };
   const { schemaVersion, motd, version, icon, players, hover, extensions } =
@@ -269,11 +267,11 @@ export function validateDocument(input: unknown): Outcome<ServerListDocument> {
 }
 export function readDocument(json: string): Outcome<ServerListDocument> {
   if (json.length > 2_000_000)
-    return failure("document-limit", "", "Document is too large");
+    return failure("document-limit", "", { key: "diagnostic.documentLimit" });
   try {
     return validateDocument(JSON.parse(json));
   } catch {
-    return failure("invalid-json", "", "Document is not valid JSON");
+    return failure("invalid-json", "", { key: "diagnostic.invalidJson" });
   }
 }
 export function writeDocument(document: ServerListDocument): string {
