@@ -495,7 +495,7 @@ export function createEntry(
     pingTip.textContent = compatible
       ? `${context.pingMs} ms`
       : (labels.incompatible ?? "Incompatible version!");
-    stop = animateObfuscation(wrapper, context.profile, context.animations);
+    stop = animateObfuscation(wrapper, context, context.animations);
     wrapper.dataset.profileVerified = String(context.profile.verified);
     wrapper.title = context.profile.verified
       ? ""

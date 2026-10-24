@@ -813,6 +813,38 @@
   content: none;
 }
 
+/* Keep real text for editing/accessibility; the two silhouettes paint native
+   italic ink and its shadow without browser font synthesis or extra DOM nodes. */
+.mcp-pixel-italic {
+  -webkit-text-fill-color: transparent;
+  text-shadow: none !important;
+  text-decoration: none !important;
+}
+.mcp-glyph.mcp-pixel-italic::before,
+.mcp-glyph.mcp-pixel-italic::after,
+.mce-native-glyph.mcp-pixel-italic::before,
+.mce-native-glyph.mcp-pixel-italic::after {
+  content: "";
+  position: absolute;
+  left: var(--mcp-italic-left);
+  top: -0.4444444444em;
+  width: var(--mcp-italic-width);
+  height: var(--mcp-italic-size);
+  background: var(--mcp-italic-foreground) 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  box-shadow: none;
+  pointer-events: none;
+  transform: scale(var(--mcp-italic-inverse-scale));
+  transform-origin: top left;
+  z-index: 1;
+}
+.mcp-glyph.mcp-pixel-italic::after,
+.mce-native-glyph.mcp-pixel-italic::after {
+  background-image: var(--mcp-italic-shadow);
+  translate: var(--mcp-shadow-offset, 0px 0px);
+  z-index: 0;
+}
+
 .mcp-list-fade {
   position: absolute;
   inset: var(--mcp-list-top, 31px) 0 var(--mcp-footer-height, 63px);
