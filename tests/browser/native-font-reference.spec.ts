@@ -345,6 +345,7 @@ for (const [version, profile] of versions) {
     "shadow",
     "underlined",
     "strikethrough",
+    "italic",
   ]) {
     test(`native ${version} ${id} ink and shadows in viewer and editor`, async ({
       page,
@@ -390,7 +391,12 @@ for (const [version, profile] of versions) {
           [21, 63, 63],
         ].entries()) {
           const reference = mask(native, color);
-          if (windows && colorIndex >= 2 && reference.some(Boolean)) {
+          if (
+            windows &&
+            id !== "italic" &&
+            colorIndex >= 2 &&
+            reference.some(Boolean)
+          ) {
             const [x, y] = shadowAnchors[id]![colorIndex - 2]!;
             const offset = (y! * native.width + x!) * 4;
             expect([...native.data.subarray(offset, offset + 3)]).toEqual(
@@ -406,7 +412,7 @@ for (const [version, profile] of versions) {
           }
           expect
             .soft(
-              (windows && colorIndex < 2
+              (windows && id !== "italic" && colorIndex < 2
                 ? coverage(crop, color)
                 : mask(crop, color)
               ).filter((value, index) => value !== reference[index]).length,

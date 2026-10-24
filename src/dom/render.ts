@@ -7,6 +7,7 @@ import type {
   TextStyle,
 } from "../core/model.js";
 import { layoutText } from "../core/layout/layout.js";
+import { applyPixelItalic, usesBundledPixelFont } from "./font/italic.js";
 export interface PreviewOptions {
   document: ServerListDocument;
   context: PreviewContext;
@@ -91,6 +92,9 @@ export function renderText(
     Math.min(maxLines, layout.lines.length) * context.profile.font.lineHeight +
     "px";
   root.setAttribute("aria-label", layout.glyphs.map((g) => g.text).join(""));
+  const pixelFont = usesBundledPixelFont(context);
+  const pixelScale =
+    context.guiScale * (root.ownerDocument.defaultView?.devicePixelRatio ?? 1);
   for (const glyph of layout.glyphs) {
     if (glyph.suppressed || glyph.line >= maxLines) continue;
     const span = element(
@@ -112,6 +116,14 @@ export function renderText(
         ? defaultColor
         : glyph.color,
     );
+    if (pixelFont)
+      applyPixelItalic(
+        span,
+        span.textContent!,
+        glyph.style,
+        pixelScale,
+        glyph.advance,
+      );
     if (glyph.style.obfuscated && glyph.text.trim()) {
       span.dataset.obfuscated = "";
       span.dataset.advance = String(glyph.advance - (glyph.style.bold ? 1 : 0));
