@@ -17,6 +17,8 @@ import type {
 import { evaluatePlayerCounts } from "../../core/status/evaluate.js";
 import { validateDocument } from "../../core/document.js";
 import { parseText } from "../../core/text/parse.js";
+import { layoutText } from "../../core/layout/layout.js";
+import { resolveText } from "../../core/text/placeholders.js";
 import { editorSchema, type StylePath } from "./schema.js";
 import { fromEditorNode, nextId, toEditorNode } from "./mapping.js";
 import { EditorHistory, type HistoryEntry } from "./history.js";
@@ -152,6 +154,21 @@ export function createEditorController(
     field: EditableField,
     resolved: Readonly<Record<string, string>>,
   ) {
+    const measure = (doc: EditorState["doc"]) => {
+      const source = fromEditorNode(doc, textFor(field));
+      const layout = layoutText(resolveText(source, resolved).value!, {
+        profile: options.context.profile,
+        width: entryTextWidth(options.context),
+        maxLines: 2,
+      });
+      return {
+        lines: layout.lines.length,
+        advance: layout.glyphs.reduce(
+          (total, glyph) => total + glyph.advance,
+          0,
+        ),
+      };
+    };
     return [
       inlineEffects(
         () => textFor(field),
@@ -167,10 +184,16 @@ export function createEditorController(
       ),
       new Plugin({
         filterTransaction(tr, state) {
+          if (!tr.docChanged || field !== "motd") return true;
+          const next = measure(tr.doc);
+          if (next.lines <= 2) return true;
+          const previous = measure(state.doc);
+          // Source/import may already overflow. Keep it intact and permit edits
+          // that shrink it or preserve its occupied space, never hidden growth.
           return (
-            !tr.docChanged ||
-            field !== "motd" ||
-            tr.doc.childCount <= Math.max(2, state.doc.childCount)
+            previous.lines > 2 &&
+            next.lines <= previous.lines &&
+            next.advance <= previous.advance
           );
         },
       }),
@@ -272,6 +295,7 @@ export function createEditorController(
           ),
           role: "textbox",
           "aria-multiline": String(field !== "version"),
+          spellcheck: "false",
         },
       });
       if (field === "motd")
@@ -317,6 +341,7 @@ export function createEditorController(
         ),
         role: "textbox",
         "aria-multiline": String(field !== "version"),
+        spellcheck: "false",
       },
       handleDOMEvents: {
         focus() {
@@ -348,6 +373,7 @@ export function createEditorController(
       handlePaste(view, event) {
         const plain = event.clipboardData?.getData("text/plain");
         if (plain !== undefined) {
+          if (!syncNativeSelection(view)) return true;
           view.dispatch(view.state.tr.insertText(plain));
           return true;
         }
@@ -356,7 +382,11 @@ export function createEditorController(
       dispatchTransaction(tr) {
         if (destroyed) return;
         const before = snapshot();
-        view.updateState(view.state.apply(tr));
+        const previousState = view.state;
+        view.updateState(previousState.apply(tr));
+        // Rejected input still needs its DOM redrawn, but must not move saved
+        // selections, emit a document change or consume an undo boundary.
+        if (view.state === previousState) return;
         if (
           tr.docChanged &&
           (locked() ||
@@ -642,6 +672,32 @@ export function createEditorController(
       rebuild();
   }
 
+  function syncNativeSelection(view: EditorView): boolean {
+    const native = view.dom.ownerDocument.getSelection();
+    if (
+      native?.anchorNode &&
+      native.focusNode &&
+      view.dom.contains(native.anchorNode) &&
+      view.dom.contains(native.focusNode)
+    ) {
+      try {
+        const selection = TextSelection.between(
+          view.state.doc.resolve(
+            view.posAtDOM(native.anchorNode, native.anchorOffset),
+          ),
+          view.state.doc.resolve(
+            view.posAtDOM(native.focusNode, native.focusOffset),
+          ),
+        );
+        if (!selection.eq(view.state.selection))
+          view.dispatch(view.state.tr.setSelection(selection));
+      } catch {
+        return false;
+      }
+    }
+    return true;
+  }
+
   function restoreSelection(saved: FieldSelection): boolean {
     if (destroyed || saved.generation !== generation || !selections.has(saved))
       return false;
@@ -703,26 +759,7 @@ export function createEditorController(
     captureSelection() {
       const view = views.get(activeField);
       if (!view) return null;
-      const native = view.dom.ownerDocument.getSelection();
-      if (
-        native?.anchorNode &&
-        native.focusNode &&
-        view.dom.contains(native.anchorNode) &&
-        view.dom.contains(native.focusNode)
-      ) {
-        try {
-          const anchor = view.posAtDOM(native.anchorNode, native.anchorOffset),
-            head = view.posAtDOM(native.focusNode, native.focusOffset);
-          const selection = TextSelection.between(
-            view.state.doc.resolve(anchor),
-            view.state.doc.resolve(head),
-          );
-          if (!selection.eq(view.state.selection))
-            view.dispatch(view.state.tr.setSelection(selection));
-        } catch {
-          return null;
-        }
-      }
+      if (!syncNativeSelection(view)) return null;
       const saved = {
         field: activeField,
         from: Math.max(1, view.state.selection.from),

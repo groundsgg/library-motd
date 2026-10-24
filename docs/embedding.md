@@ -49,3 +49,11 @@ Mojang's [EULA](https://www.minecraft.net/en-us/eula) generally restricts redist
 NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
 
 Use `createComparison` (DOM) or `ServerListComparison` (optional React) to compare one document across independent client contexts. See [comparison.md](comparison.md) for lifecycle, diagnostics and examples.
+
+The inline MOTD editor accepts changes only within two measured visual lines.
+This includes soft wraps and resolved placeholders, not just explicit newlines.
+Rejected changes do not rewrite source or add undo steps. Source editing and
+imports preserve overlong documents; their extra lines remain available without
+scrolling the two visible rows. Existing overflow can be shortened or cleared,
+but new hidden growth is rejected. Browser spellcheck is disabled on inline text
+surfaces; focusing a field adds no synthetic underline to the client rendering.
