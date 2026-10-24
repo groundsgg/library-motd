@@ -1,3 +1,4 @@
+import { isStatusIcon as validIcon } from "./image/icon.js";
 import type {
   CountRule,
   Outcome,
@@ -129,42 +130,6 @@ function validText(v: unknown): v is TextDocument {
       ].includes(String(v.source.format)) &&
       Number.isInteger(v.source.revision))
   );
-}
-function validIcon(value: unknown): boolean {
-  if (
-    !record(value) ||
-    typeof value.pngBase64 !== "string" ||
-    value.pngBase64.length > 131072 ||
-    !/^[A-Za-z0-9+/]+={0,2}$/.test(value.pngBase64)
-  )
-    return false;
-  try {
-    const raw = atob(value.pngBase64),
-      bytes = Uint8Array.from(raw, (c) => c.charCodeAt(0)),
-      view = new DataView(bytes.buffer);
-    if (
-      bytes.length < 45 ||
-      ![137, 80, 78, 71, 13, 10, 26, 10].every((v, i) => bytes[i] === v) ||
-      view.getUint32(8) !== 13 ||
-      raw.slice(12, 16) !== "IHDR" ||
-      view.getUint32(16) !== 64 ||
-      view.getUint32(20) !== 64
-    )
-      return false;
-    let idat = false;
-    for (let pos = 8; pos + 12 <= bytes.length;) {
-      const length = view.getUint32(pos),
-        type = raw.slice(pos + 4, pos + 8);
-      if (length > bytes.length - pos - 12) return false;
-      if (type === "IDAT") idat = true;
-      if (type === "IEND")
-        return idat && length === 0 && pos + 12 === bytes.length;
-      pos += length + 12;
-    }
-    return false;
-  } catch {
-    return false;
-  }
 }
 function validRule(rule: unknown, online: boolean): rule is CountRule {
   return (

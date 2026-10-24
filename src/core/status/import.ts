@@ -2,6 +2,7 @@ import type { JavaStatus, Outcome, ServerListDocument } from "../model.js";
 import { createDocument, validateDocument } from "../document.js";
 import { failure } from "../diagnostics.js";
 import { parseText } from "../text/parse.js";
+import { normalizeStatusIcon } from "../image/icon.js";
 export function importStatus(status: JavaStatus): Outcome<ServerListDocument> {
   try {
     if (
@@ -55,7 +56,12 @@ export function importStatus(status: JavaStatus): Outcome<ServerListDocument> {
         return failure("invalid-icon", "icon", {
           key: "diagnostic.iconDataUri",
         });
-      doc.icon = { pngBase64: status.favicon.slice(22) };
+      const icon = normalizeStatusIcon({ pngBase64: status.favicon.slice(22) });
+      if (!icon.value) return { value: null, diagnostics: icon.diagnostics };
+      doc.icon = icon.value;
+      const result = validateDocument(doc);
+      result.diagnostics.push(...icon.diagnostics);
+      return result;
     }
     return validateDocument(doc);
   } catch {

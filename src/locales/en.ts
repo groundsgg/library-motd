@@ -244,4 +244,8 @@ export const englishLabels = {
   "assistanceField.hover": "Hover",
   "assistanceKind.gradient": "Gradient: {field}",
   "assistanceKind.alignment": "Alignment: {field}",
+  "diagnostic.staticIcon":
+    "PNG animation is not supported by the Java status icon; using its static default image.",
+  "diagnostic.inheritedIcon":
+    "The inherited server icon is not a supported 64×64 PNG; using the default icon.",
 } as const;

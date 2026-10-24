@@ -9,6 +9,7 @@ import type {
   TextTarget,
 } from "../model.js";
 import { java1211Profile } from "../../profiles/java-1.21.1.js";
+import { normalizeStatusIcon } from "../image/icon.js";
 import { validateDocument } from "../document.js";
 import { diagnostic } from "../diagnostics.js";
 import { resolveText } from "../text/placeholders.js";
@@ -123,6 +124,25 @@ export function evaluateStatus(
   }
   if (document.icon)
     status.favicon = "data:image/png;base64," + document.icon.pngBase64;
+  if (status.favicon) {
+    const icon = status.favicon.startsWith("data:image/png;base64,")
+      ? normalizeStatusIcon({ pngBase64: status.favicon.slice(22) })
+      : null;
+    if (icon?.value) {
+      status.favicon = "data:image/png;base64," + icon.value.pngBase64;
+      diagnostics.push(...icon.diagnostics);
+    } else {
+      delete status.favicon;
+      diagnostics.push(
+        diagnostic(
+          "invalid-inherited-icon",
+          "context.base.favicon",
+          { key: "diagnostic.inheritedIcon" },
+          "warning",
+        ),
+      );
+    }
+  }
   if (document.players.hidden) {
     delete status.players;
     if (document.hover.mode === "custom")
