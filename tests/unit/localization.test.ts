@@ -59,6 +59,26 @@ it("treats unknown keys and inserted parameters as literal data", () => {
   expect(api.formatLabel("lineAlignment")).toBe("Line {line} alignment");
 });
 
+it("preserves unknown diagnostic fallback text while formatting explicit host templates", () => {
+  const diagnostic: api.Diagnostic = {
+    code: "host",
+    path: "",
+    severity: "warning",
+    messageKey: "host.external",
+    message: "Server said {count}",
+    parameters: { count: 2 },
+  };
+  expect(api.formatDiagnostic(diagnostic, api.germanLabels)).toBe(
+    "Server said {count}",
+  );
+  expect(
+    api.formatDiagnostic(diagnostic, { "host.external": "Anzahl: {count}" }),
+  ).toBe("Anzahl: 2");
+  expect(
+    api.formatDiagnostic({ ...diagnostic, messageKey: "constructor" }),
+  ).toBe("Server said {count}");
+});
+
 it("reports configurable visible-line limits as language-independent parameters", () => {
   const text = api.parseText(
     "A<newline>B<newline>C<newline>D",

@@ -220,13 +220,11 @@ test("crop controls translate in place while retaining their draft", async ({
 }) => {
   const png = new PNG({ width: 64, height: 64 });
   png.data.fill(255);
-  await page
-    .locator('#editor input[type="file"]')
-    .setInputFiles({
-      name: "icon.png",
-      mimeType: "image/png",
-      buffer: PNG.sync.write(png),
-    });
+  await page.locator('#editor input[type="file"]').setInputFiles({
+    name: "icon.png",
+    mimeType: "image/png",
+    buffer: PNG.sync.write(png),
+  });
   const width = page.getByLabel("Crop size", { exact: true });
   await expect(width).toBeVisible();
   await width.fill("32");
@@ -301,16 +299,63 @@ test("invalid-image diagnostics are translated in the upload tool", async ({
   await page.evaluate(() =>
     window.setEditorOptions({ labels: window.api.germanLabels }),
   );
-  await page
-    .locator('#editor input[type="file"]')
-    .setInputFiles({
-      name: "invalid.txt",
-      mimeType: "text/plain",
-      buffer: Buffer.from("invalid"),
-    });
+  await page.locator('#editor input[type="file"]').setInputFiles({
+    name: "invalid.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from("invalid"),
+  });
   await expect(
     page
       .getByRole("dialog", { name: "Server-Icon bearbeiten", exact: true })
       .getByRole("status"),
   ).toContainText("Ungültiges Bild: Wähle PNG oder JPEG.");
+});
+
+for (const adapter of ["dom", "react"]) {
+  test(`${adapter} example switches editor and preview language`, async ({
+    page,
+  }) => {
+    await page.goto(`/examples/${adapter}/`);
+    await page
+      .getByRole("combobox", { name: "Interface language", exact: true })
+      .selectOption("de");
+    await expect(
+      page.getByRole("button", { name: "Fett", exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("combobox", { name: "Presentation", exact: true })
+      .selectOption("server-list");
+    await expect(page.locator(".preview-output .mcp-menu-title")).toHaveText(
+      "Mehrspieler",
+    );
+    await page
+      .getByRole("combobox", { name: "Interface language", exact: true })
+      .selectOption("en");
+    await expect(
+      page.getByRole("button", { name: "Bold", exact: true }),
+    ).toBeVisible();
+    await expect(page.locator(".preview-output .mcp-menu-title")).toHaveText(
+      "Play Multiplayer",
+    );
+  });
+}
+
+test("comparison translates background names and diagnostic messages", async ({
+  page,
+}) => {
+  await page.evaluate(() => {
+    const host = document.createElement("div");
+    host.id = "localized-comparison";
+    document.body.append(host);
+    window.dom.createComparison(host, {
+      document: window.doc,
+      clients: [
+        { id: "one", context: { ...window.context, background: "none" } },
+      ],
+      labels: window.api.germanLabels,
+    });
+  });
+  await expect(
+    page.locator("#localized-comparison .mcp-comparison-context"),
+  ).toContainText("Hintergrund: Kein Hintergrund");
 });

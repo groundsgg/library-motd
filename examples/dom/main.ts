@@ -1,21 +1,28 @@
-import { clientProfiles } from "../../src/index.js";
+import {
+  clientProfiles,
+  englishLabels,
+  germanLabels,
+} from "../../src/index.js";
 import { createEditor, createPreview } from "../../src/dom/index.js";
 import { context, initialDocument } from "../shared/data.js";
 import "../../src/dom/styles.css";
 import "../shared/page.css";
 let document = initialDocument;
+let labels: Readonly<Record<string, string>> = englishLabels;
 const preview = createPreview(window.document.querySelector("#preview")!, {
   document,
   context,
+  labels,
 });
 const onChange = (next: typeof document) => {
   document = next;
-  preview.update({ document, context });
+  preview.update({ document, context, labels });
 };
 const editor = createEditor(window.document.querySelector("#editor")!, {
   document,
   context,
   onChange,
+  labels,
 });
 const query = <T extends HTMLElement>(id: string) =>
   window.document.querySelector<T>(id)!;
@@ -26,6 +33,10 @@ for (const profile of clientProfiles) {
   versions.add(option);
 }
 const refresh = () => {
+  labels =
+    query<HTMLSelectElement>("#language").value === "de"
+      ? germanLabels
+      : englishLabels;
   context.profile = clientProfiles.find((p) => p.id === versions.value)!;
   context.clientProtocol = context.profile.protocol!;
   context.compatible =
@@ -37,8 +48,8 @@ const refresh = () => {
   context.selected = query<HTMLInputElement>("#selected").checked;
   const toolbar = query<HTMLSelectElement>("#toolbar").value as
     "fixed" | "selection";
-  editor.update({ document, context, onChange, toolbar });
-  preview.update({ document, context });
+  editor.update({ document, context, onChange, toolbar, labels });
+  preview.update({ document, context, labels });
 };
 for (const id of [
   "#client-version",
@@ -47,5 +58,6 @@ for (const id of [
   "#presentation",
   "#selected",
   "#toolbar",
+  "#language",
 ])
   query(id).addEventListener("change", refresh);

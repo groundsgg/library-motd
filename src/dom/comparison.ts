@@ -125,7 +125,7 @@ export function createComparison(
         context.profile.clientVersion,
         `${label("comparisonProtocol", "Protocol")}: ${context.clientProtocol}`,
         `${label("comparisonScale", "GUI scale")}: ${context.guiScale}`,
-        `${label("comparisonBackground", "Background")}: ${background ?? "none"}`,
+        `${label("comparisonBackground", "Background")}: ${label(`background.${background ?? "none"}`, background ?? "none")}`,
       ].join(" · ");
       const changed = fields.filter(
         (field) =>

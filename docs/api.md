@@ -1,5 +1,11 @@
 # Public API
 
+`englishLabels`, `germanLabels`, `formatLabel`, `interpolateMessage` and
+`formatDiagnostic` are pure core exports. `MessageKey`, `MessageParameters`,
+`LabelOverrides` and `DiagnosticMessage` describe their contracts. All UI
+adapters accept partial `labels` overrides. See [localization.md](localization.md)
+for named parameters, live updates and structured diagnostic fallbacks.
+
 `@groundsgg/motd` exports the types in `src/core/model.ts` and these functions:
 
 | Function                                        | Purpose                                                               |

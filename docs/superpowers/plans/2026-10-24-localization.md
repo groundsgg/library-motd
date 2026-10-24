@@ -41,18 +41,18 @@ tests/unit/localization.test.ts.
 src/dom/entry.ts, src/dom/comparison.ts,
 tests/browser/localization.spec.ts.
 
-- [ ] Add failing live-language tests for open tools, parameters, diagnostics,
+- [x] Add failing live-language tests for open tools, parameters, diagnostics,
       literal escaping, independent instances, focus, selection and undo.
-- [ ] Add explicit bindings and localize every built-in visible/accessibility
+- [x] Add explicit bindings and localize every built-in visible/accessibility
       string; preserve DOM controls and pending drafts during updates.
-- [ ] Verify all engines and existing English UI regressions.
+- [x] Verify all engines and existing English UI regressions.
 
 ### Task 3: Standalone examples, documentation and PR
 
 **Files:** examples/dom/, examples/react/, docs/localization.md,
 docs/api.md, docs/embedding.md, README.md, package.json.
 
-- [ ] Demonstrate both catalogs and document keys, parameters and fallback rules.
-- [ ] Run full quality/unit/browser/package/example checks.
+- [x] Demonstrate both catalogs and document keys, parameters and fallback rules.
+- [x] Run full quality/unit/browser/package/example checks.
 - [ ] Obtain one fresh whole-branch review, resolve important findings with
       regressions, create the English PR and verify final CI; leave it open.

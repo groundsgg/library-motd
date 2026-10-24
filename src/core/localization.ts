@@ -41,10 +41,10 @@ export function formatDiagnostic(
   labels: LabelOverrides = {},
 ): string {
   if (!diagnostic.messageKey) return diagnostic.message;
-  return interpolateMessage(
+  const template =
     ownLabel(labels, diagnostic.messageKey) ??
-      ownLabel(englishLabels, diagnostic.messageKey) ??
-      diagnostic.message,
-    diagnostic.parameters,
-  );
+    ownLabel(englishLabels, diagnostic.messageKey);
+  return template === undefined
+    ? diagnostic.message
+    : interpolateMessage(template, diagnostic.parameters);
 }

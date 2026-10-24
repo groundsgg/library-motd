@@ -1,12 +1,18 @@
 import { createElement, StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { ServerListEditor, ServerListPreview } from "../../src/react/index.js";
-import { clientProfiles } from "../../src/index.js";
+import {
+  clientProfiles,
+  englishLabels,
+  germanLabels,
+} from "../../src/index.js";
 import { context, initialDocument } from "../shared/data.js";
 import "../../src/dom/styles.css";
 import "../shared/page.css";
 function App() {
   const [document, setDocument] = useState(initialDocument);
+  const [language, setLanguage] = useState("en");
+  const labels = language === "de" ? germanLabels : englishLabels;
   const [profile, setProfile] = useState(context.profile);
   const [toolbar, setToolbar] = useState<"fixed" | "selection">("fixed");
   const [presentation, setPresentation] = useState<"row" | "server-list">(
@@ -32,6 +38,22 @@ function App() {
       "p",
       null,
       "Controlled React editor with shared undo, local assets and no backend.",
+    ),
+    createElement(
+      "label",
+      null,
+      "Interface language ",
+      createElement(
+        "select",
+        {
+          value: language,
+          "aria-label": "Interface language",
+          onChange: (e: React.ChangeEvent<HTMLSelectElement>) =>
+            setLanguage(e.target.value),
+        },
+        createElement("option", { value: "en" }, "English"),
+        createElement("option", { value: "de" }, "Deutsch"),
+      ),
     ),
     createElement(
       "label",
@@ -86,12 +108,17 @@ function App() {
       context: previewContext,
       onChange: setDocument,
       toolbar,
+      labels,
     }),
     createElement("div", { className: "output-label" }, "Live preview"),
     createElement(
       "div",
       { className: "preview-output" },
-      createElement(ServerListPreview, { document, context: previewContext }),
+      createElement(ServerListPreview, {
+        document,
+        context: previewContext,
+        labels,
+      }),
     ),
   );
 }
