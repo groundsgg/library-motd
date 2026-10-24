@@ -17,7 +17,14 @@ export function suggestSimplification(
     candidate = structuredClone(text),
     chars = flattenText(text),
     tolerance = options.tolerance ?? 0;
+  const hasPlaceholder = (nodes: TextNode[]): boolean =>
+    nodes.some(
+      (node) =>
+        node.type === "placeholder" ||
+        (node.type === "group" && hasPlaceholder(node.children)),
+    );
   if (
+    hasPlaceholder(text.nodes) ||
     chars.length < 2 ||
     chars.some((c) => c.opaque || c.text === "\n") ||
     chars.some(
