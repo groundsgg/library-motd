@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1](https://github.com/groundsgg/library-motd/compare/v0.2.0...v0.2.1) (2026-10-24)
+
+
+### Bug Fixes
+
+* align server-list rendering with native Java clients ([#66](https://github.com/groundsgg/library-motd/issues/66)) ([d2003bf](https://github.com/groundsgg/library-motd/commit/d2003bf59c326e9077749bbe70381df24330017a)), closes [#5](https://github.com/groundsgg/library-motd/issues/5)
+* match native Java MOTD word wrapping ([#71](https://github.com/groundsgg/library-motd/issues/71)) ([f170450](https://github.com/groundsgg/library-motd/commit/f170450e20ade419b7da900228fde5401af7209c))
+* verify native MOTD font styles and shadows ([#69](https://github.com/groundsgg/library-motd/issues/69)) ([0a9e3c5](https://github.com/groundsgg/library-motd/commit/0a9e3c59a8413f34e3c4056a5686134ec600ea50))
+
 ## [0.2.0](https://github.com/groundsgg/library-motd/compare/v0.1.1...v0.2.0) (2026-10-22)
 
 
