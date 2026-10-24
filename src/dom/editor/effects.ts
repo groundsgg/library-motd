@@ -12,6 +12,7 @@ import { resolveText } from "../../core/text/placeholders.js";
 import { applyTextStyle } from "../preview.js";
 import { shadowColor } from "../render.js";
 import { italicStyle, usesBundledPixelFont } from "../font/italic.js";
+import { setLabelAttribute, type DomLocalization } from "../localization.js";
 import type { StylePath } from "./schema.js";
 import { fromEditorNode, type EditorSourceRange } from "./mapping.js";
 
@@ -208,6 +209,7 @@ export function inlineEffects(
   layout?: () => LayoutOptions,
   context?: () => PreviewContext,
   doc?: Document,
+  localization?: DomLocalization,
 ): Plugin<DecorationSet> {
   const key = new PluginKey<DecorationSet>("motd-inline-effects");
   let composing = false;
@@ -258,10 +260,16 @@ export function inlineEffects(
             currentDecorations: readonly Decoration[],
           ) {
             const source = next.attrs.node;
-            span.title =
+            setLabelAttribute(
+              span,
+              "title",
               source.type === "placeholder"
                 ? `{{${source.name}}}`
-                : "Protected source construct; edit in source mode";
+                : (localization?.message(
+                    "protectedSourceHint",
+                    "Protected source construct; edit in source mode",
+                  ) ?? "Protected source construct; edit in source mode"),
+            );
             const glyphs = currentDecorations.flatMap(
               (decoration) =>
                 (decoration.spec.effectGlyphs ?? []) as DisplayGlyph[],

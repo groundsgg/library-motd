@@ -195,8 +195,6 @@ export const englishLabels = {
   closeversion: "Close version text",
   cropx: "Crop x",
   cropy: "Crop y",
-  cropwidth: "Crop width",
-  cropheight: "Crop height",
   uploadIcon: "Upload server icon",
   editIcon: "Edit server icon",
   edit: "Edit",
@@ -222,4 +220,6 @@ export const englishLabels = {
     "The document or editor configuration changed. This draft can no longer be applied. Close and reopen the tool.",
   importTimedOut: "Import timed out",
   importCancelled: "Import cancelled",
+  cropsize: "Crop size",
+  "diagnostic.hiddenLinesCount": "Only the first {lines} lines are visible",
 } as const;

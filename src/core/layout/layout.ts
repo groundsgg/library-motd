@@ -132,7 +132,13 @@ export function layoutText(
       diagnostic(
         "hidden-lines",
         "motd",
-        { key: "diagnostic.hiddenLines" },
+        {
+          key:
+            (options.maxLines ?? 2) === 2
+              ? "diagnostic.hiddenLines"
+              : "diagnostic.hiddenLinesCount",
+          parameters: { lines: options.maxLines ?? 2 },
+        },
         "warning",
       ),
     );

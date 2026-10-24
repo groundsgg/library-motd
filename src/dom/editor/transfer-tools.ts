@@ -57,7 +57,7 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
     doc = root.ownerDocument;
   let destroyed = false,
     active: TransferState | null = null;
-  const label = (key: string, fallback: string) =>
+  const label = (key: string, fallback: LabelText) =>
     toolLabel(mount, key, fallback);
   const formatItems = (): [string, LabelText][] =>
     formats.map(([value, caption]) => [
@@ -176,7 +176,10 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
       state.status,
       label(
         "draftInvalidated",
-        "The document or editor configuration changed. This draft can no longer be applied. Close and reopen the tool.",
+        label(
+          "transferDraftInvalidated",
+          "The document or editor configuration changed. This draft can no longer be applied. Close and reopen the tool.",
+        ),
       ),
     );
     for (const control of state.body.querySelectorAll<
@@ -433,6 +436,7 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
           label("importLoading", "Loading server status…"),
         );
         let timer: ReturnType<typeof setTimeout> | undefined;
+        let timedOut = false;
         const valid = () =>
           !destroyed &&
           active === state &&
@@ -444,6 +448,7 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
         try {
           const timeout = new Promise<never>((_, reject) => {
             timer = setTimeout(() => {
+              timedOut = true;
               reject(new Error("Import timed out"));
               request.abort();
             }, imports.timeoutMs ?? 10000);
@@ -493,9 +498,13 @@ export function mountTransferTools(mount: ToolMount): ToolHandle {
           )
             setLabelText(
               state.status,
-              error instanceof Error && error.message.trim()
-                ? error.message
-                : label("importFailed", "Import failed"),
+              timedOut
+                ? label("importTimedOut", "Import timed out")
+                : request.signal.aborted
+                  ? label("importCancelled", "Import cancelled")
+                  : error instanceof Error && error.message.trim()
+                    ? error.message
+                    : label("importFailed", "Import failed"),
             );
         } finally {
           clearTimeout(timer);

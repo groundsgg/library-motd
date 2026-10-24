@@ -470,12 +470,7 @@ export function createEntry(
       const names = value.players!.sample.map((s) => s.name),
         remaining = value.players!.online - names.length;
       if (remaining > 0)
-        names.push(
-          (labels.morePlayers ?? "… and {count} more …").replace(
-            "{count}",
-            String(remaining),
-          ),
-        );
+        names.push(formatLabel("morePlayers", { count: remaining }, labels));
       const raw = names.join("\n§r"),
         text = parseText(raw, "legacy-section").value!,
         content = element(doc, "div", "mcp-tooltip-text");
@@ -524,3 +519,4 @@ export function createEntry(
     },
   };
 }
+import { formatLabel } from "../core/localization.js";

@@ -38,7 +38,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     preview: HTMLImageElement | undefined,
     canvas: HTMLCanvasElement | undefined,
     invalidated = false;
-  const label = (key: string, fallback: string) =>
+  const label = (key: string, fallback: LabelText) =>
     toolLabel(mount, key, fallback);
   const allowed = () =>
     !destroyed &&
@@ -106,7 +106,10 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
         status!,
         label(
           "draftInvalidated",
-          "The document changed. This draft can no longer be applied. Close and reopen the tool.",
+          label(
+            "iconDraftInvalidated",
+            "The document changed. This draft can no longer be applied. Close and reopen the tool.",
+          ),
         ),
       );
       for (const control of body.querySelectorAll<
@@ -314,10 +317,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
       if (!valid()) return;
       if (!normalized.value) {
         if (overlays.getOpenId() === "icon") overlays.close("cancel");
-        open(
-          undefined,
-          normalized.diagnostics.map((d) => d.message).join("\n"),
-        );
+        open(undefined, mount.localization.diagnostics(normalized.diagnostics));
         return;
       }
       image = await createImageBitmap(uploaded);

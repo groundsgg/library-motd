@@ -7,7 +7,7 @@ import { mountTextTools } from "./text-tools.js";
 import { mountStatusTools } from "./status-tools.js";
 import { mountIconTool } from "./icon-tool.js";
 import { mountTransferTools } from "./transfer-tools.js";
-import { DomLocalization, setLabelText } from "../localization.js";
+import { setLabelText } from "../localization.js";
 import type { EditorOptions, EditorHandle } from "./types.js";
 export type {
   EditableField,
@@ -34,7 +34,7 @@ export function createEditor(
   root.append(canvas, diagnostics);
   host.append(root);
   const controller = createEditorController(initial),
-    localization = new DomLocalization(() => controller.getOptions().labels),
+    localization = controller.getLocalization(),
     entry = createEntry(canvas, initial),
     overlays = createOverlays(root),
     mount = { root, entry, controller, overlays, localization };
@@ -88,7 +88,6 @@ export function createEditor(
       for (const tool of tools) tool.destroy();
       overlays.destroy();
       controller.destroy();
-      localization.destroy();
       entry.destroy();
       root.remove();
     },

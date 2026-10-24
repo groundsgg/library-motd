@@ -58,3 +58,21 @@ it("treats unknown keys and inserted parameters as literal data", () => {
   );
   expect(api.formatLabel("lineAlignment")).toBe("Line {line} alignment");
 });
+
+it("reports configurable visible-line limits as language-independent parameters", () => {
+  const text = api.parseText(
+    "A<newline>B<newline>C<newline>D",
+    "minimessage",
+  ).value!;
+  const result = api.layoutText(text, {
+    profile: api.java1211Profile,
+    width: 100,
+    maxLines: 3,
+  });
+  const diagnostic = result.diagnostics.find((d) => d.code === "hidden-lines")!;
+  expect(diagnostic.parameters).toEqual({ lines: 3 });
+  expect(diagnostic.message).toBe("Only the first 3 lines are visible");
+  expect(api.formatDiagnostic(diagnostic, api.germanLabels)).toBe(
+    "Nur die ersten 3 Zeilen sind sichtbar.",
+  );
+});

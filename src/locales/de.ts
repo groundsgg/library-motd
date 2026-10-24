@@ -210,8 +210,6 @@ export const germanLabels = {
   closeversion: "Versionstext schließen",
   cropx: "X-Position des Zuschnitts",
   cropy: "Y-Position des Zuschnitts",
-  cropwidth: "Breite des Zuschnitts",
-  cropheight: "Höhe des Zuschnitts",
   uploadIcon: "Server-Icon hochladen",
   editIcon: "Server-Icon bearbeiten",
   edit: "Bearbeiten",
@@ -238,4 +236,6 @@ export const germanLabels = {
     "Das Dokument oder die Editorkonfiguration wurde geändert. Dieser Entwurf kann nicht mehr angewendet werden. Öffne das Werkzeug erneut.",
   importTimedOut: "Zeitüberschreitung beim Import",
   importCancelled: "Import abgebrochen",
+  cropsize: "Größe des Zuschnitts",
+  "diagnostic.hiddenLinesCount": "Nur die ersten {lines} Zeilen sind sichtbar.",
 } satisfies Readonly<Record<keyof typeof englishLabels, string>>;

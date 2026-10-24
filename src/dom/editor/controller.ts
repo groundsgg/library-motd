@@ -25,6 +25,7 @@ import { EditorHistory, type HistoryEntry } from "./history.js";
 import { inlineEffects } from "./effects.js";
 import { entryTextWidth } from "../render.js";
 import { formatLabel } from "../../core/localization.js";
+import { DomLocalization } from "../localization.js";
 import type {
   EditableField,
   Feature,
@@ -48,6 +49,7 @@ export type EditorEvent =
   | "replace"
   | "diagnostics";
 export interface EditorController extends EditorHandle {
+  getLocalization(): DomLocalization;
   getOptions(): EditorOptions;
   getGeneration(): number;
   getActiveField(): EditableField;
@@ -80,6 +82,7 @@ export function createEditorController(
     current = structuredClone(initial.document),
     destroyed = false,
     generation = 0;
+  const localization = new DomLocalization(() => options.labels);
   let activeField: EditableField = "motd",
     errors: Diagnostic[] = [],
     pending = false,
@@ -185,6 +188,7 @@ export function createEditorController(
           : undefined,
         () => options.context,
         doc,
+        localization,
       ),
       new Plugin({
         filterTransaction(tr, state) {
@@ -238,7 +242,11 @@ export function createEditorController(
           for (const saved of selections)
             if (saved.field === field) selections.delete(saved);
         }
-        const schema = editorSchema(view.dom.ownerDocument, resolved),
+        const schema = editorSchema(
+            view.dom.ownerDocument,
+            resolved,
+            localization,
+          ),
           node = toEditorNode(textFor(field), schema);
         let nextSelection;
         try {
@@ -326,7 +334,7 @@ export function createEditorController(
     host.dataset.editorField = field;
     host.classList.add("mce-inline");
     const resolved = values(),
-      schema = editorSchema(host.ownerDocument, resolved);
+      schema = editorSchema(host.ownerDocument, resolved, localization);
     const view = new EditorView(host, {
       state: EditorState.create({
         schema,
@@ -717,6 +725,7 @@ export function createEditorController(
     return true;
   }
   return {
+    getLocalization: () => localization,
     execute,
     getDocument: () => structuredClone(current),
     getOptions: () => options,
@@ -822,6 +831,7 @@ export function createEditorController(
       if (destroyed) return;
       destroyed = true;
       for (const view of views.values()) view.destroy();
+      localization.destroy();
       views.clear();
       listeners.clear();
       selections.clear();
