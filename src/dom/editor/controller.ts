@@ -24,6 +24,8 @@ import { fromEditorNode, nextId, toEditorNode } from "./mapping.js";
 import { EditorHistory, type HistoryEntry } from "./history.js";
 import { inlineEffects } from "./effects.js";
 import { entryTextWidth } from "../render.js";
+import { formatLabel } from "../../core/localization.js";
+import { DomLocalization } from "../localization.js";
 import type {
   EditableField,
   Feature,
@@ -47,6 +49,7 @@ export type EditorEvent =
   | "replace"
   | "diagnostics";
 export interface EditorController extends EditorHandle {
+  getLocalization(): DomLocalization;
   getOptions(): EditorOptions;
   getGeneration(): number;
   getActiveField(): EditableField;
@@ -79,8 +82,9 @@ export function createEditorController(
     current = structuredClone(initial.document),
     destroyed = false,
     generation = 0;
+  const localization = new DomLocalization(() => options.labels);
   let activeField: EditableField = "motd",
-    errors: string[] = [],
+    errors: Diagnostic[] = [],
     pending = false,
     pendingReplacement = false;
   const history = new EditorHistory(),
@@ -93,7 +97,7 @@ export function createEditorController(
   const viewGenerations = new Map<EditableField, number>(),
     rejectedCompositions = new Set<EditableField>();
   const label = (key: string, fallback: string) =>
-    options.labels?.[key] ?? fallback;
+    formatLabel(key, {}, options.labels, fallback);
   const enabled = (field: Feature) => options.features?.[field] !== false;
   const locked = () => !!options.readOnly || !!options.disabled;
   const emit = (event: EditorEvent) => {
@@ -184,6 +188,7 @@ export function createEditorController(
           : undefined,
         () => options.context,
         doc,
+        localization,
       ),
       new Plugin({
         filterTransaction(tr, state) {
@@ -237,7 +242,11 @@ export function createEditorController(
           for (const saved of selections)
             if (saved.field === field) selections.delete(saved);
         }
-        const schema = editorSchema(view.dom.ownerDocument, resolved),
+        const schema = editorSchema(
+            view.dom.ownerDocument,
+            resolved,
+            localization,
+          ),
           node = toEditorNode(textFor(field), schema);
         let nextSelection;
         try {
@@ -325,7 +334,7 @@ export function createEditorController(
     host.dataset.editorField = field;
     host.classList.add("mce-inline");
     const resolved = values(),
-      schema = editorSchema(host.ownerDocument, resolved);
+      schema = editorSchema(host.ownerDocument, resolved, localization);
     const view = new EditorView(host, {
       state: EditorState.create({
         schema,
@@ -459,7 +468,7 @@ export function createEditorController(
       : next;
     const valid = validateDocument(mapped);
     if (!valid.value) {
-      errors = valid.diagnostics.map((d) => d.message);
+      errors = valid.diagnostics;
       showErrors();
       return false;
     }
@@ -655,7 +664,7 @@ export function createEditorController(
     else if (command.type === "replace-source") {
       const parsed = parseText(command.source, command.format ?? "minimessage");
       if (!parsed.value) {
-        errors = parsed.diagnostics.map((d) => d.message);
+        errors = parsed.diagnostics;
         showErrors();
         return;
       }
@@ -716,19 +725,14 @@ export function createEditorController(
     return true;
   }
   return {
+    getLocalization: () => localization,
     execute,
     getDocument: () => structuredClone(current),
     getOptions: () => options,
     getGeneration: () => generation,
     getActiveField: () => activeField,
     getView: (field) => views.get(field),
-    getDiagnostics: () =>
-      errors.map((message) => ({
-        code: "editor",
-        severity: "error" as const,
-        path: "",
-        message,
-      })),
+    getDiagnostics: () => structuredClone(errors),
     isComposing: () => composing.size > 0,
     mountText,
     applySources(sources) {
@@ -743,7 +747,7 @@ export function createEditorController(
           return;
         const result = parseText(source, format);
         if (!result.value) {
-          errors = result.diagnostics.map((d) => d.message);
+          errors = result.diagnostics;
           showErrors();
           return;
         }
@@ -827,6 +831,7 @@ export function createEditorController(
       if (destroyed) return;
       destroyed = true;
       for (const view of views.values()) view.destroy();
+      localization.destroy();
       views.clear();
       listeners.clear();
       selections.clear();

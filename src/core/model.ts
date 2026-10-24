@@ -5,6 +5,9 @@ export interface Diagnostic {
   severity: "error" | "warning";
   path: string;
   message: string;
+  /** Stable translation key; message remains the English compatibility fallback. */
+  messageKey?: string;
+  parameters?: Readonly<Record<string, string | number>>;
   range?: { start: number; end: number };
 }
 export interface Outcome<T> {

@@ -1,4 +1,10 @@
 import {
+  setLabelText,
+  setLabelAttribute,
+  type LabelText,
+  type LabelParameters,
+} from "../localization.js";
+import {
   evaluateStatus,
   evaluatePlayerCounts,
 } from "../../core/status/evaluate.js";
@@ -33,8 +39,11 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
     pinned: "hover" | "version" | null = null,
     syncOverlay: (() => void) | null = null,
     syncPinned: (() => void) | null = null;
-  const label = (key: string, fallback: string) =>
-    toolLabel(mount, key, fallback);
+  const label = (
+    key: string,
+    fallback: LabelText,
+    parameters?: LabelParameters,
+  ) => toolLabel(mount, key, fallback, parameters);
   const allowed = (field: "players" | "version" | "hover") =>
     !toolLocked(mount) && controller.getOptions().features?.[field] !== false;
   function compatible() {
@@ -55,8 +64,8 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
   menu.dataset.entryMenu = "true";
   root.querySelector(".mce-entry-actions")!.append(menu);
   function select(
-    name: string,
-    items: [string, string][],
+    name: LabelText,
+    items: [string, LabelText][],
     change: (value: string) => void,
   ) {
     const input = element(doc, "select", "");
@@ -68,7 +77,11 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
     input.addEventListener("change", () => change(input.value));
     return { input, field: toolField(doc, name, input) };
   }
-  function content(title: string, close: () => void, closeName = "Close") {
+  function content(
+    title: LabelText,
+    close: () => void,
+    closeName: LabelText = label("close", "Close"),
+  ) {
     const body = element(doc, "div", "mce-tool-content"),
       heading = element(doc, "div", "mce-tool-heading");
     heading.append(
@@ -80,7 +93,7 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
   }
   function open(
     id: string,
-    title: string,
+    title: LabelText,
     anchor: HTMLElement,
     body: HTMLElement,
     sync = () => {},
@@ -119,9 +132,9 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
       buttons.forEach((button, index) => {
         const item = items[index]!;
         button.disabled = !item.enabled;
-        button.textContent = item.label;
-        button.setAttribute("aria-label", item.label);
-        button.title = item.label;
+        setLabelText(button, item.label);
+        setLabelAttribute(button, "aria-label", item.label);
+        setLabelAttribute(button, "title", item.label);
       });
     });
   }
@@ -175,7 +188,8 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
     );
     const result = element(doc, "output", "mce-count-preview");
     result.role = "status";
-    result.setAttribute(
+    setLabelAttribute(
+      result,
       "aria-label",
       label("evaluatedPlayerCounts", "Evaluated player counts"),
     );
@@ -186,12 +200,17 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
       const mode = select(
         label(field + "Mode", title + " mode"),
         [
-          ["inherit", "Live value"],
-          ["fixed", "Fixed value"],
-          ["offset", "Add offset"],
-          ["percent", "Percent of live value"],
+          ["inherit", label("countMode.inherit", "Live value")],
+          ["fixed", label("countMode.fixed", "Fixed value")],
+          ["offset", label("countMode.offset", "Add offset")],
+          ["percent", label("countMode.percent", "Percent of live value")],
           ...(field === "maximum"
-            ? [["headroom", "Free slots above online"] as [string, string]]
+            ? [
+                [
+                  "headroom",
+                  label("countMode.headroom", "Free slots above online"),
+                ] as [string, LabelText],
+              ]
             : []),
         ],
         (value) => {
@@ -253,11 +272,19 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
           controller.getDocument(),
           controller.getOptions().context,
         );
-        result.textContent = counts.value
-          ? label("calculatedPreview", "Calculated preview: {online}/{maximum}")
-              .replaceAll("{online}", String(counts.value?.online ?? "?"))
-              .replaceAll("{maximum}", String(counts.value?.max ?? "?"))
-          : counts.diagnostics.map((d) => d.message).join("\n");
+        setLabelText(
+          result,
+          counts.value
+            ? label(
+                "calculatedPreview",
+                "Calculated preview: {online}/{maximum}",
+                {
+                  online: counts.value.online ?? "?",
+                  maximum: counts.value.max ?? "?",
+                },
+              )
+            : mount.localization.diagnostics(counts.diagnostics),
+        );
       },
     );
   }
@@ -270,9 +297,12 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
       mode = select(
         label("versionDisplay", "Version display"),
         [
-          ["automatic", "Automatic"],
-          ["when-incompatible", "Custom when incompatible"],
-          ["always", "Custom always"],
+          ["automatic", label("versionMode.automatic", "Automatic")],
+          [
+            "when-incompatible",
+            label("versionMode.when-incompatible", "Custom when incompatible"),
+          ],
+          ["always", label("versionMode.always", "Custom always")],
         ],
         (mode) => {
           if (!allowed("version")) return;
@@ -310,13 +340,25 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
         const state = controller.getDocument();
         mode.input.value = state.version.mode;
         edit.hidden = state.version.mode === "automatic" || !compatible();
-        reason.textContent = label(
-          "versionHint",
-          state.version.mode === "automatic"
-            ? "Choose a custom mode to edit version text."
-            : compatible()
-              ? "This client shows player counts. Custom version text is kept for incompatible clients."
-              : "Edit the version text directly in the server entry.",
+        setLabelText(
+          reason,
+          label(
+            "versionHint",
+            state.version.mode === "automatic"
+              ? label(
+                  "versionHintAutomatic",
+                  "Choose a custom mode to edit version text.",
+                )
+              : compatible()
+                ? label(
+                    "versionHintCompatible",
+                    "This client shows player counts. Custom version text is kept for incompatible clients.",
+                  )
+                : label(
+                    "versionHintEditable",
+                    "Edit the version text directly in the server entry.",
+                  ),
+          ),
         );
       },
     );
@@ -350,8 +392,8 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
     );
     panel = element(doc, "div", "mce-popout mce-pinned-surface");
     panel.role = "dialog";
-    panel.setAttribute("aria-label", title);
-    panel.setAttribute("aria-modal", "false");
+    setLabelAttribute(panel, "aria-label", title);
+    setLabelAttribute(panel, "aria-modal", "false");
     const body = content(
         title,
         () => {
@@ -371,9 +413,9 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
       mode = select(
         label("playerHover", "Player hover"),
         [
-          ["inherit", "Live player list"],
-          ["custom", "Custom text"],
-          ["disabled", "No custom entries"],
+          ["inherit", label("hoverMode.inherit", "Live player list")],
+          ["custom", label("hoverMode.custom", "Custom text")],
+          ["disabled", label("hoverMode.disabled", "No custom entries")],
         ],
         (mode) => {
           if (!allowed("hover")) return;
@@ -408,19 +450,30 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
       if (mode) mode.input.value = state.hover.mode;
       text.hidden = !active;
       if (active) controller.mountText(field, text);
-      hint.textContent =
+      setLabelText(
+        hint,
         field === "hover"
           ? label(
               "hoverHint",
               !compatible() || state.players.hidden
-                ? "This client cannot display player hover with the current status settings. Your custom text remains editable."
+                ? label(
+                    "hoverHintUnavailable",
+                    "This client cannot display player hover with the current status settings. Your custom text remains editable.",
+                  )
                 : state.hover.mode === "inherit"
-                  ? "The live player list is displayed. Choose Custom text to edit it."
+                  ? label(
+                      "hoverHintInherited",
+                      "The live player list is displayed. Choose Custom text to edit it.",
+                    )
                   : state.hover.mode === "disabled"
-                    ? "Custom entries are disabled. Choose Custom text to edit them."
+                    ? label(
+                        "hoverHintDisabled",
+                        "Custom entries are disabled. Choose Custom text to edit them.",
+                      )
                     : "",
             )
-          : "";
+          : "",
+      );
     };
     anchors.playerHover.dataset.editorPinned = "true";
     anchors.playerHover.hidden = true;
@@ -437,7 +490,8 @@ export function mountStatusTools(mount: ToolMount): ToolHandle {
     updating = true;
     try {
       menu.disabled = !menuActions().some((item) => item.enabled);
-      menu.setAttribute(
+      setLabelAttribute(
+        menu,
         "aria-label",
         label("entryTools", "Server entry tools"),
       );

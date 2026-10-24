@@ -58,7 +58,7 @@ export function parseMiniMessage(
   options: ParseOptions = {},
 ): Outcome<TextDocument> {
   if (input.length > (options.maxTextLength ?? 65536))
-    return failure("text-limit", "", "Text exceeds its configured limit");
+    return failure("text-limit", "", { key: "diagnostic.textLimit" });
   let serial = 0;
   const id = () => `n${serial++}`;
   const root: TextNode[] = [];
@@ -167,11 +167,7 @@ export function parseMiniMessage(
     if (style) {
       flush();
       if (stack.length > (options.maxDepth ?? 128))
-        return failure(
-          "depth-limit",
-          "",
-          "Text nesting exceeds its configured limit",
-        );
+        return failure("depth-limit", "", { key: "diagnostic.depthLimit" });
       const group: TextNode & { type: "group" } = {
         id: id(),
         type: "group",
@@ -211,7 +207,7 @@ export function parseMiniMessage(
       diagnostic(
         "unsupported-tag",
         "",
-        `Preserved unsupported tag <${originalName}>`,
+        { key: "diagnostic.unsupportedTag", parameters: { tag: originalName } },
         "warning",
       ),
     );

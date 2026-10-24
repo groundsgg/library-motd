@@ -2,8 +2,17 @@ import { element } from "../render.js";
 import type { ToolMount } from "./tool-types.js";
 import type { TextStyle } from "../../core/model.js";
 import type { EditableField } from "./types.js";
-export const toolLabel = (mount: ToolMount, key: string, fallback: string) =>
-  mount.controller.getOptions().labels?.[key] ?? fallback;
+import {
+  setLabelAttribute,
+  type LabelText,
+  type LabelParameters,
+} from "../localization.js";
+export const toolLabel = (
+  mount: ToolMount,
+  key: string,
+  fallback: LabelText,
+  parameters?: LabelParameters,
+) => mount.localization.message(key, fallback, parameters);
 export const toolLocked = (mount: ToolMount) =>
   !!(
     mount.controller.getOptions().readOnly ||
@@ -20,24 +29,24 @@ export function fieldEditable(mount: ToolMount, field: EditableField): boolean {
 }
 export function toolButton(
   doc: Document,
-  text: string,
-  label: string,
+  text: LabelText,
+  label: LabelText,
   action: () => void,
 ): HTMLButtonElement {
   const button = element(doc, "button", "mce-button", text);
   button.type = "button";
-  button.setAttribute("aria-label", label);
-  button.title = label;
+  setLabelAttribute(button, "aria-label", label);
+  setLabelAttribute(button, "title", label);
   button.addEventListener("click", action);
   return button;
 }
 export function toolField(
   doc: Document,
-  label: string,
+  label: LabelText,
   input: HTMLElement,
 ): HTMLLabelElement {
   const field = element(doc, "label", "mce-tool-field", label);
-  input.setAttribute("aria-label", label);
+  setLabelAttribute(input, "aria-label", label);
   field.append(input);
   return field;
 }
@@ -82,7 +91,7 @@ export function activeStyle(mount: ToolMount): TextStyle {
 }
 
 export interface EntryToolAction {
-  label: string;
+  label: LabelText;
   enabled: boolean;
   action(): void;
 }

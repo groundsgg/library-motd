@@ -66,7 +66,8 @@ export function createComparison(
     if (destroyed) return;
     validateClients(options.clients);
     const labels = options.labels ?? {};
-    const label = (key: string, fallback: string) => labels[key] ?? fallback;
+    const label = (key: string, fallback: string) =>
+      formatLabel(key, {}, labels, fallback);
     const selected = new Set(options.clients.map((client) => client.id));
     for (const [id, panel] of panels) {
       if (selected.has(id)) continue;
@@ -124,7 +125,7 @@ export function createComparison(
         context.profile.clientVersion,
         `${label("comparisonProtocol", "Protocol")}: ${context.clientProtocol}`,
         `${label("comparisonScale", "GUI scale")}: ${context.guiScale}`,
-        `${label("comparisonBackground", "Background")}: ${background ?? "none"}`,
+        `${label("comparisonBackground", "Background")}: ${label(`background.${background ?? "none"}`, background ?? "none")}`,
       ].join(" · ");
       const changed = fields.filter(
         (field) =>
@@ -147,7 +148,7 @@ export function createComparison(
         label("comparisonDiagnostics", "Preview diagnostics"),
       );
       for (const note of notes) {
-        const item = element(doc, "li", "", note.message);
+        const item = element(doc, "li", "", formatDiagnostic(note, labels));
         item.dataset.code = note.code;
         panel.diagnostics.append(item);
       }
@@ -184,3 +185,4 @@ export function createComparison(
     },
   };
 }
+import { formatLabel, formatDiagnostic } from "../core/localization.js";

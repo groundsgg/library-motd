@@ -37,27 +37,15 @@ export async function normalizeIcon(
   options: IconOptions = {},
 ): Promise<Outcome<IconValue>> {
   if (input.size > (options.maxBytes ?? 10 * 1024 * 1024))
-    return failure(
-      "image-limit",
-      "icon",
-      "Image exceeds the configured byte limit",
-    );
+    return failure("image-limit", "icon", { key: "diagnostic.imageBytes" });
   if (!["image/png", "image/jpeg"].includes(input.type))
-    return failure(
-      "invalid-image",
-      "icon",
-      "Invalid image: choose PNG or JPEG",
-    );
+    return failure("invalid-image", "icon", { key: "diagnostic.imageFormat" });
   const bytes = new Uint8Array(await input.arrayBuffer()),
     size = dimensions(bytes);
   if (!size || !size.width || !size.height)
-    return failure("invalid-image", "icon", "Invalid image: damaged header");
+    return failure("invalid-image", "icon", { key: "diagnostic.imageHeader" });
   if (size.width * size.height > (options.maxPixels ?? 16_000_000))
-    return failure(
-      "image-limit",
-      "icon",
-      "Image exceeds the configured pixel limit",
-    );
+    return failure("image-limit", "icon", { key: "diagnostic.imagePixels" });
   let image: ImageBitmap | undefined;
   try {
     image = await createImageBitmap(input);
@@ -77,11 +65,7 @@ export async function normalizeIcon(
       crop.x + crop.width > image.width ||
       crop.y + crop.height > image.height
     )
-      return failure(
-        "invalid-crop",
-        "icon",
-        "Crop must be a square inside the image",
-      );
+      return failure("invalid-crop", "icon", { key: "diagnostic.invalidCrop" });
     const canvas = globalThis.document.createElement("canvas");
     canvas.width = 64;
     canvas.height = 64;
@@ -103,7 +87,7 @@ export async function normalizeIcon(
       diagnostics: [],
     };
   } catch {
-    return failure("invalid-image", "icon", "Invalid image: decoding failed");
+    return failure("invalid-image", "icon", { key: "diagnostic.imageDecode" });
   } finally {
     image?.close();
   }

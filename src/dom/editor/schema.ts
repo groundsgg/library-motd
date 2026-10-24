@@ -1,6 +1,7 @@
 import { Schema } from "prosemirror-model";
 import type { TextStyle } from "../../core/model.js";
 import { applyTextStyle } from "../preview.js";
+import { setLabelAttribute, type DomLocalization } from "../localization.js";
 export interface StylePath {
   id: string;
   style: TextStyle;
@@ -8,6 +9,7 @@ export interface StylePath {
 export function editorSchema(
   doc: Document,
   values: Readonly<Record<string, string>>,
+  localization?: DomLocalization,
 ): Schema {
   return new Schema({
     nodes: {
@@ -33,10 +35,16 @@ export function editorSchema(
             n.type === "placeholder"
               ? (values[n.name] ?? `{{${n.name}}}`)
               : (n.fallback ?? "[protected]");
-          span.title =
+          setLabelAttribute(
+            span,
+            "title",
             n.type === "placeholder"
               ? `{{${n.name}}}`
-              : "Protected source construct; edit in source mode";
+              : (localization?.message(
+                  "protectedSourceHint",
+                  "Protected source construct; edit in source mode",
+                ) ?? "Protected source construct; edit in source mode"),
+          );
           span.contentEditable = "false";
           return span;
         },

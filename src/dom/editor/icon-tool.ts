@@ -1,3 +1,8 @@
+import {
+  setLabelText,
+  setLabelAttribute,
+  type LabelText,
+} from "../localization.js";
 import type { IconValue } from "../../core/model.js";
 import { normalizeIcon } from "../icon.js";
 import { element } from "../render.js";
@@ -33,7 +38,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     preview: HTMLImageElement | undefined,
     canvas: HTMLCanvasElement | undefined,
     invalidated = false;
-  const label = (key: string, fallback: string) =>
+  const label = (key: string, fallback: LabelText) =>
     toolLabel(mount, key, fallback);
   const allowed = () =>
     !destroyed &&
@@ -45,7 +50,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     label("cancelUpload", "Cancel upload"),
     () => {
       request++;
-      loading.textContent = "";
+      setLabelText(loading, "");
       cancelPending.hidden = true;
       if (body && overlays.getOpenId() === "icon") overlays.close("cancel");
     },
@@ -59,11 +64,11 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
   });
   upload.className = "mce-icon-upload";
   const glyph = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
-  glyph.setAttribute("viewBox", "0 0 16 16");
-  glyph.setAttribute("class", "mce-upload-icon");
-  glyph.setAttribute("aria-hidden", "true");
-  glyph.setAttribute("fill", "currentColor");
-  glyph.setAttribute("shape-rendering", "crispEdges");
+  setLabelAttribute(glyph, "viewBox", "0 0 16 16");
+  setLabelAttribute(glyph, "class", "mce-upload-icon");
+  setLabelAttribute(glyph, "aria-hidden", "true");
+  setLabelAttribute(glyph, "fill", "currentColor");
+  setLabelAttribute(glyph, "shape-rendering", "crispEdges");
   for (const data of [
     "M1 3h8v1H2v10h12V8h1v7H1z",
     "M3 11h1v-1h1V9h1v1h1v1h1v1h1v-1h1v-1h1v1h1v1h1v1H3z",
@@ -71,7 +76,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     "M12 1h2v2h2v2h-2v2h-2V5h-2V3h2z",
   ]) {
     const path = doc.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", data);
+    setLabelAttribute(path, "d", data);
     glyph.append(path);
   }
   upload.append(glyph);
@@ -85,7 +90,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     original = undefined;
     body = null;
     draft = undefined;
-    loading.textContent = "";
+    setLabelText(loading, "");
     cancelPending.hidden = true;
   }
   function invalidate() {
@@ -94,12 +99,18 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     bitmap = undefined;
     original = undefined;
     invalidated = true;
-    loading.textContent = "";
+    setLabelText(loading, "");
     cancelPending.hidden = true;
     if (body && overlays.getOpenId() === "icon") {
-      status!.textContent = label(
-        "draftInvalidated",
-        "The document changed. This draft can no longer be applied. Close and reopen the tool.",
+      setLabelText(
+        status!,
+        label(
+          "draftInvalidated",
+          label(
+            "iconDraftInvalidated",
+            "The document changed. This draft can no longer be applied. Close and reopen the tool.",
+          ),
+        ),
       );
       for (const control of body.querySelectorAll<
         HTMLInputElement | HTMLButtonElement
@@ -140,11 +151,11 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     });
     if (token !== request || !allowed() || invalidated || !body) return;
     draft = result.value ?? undefined;
-    status!.textContent = result.diagnostics.map((d) => d.message).join("\n");
+    setLabelText(status!, mount.localization.diagnostics(result.diagnostics));
     apply!.disabled = draft === undefined;
     showPreview();
   }
-  function open(value: IconValue | null | undefined, error = "") {
+  function open(value: IconValue | null | undefined, error: LabelText = "") {
     if (!allowed()) return;
     // Close another primary tool before installing this draft's references.
     overlays.close("dismiss");
@@ -157,7 +168,11 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     status = element(doc, "div", "mce-tool-status", error);
     status.role = "status";
     preview = element(doc, "img", "mce-icon-preview");
-    preview.alt = label("iconPreview", "Icon crop preview");
+    setLabelAttribute(
+      preview,
+      "alt",
+      label("iconPreview", "Icon crop preview"),
+    );
     canvas = element(doc, "canvas", "mce-crop-canvas");
     if (bitmap) {
       const ratio = Math.min(480 / bitmap.width, 300 / bitmap.height);
@@ -248,7 +263,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
         request++;
         draft = null;
         apply!.disabled = false;
-        status!.textContent = "";
+        setLabelText(status!, "");
         showPreview();
       },
     );
@@ -293,7 +308,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
       token === request &&
       generation === controller.getGeneration() &&
       allowed();
-    loading.textContent = label("imageLoading", "Preparing image…");
+    setLabelText(loading, label("imageLoading", "Preparing image…"));
     cancelPending.hidden = false;
     if (body) apply!.disabled = true;
     let image: ImageBitmap | undefined;
@@ -302,10 +317,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
       if (!valid()) return;
       if (!normalized.value) {
         if (overlays.getOpenId() === "icon") overlays.close("cancel");
-        open(
-          undefined,
-          normalized.diagnostics.map((d) => d.message).join("\n"),
-        );
+        open(undefined, mount.localization.diagnostics(normalized.diagnostics));
         return;
       }
       image = await createImageBitmap(uploaded);
@@ -327,7 +339,7 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
     } finally {
       image?.close();
       if (valid()) {
-        loading.textContent = "";
+        setLabelText(loading, "");
         cancelPending.hidden = true;
       }
     }
@@ -355,9 +367,10 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
   function update() {
     if (destroyed) return;
     file.disabled = !allowed();
-    file.setAttribute("aria-label", label("serverIcon", "Server icon"));
+    setLabelAttribute(file, "aria-label", label("serverIcon", "Server icon"));
     upload.hidden = !allowed();
-    upload.setAttribute(
+    setLabelAttribute(
+      upload,
       "aria-label",
       label(
         controller.getDocument().icon ? "editIcon" : "uploadIcon",
@@ -366,14 +379,17 @@ export function mountIconTool(mount: ToolMount): ToolHandle {
           : "Upload server icon",
       ),
     );
-    upload.title = upload.getAttribute("aria-label")!;
-    caption.textContent = label(
-      controller.getDocument().icon ? "edit" : "upload",
-      controller.getDocument().icon ? "Edit" : "Upload",
+    setLabelAttribute(upload, "title", upload.getAttribute("aria-label")!);
+    setLabelText(
+      caption,
+      label(
+        controller.getDocument().icon ? "edit" : "upload",
+        controller.getDocument().icon ? "Edit" : "Upload",
+      ),
     );
     if (!allowed()) {
       request++;
-      loading.textContent = "";
+      setLabelText(loading, "");
       cancelPending.hidden = true;
       if (overlays.getOpenId() === "icon") overlays.close("cancel");
     }

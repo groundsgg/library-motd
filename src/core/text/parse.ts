@@ -15,9 +15,9 @@ export function parseText(
   options: ParseOptions = {},
 ): Outcome<TextDocument> {
   if (typeof input !== "string")
-    return failure("invalid-text", "", "Expected a string");
+    return failure("invalid-text", "", { key: "diagnostic.expectedString" });
   if (input.length > (options.maxTextLength ?? 65536))
-    return failure("text-limit", "", "Text exceeds its configured limit");
+    return failure("text-limit", "", { key: "diagnostic.textLimit" });
   if (format === "minimessage") return parseMiniMessage(input, options);
   try {
     const doc =
@@ -29,6 +29,6 @@ export function parseText(
     doc.source = { format, value: input, revision: 0 };
     return { value: doc, diagnostics: [] };
   } catch {
-    return failure("invalid-text", "", "Invalid text component");
+    return failure("invalid-text", "", { key: "diagnostic.invalidText" });
   }
 }

@@ -8,6 +8,7 @@ import type {
 } from "../core/model.js";
 import { layoutText } from "../core/layout/layout.js";
 import { applyPixelItalic, usesBundledPixelFont } from "./font/italic.js";
+import { appendLabelText, type LabelText } from "./localization.js";
 export interface PreviewOptions {
   document: ServerListDocument;
   context: PreviewContext;
@@ -38,11 +39,11 @@ export const element = <K extends keyof HTMLElementTagNameMap>(
   doc: Document,
   tag: K,
   className: string,
-  text?: string,
+  text?: LabelText,
 ): HTMLElementTagNameMap[K] => {
   const e = doc.createElement(tag);
   e.className = className;
-  if (text !== undefined) e.textContent = text;
+  if (text !== undefined) appendLabelText(e, text);
   return e;
 };
 export function shadowColor(color: string): string {

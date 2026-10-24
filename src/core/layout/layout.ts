@@ -29,7 +29,7 @@ export function layoutText(
         diagnostic(
           "alignment-unavailable",
           "motd",
-          "Alignment requires a positive space advance in this font profile",
+          { key: "diagnostic.alignmentUnavailable" },
           "warning",
         ),
       );
@@ -56,7 +56,7 @@ export function layoutText(
       diagnostic(
         "unsupported-text-layout",
         "motd",
-        "Text is outside this profile's LTR script coverage; contextual shaping and bidirectional ordering are approximate",
+        { key: "diagnostic.unsupportedTextLayout" },
         "warning",
       ),
     );
@@ -70,8 +70,8 @@ export function layoutText(
           "missing-glyph",
           c.nodeId,
           c.text === "\r"
-            ? "Carriage return is displayed as ?; its native control glyph is outside the DOM font capability"
-            : `No glyph for ${c.text} in this font profile; fallback rendering and width are approximate`,
+            ? { key: "diagnostic.carriageReturnGlyph" }
+            : { key: "diagnostic.missingGlyph", parameters: { glyph: c.text } },
           "warning",
         ),
       );
@@ -119,7 +119,7 @@ export function layoutText(
         diagnostic(
           "line-overflow",
           chars[end]!.nodeId,
-          "Text wraps beyond the selected row width",
+          { key: "diagnostic.lineOverflow" },
           "warning",
         ),
       );
@@ -132,7 +132,13 @@ export function layoutText(
       diagnostic(
         "hidden-lines",
         "motd",
-        "Only the first two lines are visible",
+        {
+          key:
+            (options.maxLines ?? 2) === 2
+              ? "diagnostic.hiddenLines"
+              : "diagnostic.hiddenLinesCount",
+          parameters: { lines: options.maxLines ?? 2 },
+        },
         "warning",
       ),
     );
