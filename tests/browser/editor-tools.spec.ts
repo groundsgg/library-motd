@@ -1,4 +1,4 @@
-import { openEntryTool } from "./editor-actions.js";
+import { openEntryTool, selectRenderedText } from "./editor-actions.js";
 import { expect, test, type Page } from "@playwright/test";
 
 async function selectAlpha(page: Page) {
@@ -6,19 +6,7 @@ async function selectAlpha(page: Page) {
     window.editor.execute({ type: "replace-source", source: "Alpha Beta" }),
   );
   const input = page.locator("#editor [data-editor-field=motd] .ProseMirror");
-  await input.focus();
-  await input.evaluate((root) => {
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT),
-      text = walker.nextNode()!;
-    const range = document.createRange();
-    range.setStart(text, 0);
-    range.setEnd(text, 5);
-    const selection = document.getSelection()!;
-    selection.removeAllRanges();
-    selection.addRange(range);
-    document.dispatchEvent(new Event("selectionchange"));
-    root.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
-  });
+  await selectRenderedText(input, 0, 5);
 }
 test.beforeEach(async ({ page }) => {
   await page.goto("/tests/browser/host.html");
@@ -129,9 +117,12 @@ test("popover_formats_original_field", async ({ page }) => {
   ).toContainText("Maintenance");
 });
 
-test("tools_fit_scaled_scrolled_and_iframe_previews", async ({ page }) => {
+test("tools_fit_scaled_scrolled_and_iframe_previews", async ({
+  page,
+  baseURL,
+}) => {
   await page.setContent(
-    '<iframe style="width:700px;height:450px" src="http://127.0.0.1:4173/tests/browser/host.html"></iframe>',
+    `<iframe style="width:700px;height:450px" src="${new URL("/tests/browser/host.html", baseURL!).href}"></iframe>`,
   );
   const frame = page.frameLocator("iframe"),
     input = frame.locator("#editor [data-editor-field=motd] .ProseMirror");

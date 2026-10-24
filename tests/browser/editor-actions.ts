@@ -1,4 +1,51 @@
 import { expect, type Page, type Locator } from "@playwright/test";
+
+/** Select rendered UTF-16 offsets across actual text nodes, including glyph wrappers. */
+export async function selectRenderedText(
+  input: Locator,
+  from: number,
+  to: number,
+): Promise<void> {
+  const expected = (await input.textContent())!.slice(from, to);
+  await input.focus();
+  await input.evaluate(
+    (root, { from, to }) => {
+      const doc = root.ownerDocument;
+      const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      const range = doc.createRange();
+      let node: Node | null,
+        offset = 0,
+        started = false,
+        ended = false;
+      while ((node = walker.nextNode())) {
+        const length = node.textContent!.length;
+        if (!started && from <= offset + length) {
+          range.setStart(node, from - offset);
+          started = true;
+        }
+        if (started && to <= offset + length) {
+          range.setEnd(node, to - offset);
+          ended = true;
+          break;
+        }
+        offset += length;
+      }
+      if (!started || !ended)
+        throw new Error("Rendered selection offsets outside field text");
+      const selection = doc.getSelection()!;
+      selection.removeAllRanges();
+      selection.addRange(range);
+      doc.dispatchEvent(new Event("selectionchange"));
+      root.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+    },
+    { from, to },
+  );
+  await expect
+    .poll(() =>
+      input.evaluate((root) => root.ownerDocument.getSelection()?.toString()),
+    )
+    .toBe(expected);
+}
 /** Set a source-text caret independently of platform shortcut/selection timing. */
 export async function placeCaretAtTextEnd(input: Locator): Promise<void> {
   const text = await input.textContent();

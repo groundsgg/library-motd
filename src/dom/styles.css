@@ -396,6 +396,7 @@
   gap: 4px;
 }
 .mcp-menu-button {
+  --mcp-shadow-offset: 1px 1px;
   position: relative;
   box-sizing: border-box;
   grid-column: span 4;
@@ -814,35 +815,59 @@
 }
 
 /* Keep real text for editing/accessibility; the two silhouettes paint native
-   italic ink and its shadow without browser font synthesis or extra DOM nodes. */
-.mcp-pixel-italic {
+   pixel ink and its shadow without browser font synthesis or extra DOM nodes. */
+.mcp-pixel-glyph {
   -webkit-text-fill-color: transparent;
   text-shadow: none !important;
   text-decoration: none !important;
 }
-.mcp-glyph.mcp-pixel-italic::before,
-.mcp-glyph.mcp-pixel-italic::after,
-.mce-native-glyph.mcp-pixel-italic::before,
-.mce-native-glyph.mcp-pixel-italic::after {
+.mcp-glyph.mcp-pixel-glyph::before,
+.mcp-glyph.mcp-pixel-glyph::after,
+.mce-native-glyph.mcp-pixel-glyph::before,
+.mce-native-glyph.mcp-pixel-glyph::after {
   content: "";
   position: absolute;
-  left: var(--mcp-italic-left);
+  left: var(--mcp-ink-left);
   top: -0.4444444444em;
-  width: var(--mcp-italic-width);
-  height: var(--mcp-italic-size);
-  background: var(--mcp-italic-foreground) 0 0 / 100% 100% no-repeat;
+  width: var(--mcp-ink-width);
+  height: var(--mcp-ink-size);
+  background: var(--mcp-ink-foreground) 0 0 / 100% 100% no-repeat;
   image-rendering: pixelated;
   box-shadow: none;
   pointer-events: none;
-  transform: scale(var(--mcp-italic-inverse-scale));
+  transform: scale(var(--mcp-ink-inverse-scale));
   transform-origin: top left;
   z-index: 1;
 }
-.mcp-glyph.mcp-pixel-italic::after,
-.mce-native-glyph.mcp-pixel-italic::after {
-  background-image: var(--mcp-italic-shadow);
+.mcp-glyph.mcp-pixel-glyph::after,
+.mce-native-glyph.mcp-pixel-glyph::after {
+  background-image: var(--mcp-ink-shadow);
   translate: var(--mcp-shadow-offset, 0px 0px);
   z-index: 0;
+}
+
+/* IME owns live text during composition; frozen bitmaps cannot paint preedit. */
+.ProseMirror[data-pixel-composing] .mcp-pixel-glyph {
+  -webkit-text-fill-color: currentColor;
+  text-shadow: var(--mcp-shadow-offset, 0px 0px)
+    var(--mcp-shadow-color, #2a2a2a) !important;
+}
+.ProseMirror[data-pixel-composing] .mcp-pixel-italic {
+  font-style: italic !important;
+}
+.ProseMirror[data-pixel-composing] .mcp-pixel-glyph::before,
+.ProseMirror[data-pixel-composing] .mcp-pixel-glyph::after {
+  content: none;
+}
+.ProseMirror[data-pixel-composing] .mcp-pixel-glyph[data-underlined] {
+  text-decoration: underline !important;
+}
+.ProseMirror[data-pixel-composing] .mcp-pixel-glyph[data-strikethrough] {
+  text-decoration: line-through !important;
+}
+.ProseMirror[data-pixel-composing]
+  .mcp-pixel-glyph[data-underlined][data-strikethrough] {
+  text-decoration: underline line-through !important;
 }
 
 .mcp-list-fade {

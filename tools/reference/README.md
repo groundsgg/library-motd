@@ -61,3 +61,17 @@ The additional `native-wrapping-controls/26.3/` session used the same isolated
 procedure for `M\r\nM`, `M\nM` and `M\rM`. Its manifest records the source JSON,
 client hash and crop checksums. It establishes the CR control/LF boundary rather
 than certifying browser fallback ink; see the documented `?` rendering limit.
+
+## Deterministic per-glyph ink, 2026-10-24
+
+The existing independently licensed OFL cell data now paints supported normal,
+bold and italic glyphs through local PNG masks. Modern MOTD decoration shadows
+are composed above glyph foreground, matching the captured native draw order;
+old shadow-free MOTDs do not receive those pixels. Full foreground/shadow masks
+replace the Windows threshold/anchor exceptions for all eight existing
+GUI-scale-2 native-font sessions. Those sessions are still Linux Java clients.
+Actual Windows Chrome and three Linux browser engines exercise the masks; an
+actual Windows Java-client session remains outstanding in #70. Mixed styles at
+GUI1–3/DPR1–2 compare viewer/editor parity, not new native client captures.
+Unsupported/non-grid glyphs, custom fonts and text outside the per-glyph path
+retain browser font rendering. No new game fonts or textures were added.

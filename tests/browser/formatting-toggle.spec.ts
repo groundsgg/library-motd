@@ -1,3 +1,4 @@
+import { selectRenderedText } from "./editor-actions.js";
 import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
@@ -114,19 +115,7 @@ test("a partial selection removes and reapplies bold without changing its neighb
     }),
   );
   const input = page.locator("#editor [data-editor-field=motd] .ProseMirror");
-  await input.focus();
-  await input.evaluate((root) => {
-    const text = root.ownerDocument
-      .createTreeWalker(root, NodeFilter.SHOW_TEXT)
-      .nextNode()!;
-    const range = root.ownerDocument.createRange();
-    range.setStart(text, 0);
-    range.setEnd(text, 5);
-    const selection = root.ownerDocument.getSelection()!;
-    selection.removeAllRanges();
-    selection.addRange(range);
-    root.ownerDocument.dispatchEvent(new Event("selectionchange"));
-  });
+  await selectRenderedText(input, 0, 5);
   await expect
     .poll(() => page.evaluate(() => document.getSelection()?.toString()))
     .toBe("Alpha");

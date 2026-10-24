@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { PNG } from "pngjs";
-import { openEntryTool } from "./editor-actions.js";
+import { openEntryTool, placeCaretAtTextEnd } from "./editor-actions.js";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/tests/browser/host.html");
@@ -68,15 +68,14 @@ for (const field of ["version", "hover"] as const)
       exact: true,
     });
     await expect(input).toBeVisible();
-    await input.focus();
-    await input.press("Control+End");
+    await placeCaretAtTextEnd(input);
     await page.keyboard.type("M");
     await expect(input).toHaveText("AbMWM");
     const oldSize = await input
       .locator(".mcp-pixel-italic")
       .first()
       .evaluate((e) =>
-        (e as HTMLElement).style.getPropertyValue("--mcp-italic-size"),
+        (e as HTMLElement).style.getPropertyValue("--mcp-ink-size"),
       );
     const oldDocument = await page.evaluate(() => JSON.stringify(window.doc));
     const original = await input.elementHandle();
@@ -90,7 +89,7 @@ for (const field of ["version", "hover"] as const)
           .locator(".mcp-pixel-italic")
           .first()
           .evaluate((e) =>
-            (e as HTMLElement).style.getPropertyValue("--mcp-italic-size"),
+            (e as HTMLElement).style.getPropertyValue("--mcp-ink-size"),
           ),
       )
       .not.toBe(oldSize);

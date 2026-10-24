@@ -2,11 +2,12 @@ import { expect, test, type Frame, type Page } from "@playwright/test";
 for (const iframe of [false, true])
   test(`selection tool follows its text anchor through scroll${iframe ? " inside an iframe" : ""}`, async ({
     page,
+    baseURL,
   }) => {
     let owner: Page | Frame = page;
     if (iframe) {
       await page.setContent(
-        '<iframe src="http://127.0.0.1:4173/tests/browser/host.html" style="width:1000px;height:800px"></iframe>',
+        `<iframe src="${new URL("/tests/browser/host.html", baseURL!).href}" style="width:1000px;height:800px"></iframe>`,
       );
       owner = (await (await page
         .locator("iframe")

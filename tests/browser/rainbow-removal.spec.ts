@@ -126,7 +126,13 @@ test("controlled React removes rainbow from the same selected text", async ({
   await input.focus();
   await input.press("Control+A");
   await removeRainbow(page);
-  await expect(input.locator(".mce-effect-glyph")).toHaveCount(0);
+  expect(
+    await input
+      .locator(".mce-native-glyph")
+      .evaluateAll((elements) => [
+        ...new Set(elements.map((e) => getComputedStyle(e).color)),
+      ]),
+  ).toEqual(["rgb(170, 170, 170)"]);
   await expect(input.locator('span[style*="font-weight: 700"]')).toHaveCount(1);
   await expect(input).toHaveText("Alpha Beta");
   await expect(
