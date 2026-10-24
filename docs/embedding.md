@@ -23,6 +23,11 @@ Options separate `document` from `context`: the document is persistent intent; c
 
 Server import is optional and explicitly triggered. Supply `imports: {adapter(address,signal), timeoutMs?:10000}`. The application owns transport and authorization. A fetched result is staged for review and changes the document only on Apply. New requests, timeout, Cancel, permission changes and destroy abort old requests. Late results and results arriving after local edits are ignored. Replacing the document invalidates source/import drafts and explains why Apply is disabled. Changing the import adapter also invalidates its pending request. There is no built-in polling or remote proxy dependency.
 
+Import assistance is a separate explicit entry action for reviewing gradient and
+alignment candidates with before/after previews and measured deviations. It
+never changes paste/import data automatically. Set `features.assistance: false`
+to disable it. See [import-assistance.md](import-assistance.md).
+
 `normalizeIcon(blob,{crop?,maxBytes?,maxPixels?})` accepts PNG/JPEG and returns a normalized 64×64 PNG. Crop is `{x,y,width,height}` and must be square and inside the source. Defaults: 10 MiB, 16 million decoded pixels. Uploads remain local. Keep backend image validation in the consuming application too.
 
 Preview defaults to a complete menu excerpt. `presentation: "row"` embeds just the entry. `viewportWidth` and optional `viewportHeight` are physical CSS pixels; `guiScale` maps GUI coordinates to CSS pixels. `selected` controls the native selection frame. `background` accepts `auto`, `dirt`, `panorama`, `none`, or `{imageUrl}`; `auto` follows the selected client profile or host assets. Controls change context, never persisted MOTD intent.

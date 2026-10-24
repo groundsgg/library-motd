@@ -222,4 +222,26 @@ export const englishLabels = {
   importCancelled: "Import cancelled",
   cropsize: "Crop size",
   "diagnostic.hiddenLinesCount": "Only the first {lines} lines are visible",
+  importAssistance: "Import assistance",
+  assistanceHint:
+    "Review a proposal before replacing colors or intentional leading spaces. Nothing changes until Apply.",
+  assistanceColorTolerance: "RGB tolerance (0–255)",
+  assistancePositionTolerance: "Position tolerance (0–4 GUI pixels)",
+  assistanceProposal: "Proposal",
+  assistanceBefore: "Before",
+  assistanceAfter: "Suggested",
+  assistanceOriginalSource: "Original source",
+  assistanceSuggestedSource: "Suggested source",
+  assistanceMetrics:
+    "RGB deviation: {color}; position deviation: {position} GUI px; leading spaces replaced: {spaces}.",
+  assistanceInvalidated:
+    "The document or editor configuration changed. Close and reopen assistance before applying a proposal.",
+  assistanceEmpty:
+    "No safe proposals at these tolerances. Protected content, existing effects and unsupported layouts are kept unchanged.",
+  assistanceNoProposal: "No proposal",
+  "assistanceField.motd": "MOTD",
+  "assistanceField.version": "Version",
+  "assistanceField.hover": "Hover",
+  "assistanceKind.gradient": "Gradient: {field}",
+  "assistanceKind.alignment": "Alignment: {field}",
 } as const;

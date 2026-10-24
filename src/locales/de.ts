@@ -238,4 +238,26 @@ export const germanLabels = {
   importCancelled: "Import abgebrochen",
   cropsize: "Größe des Zuschnitts",
   "diagnostic.hiddenLinesCount": "Nur die ersten {lines} Zeilen sind sichtbar.",
+  importAssistance: "Importhilfe",
+  assistanceHint:
+    "Prüfe einen Vorschlag, bevor du Farben oder beabsichtigte führende Leerzeichen ersetzt. Erst Übernehmen ändert das Dokument.",
+  assistanceColorTolerance: "RGB-Toleranz (0–255)",
+  assistancePositionTolerance: "Positionstoleranz (0–4 GUI-Pixel)",
+  assistanceProposal: "Vorschlag",
+  assistanceBefore: "Vorher",
+  assistanceAfter: "Vorschlag",
+  assistanceOriginalSource: "Ursprünglicher Quelltext",
+  assistanceSuggestedSource: "Vorgeschlagener Quelltext",
+  assistanceMetrics:
+    "RGB-Abweichung: {color}; Positionsabweichung: {position} GUI-Pixel; ersetzte führende Leerzeichen: {spaces}.",
+  assistanceInvalidated:
+    "Das Dokument oder die Editorkonfiguration wurde geändert. Schließe und öffne die Importhilfe erneut, bevor du einen Vorschlag übernimmst.",
+  assistanceEmpty:
+    "Keine sicheren Vorschläge bei diesen Toleranzen. Geschützte Inhalte, vorhandene Effekte und nicht unterstützte Layouts bleiben erhalten.",
+  assistanceNoProposal: "Kein Vorschlag",
+  "assistanceField.motd": "MOTD",
+  "assistanceField.version": "Version",
+  "assistanceField.hover": "Hovertext",
+  "assistanceKind.gradient": "Farbverlauf: {field}",
+  "assistanceKind.alignment": "Ausrichtung: {field}",
 } satisfies Readonly<Record<keyof typeof englishLabels, string>>;

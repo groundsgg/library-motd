@@ -857,3 +857,8 @@
     #000
   );
 }
+
+.mce-assistance-preview {
+  max-width: 100%;
+  overflow-x: auto;
+}

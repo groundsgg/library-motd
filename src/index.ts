@@ -12,3 +12,4 @@ export * from "./core/status/evaluate.js";
 export * from "./core/status/template.js";
 export * from "./core/status/import.js";
 export * from "./core/text/simplify.js";
+export * from "./core/text/import-assistance.js";
