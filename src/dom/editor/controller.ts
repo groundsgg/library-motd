@@ -17,6 +17,8 @@ import type {
 import { evaluatePlayerCounts } from "../../core/status/evaluate.js";
 import { validateDocument } from "../../core/document.js";
 import { parseText } from "../../core/text/parse.js";
+import { layoutText } from "../../core/layout/layout.js";
+import { resolveText } from "../../core/text/placeholders.js";
 import { editorSchema, type StylePath } from "./schema.js";
 import { fromEditorNode, nextId, toEditorNode } from "./mapping.js";
 import { EditorHistory, type HistoryEntry } from "./history.js";
@@ -152,6 +154,21 @@ export function createEditorController(
     field: EditableField,
     resolved: Readonly<Record<string, string>>,
   ) {
+    const measure = (doc: EditorState["doc"]) => {
+      const source = fromEditorNode(doc, textFor(field));
+      const layout = layoutText(resolveText(source, resolved).value!, {
+        profile: options.context.profile,
+        width: entryTextWidth(options.context),
+        maxLines: 2,
+      });
+      return {
+        lines: layout.lines.length,
+        advance: layout.glyphs.reduce(
+          (total, glyph) => total + glyph.advance,
+          0,
+        ),
+      };
+    };
     return [
       inlineEffects(
         () => textFor(field),
@@ -167,10 +184,18 @@ export function createEditorController(
       ),
       new Plugin({
         filterTransaction(tr, state) {
+          if (!tr.docChanged || field !== "motd") return true;
+          const next = measure(tr.doc);
+          if (next.lines <= 2) return true;
+          const previous = measure(state.doc);
+          // Source/import may already overflow. Keep it intact and permit edits
+          // that shrink it or preserve its occupied space, never hidden growth.
           return (
-            !tr.docChanged ||
-            field !== "motd" ||
-            tr.doc.childCount <= Math.max(2, state.doc.childCount)
+            previous.lines > 2 &&
+            next.lines <= previous.lines &&
+            (tr.doc.content.size < state.doc.content.size ||
+              (tr.doc.content.size === state.doc.content.size &&
+                next.advance <= previous.advance))
           );
         },
       }),
@@ -272,6 +297,7 @@ export function createEditorController(
           ),
           role: "textbox",
           "aria-multiline": String(field !== "version"),
+          spellcheck: "false",
         },
       });
       if (field === "motd")
@@ -317,6 +343,7 @@ export function createEditorController(
         ),
         role: "textbox",
         "aria-multiline": String(field !== "version"),
+        spellcheck: "false",
       },
       handleDOMEvents: {
         focus() {
@@ -356,7 +383,11 @@ export function createEditorController(
       dispatchTransaction(tr) {
         if (destroyed) return;
         const before = snapshot();
-        view.updateState(view.state.apply(tr));
+        const previousState = view.state;
+        view.updateState(previousState.apply(tr));
+        // Rejected input still needs its DOM redrawn, but must not move saved
+        // selections, emit a document change or consume an undo boundary.
+        if (view.state === previousState) return;
         if (
           tr.docChanged &&
           (locked() ||
