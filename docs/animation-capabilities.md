@@ -88,4 +88,5 @@ capability and independent evidence.
 
 This proposal does not change parsing, serialization, playback controls or the
 current status/document APIs. Implementation and broader client verification
-remain separate work.
+remain separate work. The opt-in playback proposal is tracked in
+[#84](https://github.com/groundsgg/library-motd/issues/84).
