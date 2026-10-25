@@ -115,6 +115,8 @@ export const germanLabels = {
   "diagnostic.invalidStatus": "Ungültige Serverstatusantwort.",
   "diagnostic.unsupportedExport":
     "Geschützte Konstrukte können in diesem Format nicht dargestellt werden.",
+  "diagnostic.protectedPreview":
+    "Geschützte Komponente wird angenähert dargestellt; Aktionen und client-/serverabhängige Inhalte werden nicht aufgelöst.",
   "diagnostic.protectedLayoutMultiline":
     "Leere oder mehrzeilige geschützte Komponenten benötigen Änderungen am Quelltext. Exportiere ohne Layout oder löse den Wert zuerst auf.",
   "diagnostic.protectedLayoutBreak":

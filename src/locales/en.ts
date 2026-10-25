@@ -111,6 +111,8 @@ export const englishLabels = {
   "diagnostic.invalidStatus": "Invalid server status response",
   "diagnostic.unsupportedExport":
     "Protected constructs cannot be represented in this format",
+  "diagnostic.protectedPreview":
+    "Protected component is shown approximately; actions and client/server-dependent content are not resolved",
   "diagnostic.protectedLayoutMultiline":
     "Empty or multiline protected components cannot be materialized without changing source; export without layout or resolve the value first",
   "diagnostic.protectedLayoutBreak":

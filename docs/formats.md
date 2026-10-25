@@ -11,3 +11,16 @@ Uneven gradient stops are expanded into per-character colors for native MiniMess
 Default text parser limits: see `ParseOptions` (length and nesting). Documents reject cycles, non-JSON values, excessive nesting, duplicate IDs, invalid rules and invalid 64×64 PNG structure. Image import additionally decodes and normalizes PNG/JPEG before applying it.
 
 Aligned/uneven-gradient MiniMessage output preserves placeholder tokens and protected raw subtrees. Runtime consumers should resolve placeholders before measuring alignment. JSON export preserves native opaque objects after adjacent edits; protected JSON layout that cannot be evaluated returns an explicit diagnostic. Legacy tooltip lines are serialized independently so inherited color and decoration carry into every sample name.
+
+Protected JSON previews show literal `text` and recursive `extra` contents,
+including string/array components. Click/hover payloads, commands and HTML are
+inert data; they are not interpreted as preview actions or markup. Protected
+local styles remain approximate. Translation keys/arguments, keybinds, scores,
+selectors and NBT are not resolved: they show `[unsupported component]`, while
+known literal siblings remain visible. Their output depends on language, client
+settings or authorized game context that this standalone library does not infer.
+The fallback walk obeys the parsing depth limit. Layout emits the localized
+`protected-preview` warning for opaque nodes, including saved/reloaded documents.
+The full raw JSON stays atomic and is preserved in same-format output; other
+formats still require explicit loss reduction. The source examples and scope
+are recorded in the [protected-preview design](superpowers/specs/2026-10-25-protected-literal-previews-design.md).

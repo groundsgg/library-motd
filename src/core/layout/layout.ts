@@ -1,4 +1,9 @@
-import type { LayoutOptions, LayoutResult, TextDocument } from "../model.js";
+import type {
+  LayoutOptions,
+  LayoutResult,
+  TextDocument,
+  TextNode,
+} from "../model.js";
 import { flattenText } from "../text/colors.js";
 import { diagnostic } from "../diagnostics.js";
 export function layoutText(
@@ -8,6 +13,23 @@ export function layoutText(
   const diagnostics: LayoutResult["diagnostics"] = [],
     glyphs: LayoutResult["glyphs"] = [],
     lines: LayoutResult["lines"] = [];
+  const warnProtected = (nodes: TextNode[]) => {
+    for (const node of nodes) {
+      if (node.type === "group") warnProtected(node.children);
+      else if (node.type === "opaque")
+        diagnostics.push(
+          diagnostic(
+            "protected-preview",
+            node.id,
+            {
+              key: "diagnostic.protectedPreview",
+            },
+            "warning",
+          ),
+        );
+    }
+  };
+  warnProtected(text.nodes);
   let line = 0,
     x = 0,
     lineStart = 0;

@@ -3,6 +3,22 @@ import { COLORS } from "./minimessage.js";
 export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
   let serial = 0;
   const id = () => `j${serial++}`;
+  // Only visible literal contents are inspected. Event payloads and contextual
+  // component types remain inert, while the full subtree stays in `raw`.
+  const fallback = (v: JsonValue, depth: number): string => {
+    if (depth > maxDepth)
+      throw new TypeError("Component nesting exceeds limit");
+    if (typeof v === "string") return v;
+    if (Array.isArray(v))
+      return v.map((child) => fallback(child, depth + 1)).join("");
+    if (!v || typeof v !== "object") return "[unsupported component]";
+    return (
+      (typeof v.text === "string" ? v.text : "[unsupported component]") +
+      (Array.isArray(v.extra)
+        ? v.extra.map((child) => fallback(child, depth + 1)).join("")
+        : "")
+    );
+  };
   const visit = (v: JsonValue, depth = 0): TextNode[] => {
     if (depth > maxDepth)
       throw new TypeError("Component nesting exceeds limit");
@@ -42,8 +58,7 @@ export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
           type: "opaque",
           format: "json",
           raw: JSON.stringify(v),
-          fallback:
-            typeof v.text === "string" ? v.text : "[unsupported component]",
+          fallback: fallback(v, depth),
         },
       ];
     const style: TextStyle = {};
