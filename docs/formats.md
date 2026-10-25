@@ -23,4 +23,4 @@ The fallback walk obeys the parsing depth limit. Layout emits the localized
 `protected-preview` warning for opaque nodes, including saved/reloaded documents.
 The full raw JSON stays atomic and is preserved in same-format output; other
 formats still require explicit loss reduction. The source examples and scope
-are recorded in the [protected-preview design](superpowers/specs/2026-10-25-protected-literal-previews-design.md).
+are recorded in the repository's [protected-preview design](https://github.com/groundsgg/library-motd/blob/main/docs/superpowers/specs/2026-10-25-protected-literal-previews-design.md).
