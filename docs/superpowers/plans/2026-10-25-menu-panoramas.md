@@ -3,10 +3,10 @@
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** Add optional native-perspective, independently configurable cubemap backgrounds.
-**Architecture:** Pure pose/types plus one persistent owner-document DOM controller,
-integrated into existing entry mounts. Sources come from explicit context or the
-existing per-profile provider; static rendering is the error/offline fallback.
-**Tech Stack:** TypeScript, CSS 3D, RAF, Vitest, Playwright, original PNG fixtures.
+**Architecture:** Pure pose/types, a shared per-document WebGL cubemap renderer,
+and one persistent controller/output canvas per entry. Sources come from explicit
+context or the existing per-profile provider; static rendering is the error fallback.
+**Tech Stack:** TypeScript, WebGL, Canvas 2D, RAF, Vitest, Playwright, original PNG fixtures.
 **Spec:** ../specs/2026-10-25-menu-panoramas-design.md
 
 ## Global Constraints
@@ -33,27 +33,30 @@ tests/unit/panorama.test.ts, tools/reference/, tests/fixtures/client/native-pano
 **Interfaces:** `PanoramaSource`, `PanoramaMotion`, `PanoramaBackground`,
 `panoramaPose(elapsedMs:number, initialYaw?:number):PanoramaPose`.
 
-- [ ] Inspect native camera/motion/postprocess paths and independently capture
+- [x] Inspect native camera/motion/postprocess paths and independently capture
       original calibration resources. Record runtime/source/capture hashes privately
       and ship only original calibration output and reproducible maintainer tooling.
-- [ ] Write RED tests for zero/90°/wrapped/reverse/nonfinite pose inputs and
+- [x] Write RED tests for zero/90°/wrapped/reverse/nonfinite pose inputs and
       valid/invalid six-face settings; verify the expected failures.
-- [ ] Implement the pure contract and safe settings; run all units/types/Node checks.
-- [ ] Commit the independently testable core/calibration contract.
+- [x] Implement the pure contract and safe settings; run all units/types/Node checks.
+- [x] Commit the independently testable core/calibration contract.
 
 ### Task 2: Persistent DOM cubemap and lifecycle
 
-**Files:** src/dom/panorama.ts, src/dom/entry.ts, src/dom/styles.css,
+**Files:** src/dom/panorama.ts, src/dom/panorama-renderer.ts, src/dom/entry.ts, src/dom/styles.css,
 tests/browser/panorama.spec.ts, tests/browser/iframe.spec.ts as needed.
 **Consumes:** Task1 pose, source and settings.
 **Produces:** private controller `update(background, context, sceneSize)`, `destroy()`.
 
-- [ ] Write RED cases for six-face load, native projection probes and fallback.
-- [ ] Implement the cube/perspective mapping and persistent resource controller.
-- [ ] Write RED lifecycle cases: stale callbacks, equivalent arrays, independent
+- [x] Write RED cases for six-face load, native projection probes and fallback.
+- [x] Implement the cube/perspective mapping and persistent resource controller.
+- [x] Write RED lifecycle cases: stale callbacks, equivalent arrays, independent
       instances/iframes, pause/resume/speed changes/live reduced motion/destroy.
-- [ ] Implement bounded clock and ownership cleanup; retain editor source/caret/undo.
-- [ ] Run targeted three-engine and actual Windows checks; commit the DOM feature.
+- [x] Implement bounded clock and ownership cleanup; retain editor source/caret/undo.
+- [x] Run targeted three-engine checks and add focused Windows browser CI.
+      All 60 panorama/demo cases pass across Chromium, Firefox and WebKit,
+      including native 26.3 projection, shared GPU resources, context loss,
+      CORS and moving rows. Native Windows capture remains separate in #70.
 
 ### Task 3: Original demo, examples, docs and release validation
 
@@ -61,10 +64,13 @@ tests/browser/panorama.spec.ts, tests/browser/iframe.spec.ts as needed.
 examples/shared/, examples/dom/, examples/react/, src/locales/, docs/panoramas.md,
 docs/api.md, docs/embedding.md, tools/reference/README.md, package.json, CI.
 
-- [ ] Generate and checksum original demo faces, with reproduction/license notes.
-- [ ] Add RED example cases for demo selection/pause/speed and retained editing.
-- [ ] Add localized controls and per-profile host-provider documentation.
+- [x] Generate and checksum original demo faces, with reproduction/license notes.
+- [x] Add RED example cases for demo selection/pause/speed and retained editing.
+- [x] Add localized controls and per-profile host-provider documentation.
 - [ ] Run quality, units, full browser matrix, focused Windows, native calibration,
       Node/SSR, packed production consumer and example builds.
+      Typecheck, 122 unit tests, lint, format, 3 Node package tests and both
+      example builds pass. The WebGL renderer passes native calibration in all
+      three engines; the full suite and packed consumer are the remaining gates.
 - [ ] One fresh whole-branch review; Important findings RED→GREEN plus full suite.
 - [ ] Create one English Conventional Commit PR for #10, attach it and await green CI.

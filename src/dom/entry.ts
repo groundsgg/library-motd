@@ -8,6 +8,7 @@ import { parseText } from "../core/text/parse.js";
 import { layoutText } from "../core/layout/layout.js";
 import { bindTooltip } from "./tooltips.js";
 import { animateObfuscation } from "./animation.js";
+import { createPanorama } from "./panorama.js";
 import {
   element,
   renderText,
@@ -53,6 +54,7 @@ export function createEntry(
   const playerHover = element(doc, "div", ""),
     pingTip = element(doc, "div", "");
   const bindings = new Map<EditableField, HTMLElement>();
+  const panorama = createPanorama(backdrop);
   let options = initial,
     destroyed = false,
     diagnostics: Diagnostic[] = [],
@@ -197,6 +199,7 @@ export function createEntry(
       typeof background === "object" && "imageUrl" in background
         ? `url(${JSON.stringify(background.imageUrl)})`
         : "";
+    panorama.update(background, context, { width: sceneWidth, height });
     title.hidden = listBackground.hidden = footer.hidden = !full;
     listFade.hidden = !full || !g.listFade || background === "none";
     scene.style.setProperty("--mcp-list-fade", (g.listFade ?? 0) + "px");
@@ -515,6 +518,7 @@ export function createEntry(
       if (destroyed) return;
       destroyed = true;
       stop();
+      panorama.destroy();
       disposeTips.forEach((dispose) => dispose());
       wrapper.remove();
       bindings.clear();

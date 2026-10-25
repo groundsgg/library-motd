@@ -35,6 +35,11 @@ editing, synthetic composition and lifecycle/late-import boundaries. Menu
 geometry and the six existing Java text-reference comparisons run in each
 engine too.
 
+Panorama coverage includes native 26.3 projection probes, moving rows, pause and
+speed changes, CORS authorization, GPU loss and static fallbacks. Twenty rows
+verify that independent previews share one document's GPU context. The Windows
+Chromium job also runs these panorama and example cases.
+
 The paste boundary test supplies an explicit clipboard-data property on its
 synthetic event. Firefox discards `ClipboardEvent` constructor-supplied data;
 this harness difference is separate from handling a real user paste. These
@@ -54,6 +59,11 @@ alpha channels, still require exact equality. A profile geometry or font
 failure must not be hidden by this narrowly scoped image tolerance.
 
 ## Limits
+
+Panorama projection compares two original native calibration bands. Interior
+samples permit at most two RGB channel values of difference; samples on texture
+face boundaries are excluded because cube-edge filtering differs across engines.
+These checks do not certify the native blur shader or arbitrary panorama artwork.
 
 Playwright WebKit is an automated engine check, not a test of the shipping
 Safari application on macOS/iOS. OS-specific fonts, native clipboard workflows,

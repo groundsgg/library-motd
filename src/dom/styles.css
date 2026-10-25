@@ -349,10 +349,39 @@
   background-size: cover;
 }
 [data-background="panorama"] .mcp-background {
-  background-image:
+  --mcp-panorama-fallback:
     linear-gradient(#0005, #0005), url("../../assets/ui/panorama.svg");
+  background-image: var(--mcp-panorama-fallback);
   filter: blur(3px);
   transform: scale(1.06);
+}
+.mcp-background[data-panorama-state="ready"] {
+  filter: none;
+  transform: none;
+}
+.mcp-panorama-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.mcp-panorama-render,
+.mcp-panorama-dimmer {
+  position: absolute;
+  inset: 0;
+}
+.mcp-panorama-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: auto;
+}
+.mcp-panorama-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: auto;
 }
 [data-background="custom"] .mcp-background {
   filter: blur(3px) brightness(0.6);

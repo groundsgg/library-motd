@@ -50,7 +50,7 @@ Document fields: `motd {text,alignments}`, version `automatic|when-incompatible|
 
 `EditorOptions.mapChange(next, change)` can enrich a document before validation/history/notification. Use it for JSON-only application intent in `extensions`. It runs for visual/source/import commits; undo/redo restores the previously mapped document. It must return a valid document. This keeps application metadata in the same undo transaction without coupling the library to an application.
 
-`PreviewContext.assetProvider(profile)` returns optional `ClientAssets` for the selected version. `ClientAssets` accepts background, defaultServerIcon, fontFamily and button texture URLs. The host owns their licenses, loading and lifetime. `PreviewBackground` also supports transparent or explicit custom backgrounds. See embedding.md.
+`PreviewContext.assetProvider(profile)` returns optional `ClientAssets` for the selected version. `ClientAssets` accepts static or animated panorama backgrounds, defaultServerIcon, fontFamily and button texture URLs. The host owns their licenses, loading and lifetime. `PreviewBackground` also supports transparent or explicit custom backgrounds. `PanoramaBackground` accepts six face URLs, bounded motion, blur and dimming; `panoramaPose` exposes the DOM-free native camera pose. See [panoramas.md](panoramas.md) and embedding.md.
 
 `FontProfile.layout: "java-ltr"` enables the measured Java ASCII-space wrapping
 used by bundled profiles. Omission retains legacy grapheme wrapping for existing

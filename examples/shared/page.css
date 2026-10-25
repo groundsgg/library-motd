@@ -73,6 +73,21 @@ aside label {
   font-size: 12px;
   margin: 20px 0;
 }
+.panorama-control:has(#panorama-speed) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+#panorama-speed-label {
+  grid-column: 1 / -1;
+}
+#panorama-speed {
+  width: 100%;
+}
+.panorama-note {
+  margin: -10px 0 20px;
+  font-size: 11px;
+  line-height: 1.5;
+}
 select {
   font: inherit;
   padding: 5px;

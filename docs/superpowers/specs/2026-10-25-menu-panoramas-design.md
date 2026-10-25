@@ -10,20 +10,21 @@ criteria, rather than new preferences attributed to the user.
 
 ## Approach
 
-Use a six-face CSS 3D cube with a perspective camera, not a horizontally moving
-flat background. This supports ordinary cross-origin image URLs without a
-WebGL/CORS dependency, preserves the existing DOM/iframe ownership model and
-allows static offline fallbacks. A WebGL renderer would add context loss and
-cross-origin texture restrictions; sliding the existing SVG would not implement
-native perspective. CSS filtering may approximate native postprocessing, which
-must be documented separately from measured projection/rotation.
+Use a dependency-free WebGL cubemap shader with the audited native camera.
+Previews in one owner document share a GPU context and reference-counted textures;
+each entry retains an independent 2D output canvas and motion clock. Cross-origin
+faces require anonymous CORS permission. Missing images, disabled WebGL and context
+loss retain the static fallback. CSS filtering approximates native postprocessing
+and is documented separately from measured projection/rotation.
 
 ## Resource and motion contract
 
 Extend `PreviewBackground` with `PanoramaBackground`:
 
 - `panorama.faces`: exactly six nonempty URL strings, in native `panorama_0`
-  through `panorama_5` order. Document face orientation after the native probe.
+  through `panorama_5` order. Runtime images must be square, equal-sized and at
+  most 2048 pixels per side to bound texture allocation. Output canvases are bounded
+  to the device viewport limit and 4096 pixels per dimension.
 - `panorama.fallbackImageUrl?`: static image while loading or after failure;
   omission uses the existing original panorama illustration.
 - `panorama.overlayImageUrl?`: optional host-owned native-style overlay.
@@ -47,13 +48,14 @@ with an independently launched client using original calibration textures.
 ## Persistent lifecycle
 
 Each entry owns one persistent panorama controller. It loads six images once
-per changed source, swaps in the cube only when all are ready, and keeps the
+per changed source, swaps in the cubemap only when all are ready, and keeps the
 static fallback for invalid/missing resources. Old requests cannot publish
 after source replacement or destroy. No host object URL is revoked.
 
 The animation uses the owning window's requestAnimationFrame. It pauses without
 advancing phase when `context.animations` is false, motion is paused, reduced
-motion is enabled, the document is hidden, or the panorama is not active.
+motion is enabled, or the document is hidden. Row presentation uses the same
+motion settings and continues rotating when animations are enabled.
 Media-query changes apply live. Unrelated document/context updates do not reload
 resources or reset phase. Destroy cancels frames and removes all owned listeners
 and nodes. Instances, including same-origin iframes, own independent state.
