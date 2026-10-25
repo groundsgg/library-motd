@@ -97,3 +97,43 @@ cc -O2 -I"$icon_probe_dir" tools/reference/status-icon-probe.c -lm -o "$icon_pro
 Both runs report 64×64, center RGBA 255,0,0,128 and corner alpha 0. This is a decoder
 probe matching the API used by NativeImage, not a complete client screenshot
 session or historical/modded-client certification.
+
+## MOTD status timing session, 2026-10-25
+
+The native timing manifest records an official 26.3/protocol 777 Linux session
+using the same isolated 854×480/GUI scale 2/vanilla procedure above. The client SHA1 was
+`e877b6a07acd633fb3bb475002175cec036e7b87`; its version.json independently reports
+protocol 777. No user world or authenticated account was opened. A localhost
+status-only fixture advertised the four descriptions in the manifest and logged
+each response. Full screenshots and bytecode audit output remain private;
+only their checksums and original status data are recorded here.
+
+To reproduce, use the existing `status-server.py` with the manifest's A response,
+open the server list and wait for A to be visibly rendered. Change future status
+responses to B while leaving the client open. The session used a reloadable
+fixture; with the included static server, stop/restart that fixture with the B
+JSON and retain separate response logs. Do not refresh or reopen the client
+list during the idle interval. Capture the unchanged row and verify that no
+new `Status response sent` entry appeared. Click Refresh, wait for B, and verify
+the next response was actually sent. Keep each exact response JSON and its hash
+with the captured timestamps.
+
+Repeat with compatible protocol 777: refresh to the manifest's C response, verify
+42/500 and completed green ping bars, then change future responses to D without
+client input. Capture and count requests after the second idle interval, then
+refresh and verify D. This control distinguishes incompatible-version behavior
+from ordinary cached status display.
+
+In this session A remained after 65.941 seconds with one total request. Refresh
+produced B/request 2. C remained after 109.790 seconds with three total requests;
+Refresh produced D/request 4. Initial and refreshed frames were inspected before
+accepting the measurements. The first synthetic servers.dat was rejected because
+it was gzip-compressed; the experiment began only after correcting it to the
+client's uncompressed NBT format and confirming a real response/display pair.
+
+`ServerStatusPinger$1.handleStatusResponse` independently stores the description
+in `ServerData.motd` and rejects a second unrequested response in the same
+connection. The entry renderer uses that stored component. These observations
+do not establish every possible wait interval or other client versions/platforms.
+No continuous frame/scroll/blink feature or public timeline type was added; see
+`docs/animation-capabilities.md` for the separate future model proposal.

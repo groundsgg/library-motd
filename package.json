@@ -23,7 +23,8 @@
     "docs/localization.md",
     "docs/import-assistance.md",
     "docs/icon-animation.md",
-    "docs/panoramas.md"
+    "docs/panoramas.md",
+    "docs/animation-capabilities.md"
   ],
   "exports": {
     ".": {

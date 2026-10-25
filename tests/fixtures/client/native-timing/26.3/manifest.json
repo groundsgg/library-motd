@@ -1,0 +1,131 @@
+{
+  "sessionDate": "2026-10-25",
+  "clientVersion": "26.3",
+  "protocol": 777,
+  "clientSha1": "e877b6a07acd633fb3bb475002175cec036e7b87",
+  "environment": "Linux Xvfb854x480 GUI scale 2 software OpenGL, vanilla resources, offline isolated game dir",
+  "observations": {
+    "incompatibleIdleSeconds": 65.941,
+    "incompatibleRequestsBeforeRefresh": 1,
+    "incompatibleRequestsAfterRefresh": 2,
+    "compatibleIdleSeconds": 109.79,
+    "compatibleRequestsBeforeRefresh": 3,
+    "compatibleRequestsAfterRefresh": 4
+  },
+  "responses": [
+    {
+      "label": "A",
+      "protocol": -1,
+      "time": 1792930506.7230499,
+      "status": {
+        "version": {
+          "name": "26.3",
+          "protocol": -1
+        },
+        "players": {
+          "online": 42,
+          "max": 500,
+          "sample": []
+        },
+        "description": {
+          "text": "FRAME A",
+          "color": "gold",
+          "extra": [
+            {
+              "text": "\ninitial status response",
+              "color": "aqua"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "label": "B",
+      "protocol": -1,
+      "time": 1792930628.8004336,
+      "status": {
+        "version": {
+          "name": "26.3",
+          "protocol": -1
+        },
+        "players": {
+          "online": 42,
+          "max": 500,
+          "sample": []
+        },
+        "description": {
+          "text": "FRAME B",
+          "color": "green",
+          "extra": [
+            {
+              "text": "\nchanged response",
+              "color": "blue"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "label": "C",
+      "protocol": 777,
+      "time": 1792930702.8388608,
+      "status": {
+        "version": {
+          "name": "26.3",
+          "protocol": 777
+        },
+        "players": {
+          "online": 42,
+          "max": 500,
+          "sample": []
+        },
+        "description": {
+          "text": "FRAME C",
+          "color": "yellow",
+          "extra": [
+            {
+              "text": "\ncompatible baseline",
+              "color": "aqua"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "label": "D",
+      "protocol": 777,
+      "time": 1792930854.3793359,
+      "status": {
+        "version": {
+          "name": "26.3",
+          "protocol": 777
+        },
+        "players": {
+          "online": 42,
+          "max": 500,
+          "sample": []
+        },
+        "description": {
+          "text": "FRAME D",
+          "color": "light_purple",
+          "extra": [
+            {
+              "text": "\ncompatible changed response",
+              "color": "green"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "privateCaptureSha256": {
+    "frame-a.png": "9fd788d012980c3b310502d19db44945959f47acc9b29c3c45d4434ab47f5a9f",
+    "after-idle.png": "1d215f6c9746f396edf29996f7fd44458c4dc2c00663e5f84320f65da4902f81",
+    "after-refresh-b.png": "d6606a11e20971a6851e1bd13fc9d06f58229286f30515428fefdba7221c248f",
+    "compatible-c.png": "f25314a725a8b84183a7eca0dc55a4314143f6a2e783fd8097ce0c56aeaa76a3",
+    "compatible-idle.png": "885e483dd630634db7652218d84ac31ff2bc3ef7055192e53dc6eb27e9ad9c35",
+    "compatible-refresh-d.png": "c4554d374b17ac3d65870e9496be65ad6d009b124b3f076a06f5cde89991d204"
+  },
+  "publication": "Full screenshots, game files and bytecode audit output remain private; these hashes identify the original session evidence, not redistributable assets.",
+  "scope": "One official vanilla Java 26.3 Linux client and two finite observation intervals; no historical/modded/Windows/Bedrock certification."
+}
