@@ -5,6 +5,26 @@ Ubuntu 24.04 for every pull request and before a release. The initial matrix
 verification passed 31 tests per engine (93 cases in total). CI installs
 all three engines and their system dependencies; `CI` limits concurrency to two
 workers. A browser failure blocks the shared validation and publishing jobs.
+Failed cases retain a Playwright trace and screenshot in the existing CI report
+artifacts. The input-bounds and native-italic suites also attach
+`native-selection-events.json`: the last 256 focus, keyboard, input, composition
+and selection events, including bounded selection text, endpoints and timing.
+Endpoints include rendered field offsets so identical per-glyph text nodes can
+be distinguished.
+These observers do not alter input or selection. Open a retained trace with
+`npx playwright show-trace path/to/trace.zip`; inspect its JSON attachment to
+compare native event ordering with the failed assertion. Passing cases discard
+their traces and do not attach the event history. Tests are not automatically
+retried; intermittent failures still block validation.
+
+Cases that require an exact source caret establish it explicitly before native
+typing or selection. A programmatic focus followed immediately by `Control+End`
+can race ProseMirror's delayed focus correction before the native selection
+notification arrives. The affected overflow/placeholder/italic fixtures use
+the existing rendered-range helpers; native shortcut, arrow, deletion, clipboard
+and undo assertions remain unchanged. This avoids relying on an unverified
+starting caret rather than retrying a failed edit or changing production input.
+
 Linux CI uses Xvfb with software OpenGL so Firefox can create a real WebGL
 context. Without an X11 display its headless build correctly uses the static
 fallback, which does not exercise the animated panorama renderer.
