@@ -5,6 +5,9 @@ Ubuntu 24.04 for every pull request and before a release. The initial matrix
 verification passed 31 tests per engine (93 cases in total). CI installs
 all three engines and their system dependencies; `CI` limits concurrency to two
 workers. A browser failure blocks the shared validation and publishing jobs.
+Linux CI uses Xvfb with software OpenGL so Firefox can create a real WebGL
+context. Without an X11 display its headless build correctly uses the static
+fallback, which does not exercise the animated panorama renderer.
 
 A focused Chromium job on Windows also checks regular/bold baselines, mixed
 and fully bold two-line MOTDs, descenders, and the React formatting toggle.
@@ -18,6 +21,8 @@ actual Windows Java client; that capture remains outstanding in #70.
 ```sh
 npx playwright install --with-deps chromium firefox webkit
 npm run test:browser
+# Linux without a display (including panorama GPU checks):
+xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 npm run test:browser
 # One engine, for diagnosis:
 npm run test:browser -- --project=firefox
 ```
