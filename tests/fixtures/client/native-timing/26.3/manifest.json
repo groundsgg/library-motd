@@ -17,60 +17,104 @@
       "label": "A",
       "protocol": -1,
       "time": 1792930506.7230499,
-      "description": {
-        "text": "FRAME A",
-        "color": "gold",
-        "extra": [
-          {
-            "text": "\ninitial status response",
-            "color": "aqua"
-          }
-        ]
+      "status": {
+        "version": {
+          "name": "26.3",
+          "protocol": -1
+        },
+        "players": {
+          "online": 42,
+          "max": 500,
+          "sample": []
+        },
+        "description": {
+          "text": "FRAME A",
+          "color": "gold",
+          "extra": [
+            {
+              "text": "\ninitial status response",
+              "color": "aqua"
+            }
+          ]
+        }
       }
     },
     {
       "label": "B",
       "protocol": -1,
       "time": 1792930628.8004336,
-      "description": {
-        "text": "FRAME B",
-        "color": "green",
-        "extra": [
-          {
-            "text": "\nchanged response",
-            "color": "blue"
-          }
-        ]
+      "status": {
+        "version": {
+          "name": "26.3",
+          "protocol": -1
+        },
+        "players": {
+          "online": 42,
+          "max": 500,
+          "sample": []
+        },
+        "description": {
+          "text": "FRAME B",
+          "color": "green",
+          "extra": [
+            {
+              "text": "\nchanged response",
+              "color": "blue"
+            }
+          ]
+        }
       }
     },
     {
       "label": "C",
       "protocol": 777,
       "time": 1792930702.8388608,
-      "description": {
-        "text": "FRAME C",
-        "color": "yellow",
-        "extra": [
-          {
-            "text": "\ncompatible baseline",
-            "color": "aqua"
-          }
-        ]
+      "status": {
+        "version": {
+          "name": "26.3",
+          "protocol": 777
+        },
+        "players": {
+          "online": 42,
+          "max": 500,
+          "sample": []
+        },
+        "description": {
+          "text": "FRAME C",
+          "color": "yellow",
+          "extra": [
+            {
+              "text": "\ncompatible baseline",
+              "color": "aqua"
+            }
+          ]
+        }
       }
     },
     {
       "label": "D",
       "protocol": 777,
       "time": 1792930854.3793359,
-      "description": {
-        "text": "FRAME D",
-        "color": "light_purple",
-        "extra": [
-          {
-            "text": "\ncompatible changed response",
-            "color": "green"
-          }
-        ]
+      "status": {
+        "version": {
+          "name": "26.3",
+          "protocol": 777
+        },
+        "players": {
+          "online": 42,
+          "max": 500,
+          "sample": []
+        },
+        "description": {
+          "text": "FRAME D",
+          "color": "light_purple",
+          "extra": [
+            {
+              "text": "\ncompatible changed response",
+              "color": "green"
+            }
+          ]
+        }
       }
     }
   ],
