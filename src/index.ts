@@ -14,3 +14,4 @@ export * from "./core/status/import.js";
 export * from "./core/text/simplify.js";
 export * from "./core/text/import-assistance.js";
 export { normalizeStatusIcon } from "./core/image/icon.js";
+export { panoramaPose } from "./core/panorama.js";

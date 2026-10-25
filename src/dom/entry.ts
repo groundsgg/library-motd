@@ -152,7 +152,9 @@ export function createEntry(
         : context.background;
     stage.dataset.background =
       typeof background === "object"
-        ? "custom"
+        ? "panorama" in background
+          ? "panorama"
+          : "custom"
         : background === "auto"
           ? (context.profile.background ?? "panorama")
           : background;
@@ -192,7 +194,7 @@ export function createEntry(
       (g.footerBottom ?? 10) + "px",
     );
     backdrop.style.backgroundImage =
-      typeof background === "object"
+      typeof background === "object" && "imageUrl" in background
         ? `url(${JSON.stringify(background.imageUrl)})`
         : "";
     title.hidden = listBackground.hidden = footer.hidden = !full;

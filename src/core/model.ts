@@ -134,8 +134,39 @@ export interface ClientProfile {
   };
 }
 /** Supplied by a host application; asset URLs are never persisted in the server document. */
+export interface PanoramaSource {
+  /** Native panorama_0 through panorama_5 order: front, right, back, left, top, bottom. */
+  faces: readonly [string, string, string, string, string, string];
+  fallbackImageUrl?: string;
+  overlayImageUrl?: string;
+}
+export interface PanoramaMotion {
+  /** Initial native camera heading in degrees; changing it offsets the current phase. */
+  initialYaw?: number;
+  /** Native-speed multiplier, bounded to [-10,10]. Negative values reverse playback. */
+  speed?: number;
+  paused?: boolean;
+}
+export interface PanoramaBackground {
+  panorama: PanoramaSource;
+  motion?: PanoramaMotion;
+  /** Blur radius in CSS pixels, independent of GUI scale. Default 5; maximum 32. */
+  blur?: number;
+  /** Black overlay opacity in [0,1]. Default 1/3. */
+  dimming?: number;
+}
+export interface PanoramaPose {
+  yaw: number;
+  pitch: number;
+  verticalFov: number;
+}
 export type PreviewBackground =
-  "auto" | "dirt" | "panorama" | "none" | { imageUrl: string };
+  | "auto"
+  | "dirt"
+  | "panorama"
+  | "none"
+  | { imageUrl: string }
+  | PanoramaBackground;
 export interface ClientAssets {
   background?: Exclude<PreviewBackground, "auto">;
   defaultServerIcon?: string;
