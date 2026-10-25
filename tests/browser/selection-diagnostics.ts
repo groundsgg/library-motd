@@ -5,6 +5,8 @@ interface SelectionEvent {
   type: string;
   key?: string;
   inputType?: string;
+  nativeComposing?: boolean;
+  pixelComposing?: boolean;
   field?: string;
   anchor: { node: string; offset: number; fieldOffset?: number } | null;
   focus: { node: string; offset: number; fieldOffset?: number } | null;
@@ -47,6 +49,13 @@ export const test = base.extend<{ selectionDiagnostics: void }>({
             key: event instanceof KeyboardEvent ? event.key : undefined,
             inputType:
               event instanceof InputEvent ? event.inputType : undefined,
+            nativeComposing:
+              event instanceof InputEvent || event instanceof KeyboardEvent
+                ? event.isComposing
+                : undefined,
+            pixelComposing: document.activeElement
+              ?.closest(".ProseMirror")
+              ?.hasAttribute("data-pixel-composing"),
             field: document.activeElement?.closest<HTMLElement>(
               "[data-editor-field]",
             )?.dataset.editorField,

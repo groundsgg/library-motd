@@ -16,6 +16,8 @@ import { setLabelAttribute, type DomLocalization } from "../localization.js";
 import type { StylePath } from "./schema.js";
 import { fromEditorNode, type EditorSourceRange } from "./mapping.js";
 
+const compositionOwners = new WeakMap<HTMLElement, object>();
+
 interface DisplayGlyph extends StyledChar {
   // Transparent clipped text retains native caret/deletion geometry. Using
   // visibility:hidden here can make imported overflow impossible to shorten.
@@ -217,6 +219,7 @@ export function inlineEffects(
   const key = new PluginKey<DecorationSet>("motd-inline-effects");
   let composing = false;
   let destroyed = false;
+  let compositionOwner: object | undefined;
   return new Plugin({
     key,
     state: {
@@ -243,14 +246,21 @@ export function inlineEffects(
       handleDOMEvents: {
         compositionstart(view) {
           composing = true;
+          compositionOwner = {};
+          compositionOwners.set(view.dom, compositionOwner);
           view.dom.setAttribute("data-pixel-composing", "");
           return false;
         },
         compositionend(view) {
           composing = false;
+          const owner = compositionOwner;
           queueMicrotask(() => {
-            if (!destroyed) {
-              view.dispatch(view.state.tr.setMeta(key, true));
+            // Controller recovery may already have replaced this plugin. Its
+            // completed marker must still clear, but never a newer preedit's.
+            if (owner && compositionOwners.get(view.dom) === owner) {
+              if (!destroyed && !composing)
+                view.dispatch(view.state.tr.setMeta(key, true));
+              compositionOwners.delete(view.dom);
               view.dom.removeAttribute("data-pixel-composing");
             }
           });
