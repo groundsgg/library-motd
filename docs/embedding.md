@@ -30,6 +30,8 @@ to disable it. See [import-assistance.md](import-assistance.md).
 
 `normalizeIcon(blob,{crop?,maxBytes?,maxPixels?})` accepts PNG/JPEG and returns a normalized 64×64 PNG. Crop is `{x,y,width,height}` and must be square and inside the source. Defaults: 10 MiB, 16 million decoded pixels. Uploads remain local. Keep backend image validation in the consuming application too.
 
+For optional animated client-menu backgrounds, provide a `PanoramaBackground` through `context.background` or the selected profile's `assetProvider`. Faces, fallback artwork, blur and motion are host-owned; the library package includes only original demo illustrations. See [panoramas.md](panoramas.md) for the standalone API and lifecycle behavior.
+
 Preview defaults to a complete menu excerpt. `presentation: "row"` embeds just the entry. `viewportWidth` and optional `viewportHeight` are physical CSS pixels; `guiScale` maps GUI coordinates to CSS pixels. `selected` controls the native selection frame. `background` accepts `auto`, `dirt`, `panorama`, `none`, or `{imageUrl}`; `auto` follows the selected client profile or host assets. Controls change context, never persisted MOTD intent.
 
 PNG uploads preserve alpha. The editor offers a pixel-art image-plus action on icon hover and keyboard focus, and accepts dropped PNG/JPEG files. Uploading opens a local crop draft: move the square or enter crop coordinates, then Apply or Cancel. Replacement and reset are staged too; one Apply is one undoable change. Pending decoding can be cancelled, and stale uploads cannot overwrite a newer draft or replacement document. Read-only/disabled instances and plain previews have no upload action.

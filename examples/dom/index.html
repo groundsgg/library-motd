@@ -47,6 +47,25 @@
               <option value="none">Transparent</option>
             </select></label
           >
+          <label class="panorama-control">
+            <input id="panorama-paused" type="checkbox" />
+            <span id="panorama-paused-label">Pause panorama</span>
+          </label>
+          <label class="panorama-control">
+            <span id="panorama-speed-label">Rotation speed</span>
+            <input
+              id="panorama-speed"
+              type="range"
+              min="-10"
+              max="10"
+              step="0.5"
+              value="1"
+            />
+            <output id="panorama-speed-value">1×</output>
+          </label>
+          <p class="panorama-note" id="panorama-demo-note">
+            Original demo artwork. No game textures included.
+          </p>
           <label
             >Presentation
             <select id="presentation" aria-label="Presentation">

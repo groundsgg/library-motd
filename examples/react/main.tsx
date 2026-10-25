@@ -6,7 +6,11 @@ import {
   englishLabels,
   germanLabels,
 } from "../../src/index.js";
-import { context, initialDocument } from "../shared/data.js";
+import {
+  context,
+  demoPanoramaMotion,
+  initialDocument,
+} from "../shared/data.js";
 import "../../src/dom/styles.css";
 import "../shared/page.css";
 function App() {
@@ -18,6 +22,8 @@ function App() {
   const [presentation, setPresentation] = useState<"row" | "server-list">(
     "row",
   );
+  const [panoramaPaused, setPanoramaPaused] = useState(false);
+  const [panoramaSpeed, setPanoramaSpeed] = useState(1);
   const previewContext = {
     ...context,
     profile,
@@ -103,6 +109,45 @@ function App() {
         createElement("option", { value: "server-list" }, "Server list"),
       ),
     ),
+    createElement(
+      "label",
+      null,
+      createElement("input", {
+        id: "panorama-paused",
+        type: "checkbox",
+        checked: panoramaPaused,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+          demoPanoramaMotion.paused = e.target.checked;
+          setPanoramaPaused(e.target.checked);
+        },
+      }),
+      " ",
+      labels.pausePanorama,
+    ),
+    createElement(
+      "label",
+      null,
+      labels.panoramaSpeed,
+      createElement("input", {
+        id: "panorama-speed",
+        type: "range",
+        min: -10,
+        max: 10,
+        step: 0.5,
+        value: panoramaSpeed,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+          const speed = Number(e.target.value);
+          demoPanoramaMotion.speed = speed;
+          setPanoramaSpeed(speed);
+        },
+      }),
+      createElement(
+        "output",
+        { id: "panorama-speed-value" },
+        `${panoramaSpeed}×`,
+      ),
+    ),
+    createElement("p", null, labels.panoramaDemoNote),
     createElement(ServerListEditor, {
       document,
       context: previewContext,
