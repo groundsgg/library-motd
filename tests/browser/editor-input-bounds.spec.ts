@@ -172,7 +172,7 @@ test("imported overflow stays intact and cannot scroll the visible rows or grow 
   await setup(page, "<gold>" + "M".repeat(120));
   const box = page.locator("#editor .mcp-motd");
   const before = PNG.sync.read(await box.screenshot({ caret: "hide" }));
-  await field(page).focus();
+  await placeCaretAtTextEnd(field(page));
   await field(page).press("Control+End");
   expect(await box.evaluate((el) => el.scrollTop)).toBe(0);
   const after = PNG.sync.read(await box.screenshot({ caret: "hide" }));
@@ -261,7 +261,7 @@ test("a visually shorter replacement can recover imported placeholder overflow",
     window.setEditorOptions({ context: window.context });
     window.changes = [];
   });
-  await field(page).focus();
+  await placeCaretAtTextEnd(field(page));
   await field(page).press("Control+End");
   await field(page).press("Shift+ArrowLeft");
   await expect

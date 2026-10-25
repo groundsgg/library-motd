@@ -6,8 +6,8 @@ interface SelectionEvent {
   key?: string;
   inputType?: string;
   field?: string;
-  anchor: { node: string; offset: number } | null;
-  focus: { node: string; offset: number } | null;
+  anchor: { node: string; offset: number; fieldOffset?: number } | null;
+  focus: { node: string; offset: number; fieldOffset?: number } | null;
   selected: string;
   selectedLength: number;
 }
@@ -20,13 +20,24 @@ export const test = base.extend<{ selectionDiagnostics: void }>({
       await page.addInitScript(() => {
         const events: SelectionEvent[] = [];
         (window as DiagnosticWindow).selectionEvents = events;
-        const position = (node: Node | null, offset: number) =>
-          node
-            ? {
-                node: node.nodeName + ":" + node.textContent?.slice(0, 80),
-                offset,
-              }
-            : null;
+        const position = (node: Node | null, offset: number) => {
+          if (!node) return null;
+          const root = (
+            node.nodeType === 1 ? (node as Element) : node.parentElement
+          )?.closest(".ProseMirror");
+          let fieldOffset: number | undefined;
+          if (root) {
+            const range = document.createRange();
+            range.selectNodeContents(root);
+            range.setEnd(node, offset);
+            fieldOffset = range.toString().length;
+          }
+          return {
+            node: node.nodeName + ":" + node.textContent?.slice(0, 80),
+            offset,
+            fieldOffset,
+          };
+        };
         const record = (event: Event) => {
           const selection = document.getSelection();
           const selected = selection?.toString() ?? "";
