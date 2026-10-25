@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./selection-diagnostics.js";
 import { PNG } from "pngjs";
 import { openEntryTool, placeCaretAtTextEnd } from "./editor-actions.js";
 
