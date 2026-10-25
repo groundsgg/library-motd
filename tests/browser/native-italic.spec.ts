@@ -1,6 +1,10 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./selection-diagnostics.js";
 import { PNG } from "pngjs";
-import { openEntryTool, placeCaretAtTextEnd } from "./editor-actions.js";
+import {
+  openEntryTool,
+  placeCaretAtTextEnd,
+  selectRenderedText,
+} from "./editor-actions.js";
 
 function mask(image: PNG, color: number[]) {
   return Array.from({ length: image.width * image.height }, (_, i) =>
@@ -212,7 +216,7 @@ test("italic text supports partial selection, clipboard, typing and undo without
     }),
   );
   const input = page.locator("#editor [data-editor-field=motd] .ProseMirror");
-  await input.focus();
+  await selectRenderedText(input, 0, 0);
   await input.press("Control+Home");
   for (let i = 0; i < 5; i++) {
     await input.press("Shift+ArrowRight");
