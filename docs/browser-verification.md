@@ -6,11 +6,12 @@ verification passed 31 tests per engine (93 cases in total). CI installs
 all three engines and their system dependencies; `CI` limits concurrency to two
 workers. A browser failure blocks the shared validation and publishing jobs.
 Failed cases retain a Playwright trace and screenshot in the existing CI report
-artifacts. The input-bounds and native-italic suites also attach
+artifacts. The input-bounds, native-italic and native-composition suites also attach
 `native-selection-events.json`: the last 256 focus, keyboard, input, composition
 and selection events, including bounded selection text, endpoints and timing.
 Endpoints include rendered field offsets so identical per-glyph text nodes can
-be distinguished.
+be distinguished. Native composing flags and the pixel-rendering fallback mode
+are recorded alongside them.
 These observers do not alter input or selection. Open a retained trace with
 `npx playwright show-trace path/to/trace.zip`; inspect its JSON attachment to
 compare native event ordering with the failed assertion. Passing cases discard
@@ -24,6 +25,12 @@ notification arrives. The affected overflow/placeholder/italic fixtures use
 the existing rendered-range helpers; native shortcut, arrow, deletion, clipboard
 and undo assertions remain unchanged. This avoids relying on an unverified
 starting caret rather than retrying a failed edit or changing production input.
+
+Composition completion also verifies that deferred document/access recovery
+restores supported pixel-glyph painting. A back-to-back lifecycle case keeps the
+newer preedit on live text until its own end. Native Chromium CDP cases run on
+Linux and Windows; they remain automated lifecycle checks, not physical IME or
+screen-reader certification.
 
 Linux CI uses Xvfb with software OpenGL so Firefox can create a real WebGL
 context. Without an X11 display its headless build correctly uses the static
