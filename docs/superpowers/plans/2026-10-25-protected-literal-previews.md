@@ -31,10 +31,10 @@
 
 **Interfaces:** Keep `parseText`, `TextNode` and serializers unchanged. `layoutText` adds warning code `protected-preview` with each opaque node's ID as path.
 
-- [ ] Add unit tests for literal `text` plus nested `extra`/arrays, empty roots with custom event payloads, unresolved components, literal HTML-like data, depth limits, exact roundtrip and neighboring edits.
-- [ ] Run the new unit file and observe missing descendant text/warnings.
-- [ ] Implement only the plain-text fallback walker and localized layout warning.
-- [ ] Run all unit tests, lint, typecheck and formatting.
-- [ ] Add browser coverage for viewer/editor parity, inert action/HTML data, protected atomicity, neighboring edit/undo and persisted localized warning.
+- [x] Add unit tests for literal `text` plus nested `extra`/arrays, empty roots with custom event payloads, unresolved components, literal HTML-like data, depth limits, exact roundtrip and neighboring edits.
+- [x] Run the new unit file and observe missing descendant text/warnings.
+- [x] Implement only the plain-text fallback walker and localized layout warning.
+- [x] Run all unit tests, lint, typecheck and formatting.
+- [x] Add browser coverage for viewer/editor parity, inert action/HTML data, protected atomicity, neighboring edit/undo and persisted localized warning.
 - [ ] Run the browser cases in all engines and the standard CI suite.
 - [ ] Commit, obtain fresh whole-branch review, create an issue-scoped PR, and merge after green current-head CI under existing authorization.
