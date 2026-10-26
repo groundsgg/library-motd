@@ -5,6 +5,34 @@ import {
 } from "../../tools/graphics-observer.mjs";
 import { collectGraphicsSnapshot } from "../../tools/linux-graphics-diagnostics.mjs";
 
+test("graphics observer preserves missing native arguments separately from undefined", async ({
+  page,
+}) => {
+  await page.goto("/tests/browser/host.html");
+  const outcomes = () => {
+    const canvas = document.createElement("canvas");
+    const call = (args: unknown[]) => {
+      try {
+        return {
+          returnedNull:
+            Reflect.apply(
+              HTMLCanvasElement.prototype.getContext,
+              canvas,
+              args,
+            ) === null,
+        };
+      } catch (error) {
+        return { error: (error as Error).name };
+      }
+    };
+    return { missing: call([]), explicitUndefined: call([undefined]) };
+  };
+  const before = await page.evaluate(outcomes);
+  expect(before.missing).toEqual({ error: "TypeError" });
+  await page.evaluate(installGraphicsObserver);
+  expect(await page.evaluate(outcomes)).toEqual(before);
+});
+
 test("graphics observer preserves native context identity, arguments and receiver errors", async ({
   page,
 }) => {

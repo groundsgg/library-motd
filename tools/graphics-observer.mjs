@@ -28,12 +28,12 @@ export function installGraphicsObserver() {
           : "other";
   const positive = (value) =>
     Number.isSafeInteger(value) && value > 0 ? value : null;
-  HTMLCanvasElement.prototype.getContext = function (api, ...args) {
+  HTMLCanvasElement.prototype.getContext = function (api) {
     if (
       !(this instanceof HTMLCanvasElement) ||
       !["webgl", "webgl2", "experimental-webgl"].includes(api)
     ) {
-      return Reflect.apply(original, this, [api, ...args]);
+      return Reflect.apply(original, this, arguments);
     }
     totals.attempts++;
     if (!observed.has(this)) {
@@ -60,7 +60,7 @@ export function installGraphicsObserver() {
     }
     let context;
     try {
-      context = Reflect.apply(original, this, [api, ...args]);
+      context = Reflect.apply(original, this, arguments);
     } catch (error) {
       record({ type: "create", api, ok: false, threw: true });
       throw error;
