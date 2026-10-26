@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.3.0](https://github.com/groundsgg/library-motd/compare/v0.2.0...v0.3.0) (2026-10-26)
+
+
+### Features
+
+* add opt-in gradient and alignment import assistance ([#76](https://github.com/groundsgg/library-motd/issues/76)) ([b587725](https://github.com/groundsgg/library-motd/commit/b58772594aa36e2a996f5b4cd6fd8859721428c1))
+* add optional rotating menu panoramas ([#79](https://github.com/groundsgg/library-motd/issues/79)) ([28a1a23](https://github.com/groundsgg/library-motd/commit/28a1a23a5b4bde0b4d5331ade97f926d60b09df8))
+* localize all editor labels and diagnostics ([#75](https://github.com/groundsgg/library-motd/issues/75)) ([c9a1c78](https://github.com/groundsgg/library-motd/commit/c9a1c78ebe9be8dd6249fd8d4203727279a65604))
+* preview styled protected JSON literals ([#100](https://github.com/groundsgg/library-motd/issues/100)) ([c49e91e](https://github.com/groundsgg/library-motd/commit/c49e91e9354dd9c3d4df0730ebe382ffa4b66496))
+
+
+### Bug Fixes
+
+* align server-list rendering with native Java clients ([#66](https://github.com/groundsgg/library-motd/issues/66)) ([d2003bf](https://github.com/groundsgg/library-motd/commit/d2003bf59c326e9077749bbe70381df24330017a)), closes [#5](https://github.com/groundsgg/library-motd/issues/5)
+* constrain inline MOTD editing and remove browser decorations ([#73](https://github.com/groundsgg/library-motd/issues/73)) ([a18cbaa](https://github.com/groundsgg/library-motd/commit/a18cbaad9916158e8480e0f8d4495bb9ba9aabbb))
+* **editor:** preserve pixel ink while selecting text ([#92](https://github.com/groundsgg/library-motd/issues/92)) ([66ff795](https://github.com/groundsgg/library-motd/commit/66ff795280b3754a3cd11ad1540b7f7e59138e90))
+* **editor:** restore pixel paint after composition recovery ([#88](https://github.com/groundsgg/library-motd/issues/88)) ([18e9e72](https://github.com/groundsgg/library-motd/commit/18e9e72ce18cecc6ce22e61d3f3e510abef9ebac))
+* keep optional graphics probes nonblocking ([#98](https://github.com/groundsgg/library-motd/issues/98)) ([55ec952](https://github.com/groundsgg/library-motd/commit/55ec9521f08ed01dcaf02674889e54bd08ea7579))
+* match native italic glyph rendering ([#74](https://github.com/groundsgg/library-motd/issues/74)) ([cf4dbee](https://github.com/groundsgg/library-motd/commit/cf4dbee6520cd2e542a3dd504164f1cf3e5b2915))
+* match native Java MOTD word wrapping ([#71](https://github.com/groundsgg/library-motd/issues/71)) ([f170450](https://github.com/groundsgg/library-motd/commit/f170450e20ade419b7da900228fde5401af7209c))
+* match native static server-icon behavior for APNG sources ([#78](https://github.com/groundsgg/library-motd/issues/78)) ([fcb5b33](https://github.com/groundsgg/library-motd/commit/fcb5b3321a9b29ca348a3c129be37e1d6557f8c3))
+* mitigate Windows Chromium loopback socket failures ([#99](https://github.com/groundsgg/library-motd/issues/99)) ([7e15ab9](https://github.com/groundsgg/library-motd/commit/7e15ab9239843d6d9c9a6643f0bca5508b118e9f))
+* parse JSON component array children once ([#96](https://github.com/groundsgg/library-motd/issues/96)) ([80b2f64](https://github.com/groundsgg/library-motd/commit/80b2f6494cc491eb51735245b0852f1a082d6c1c))
+* preserve literal descendants in protected JSON previews ([#83](https://github.com/groundsgg/library-motd/issues/83)) ([d273dd6](https://github.com/groundsgg/library-motd/commit/d273dd6895123be9afccc3e5c37e02f98a50bd87))
+* render bundled pixel ink consistently across operating systems ([#77](https://github.com/groundsgg/library-motd/issues/77)) ([f51b2ff](https://github.com/groundsgg/library-motd/commit/f51b2ff4d0b70261ca3c07ab4229bdd795301d0a))
+* verify native MOTD font styles and shadows ([#69](https://github.com/groundsgg/library-motd/issues/69)) ([0a9e3c5](https://github.com/groundsgg/library-motd/commit/0a9e3c59a8413f34e3c4056a5686134ec600ea50))
+
 ## [0.2.0](https://github.com/groundsgg/library-motd/compare/v0.1.1...v0.2.0) (2026-10-22)
 
 
