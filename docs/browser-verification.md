@@ -83,6 +83,13 @@ Native reference fixtures and geometry assertions are unchanged. The supplied
 opaque icon and the existing text-pixel masks are compared exactly in every
 engine. Uploaded PNG alpha values must remain exact as well.
 
+Selected bundled glyphs also retain their foreground/shadow pixels at DPR 1
+and 2, including bold, italic, decorations and placeholder text. A controlled
+transparent highlight isolates the ink comparison; a separate case requires
+the native selection background to remain visible. Custom-font and synthetic
+preedit cases keep their live browser foreground. These run on Windows Chromium
+as well as the full three-engine matrix.
+
 For the transparent-icon screenshot, Chromium matches the native capture
 exactly. Other engines may differ by at most two 8-bit RGB channel values on
 partially transparent pixels because canvas premultiplication and compositing
