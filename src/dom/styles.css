@@ -875,6 +875,16 @@
   z-index: 0;
 }
 
+/* Keep native highlighting without painting a second browser-font silhouette.
+   Live IME text still owns its foreground while composition is active. */
+.mce-inline
+  .ProseMirror:not([data-pixel-composing])
+  .mcp-pixel-glyph::selection {
+  color: transparent;
+  text-shadow: none;
+  background-color: Highlight;
+}
+
 /* IME owns live text during composition; frozen bitmaps cannot paint preedit. */
 .ProseMirror[data-pixel-composing] .mcp-pixel-glyph {
   -webkit-text-fill-color: currentColor;
