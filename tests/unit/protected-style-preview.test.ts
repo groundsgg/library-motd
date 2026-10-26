@@ -1,4 +1,5 @@
 import { expect, it } from "vitest";
+import { spawnSync } from "node:child_process";
 import * as api from "../../src/index.js";
 
 const options = { profile: api.java1211Profile, width: 10000, maxLines: 2 };
@@ -16,6 +17,41 @@ const paint = (text: api.TextDocument) =>
       line,
     }));
 const action = { action: "run_command", value: "/never-execute" };
+
+it("renders deeply nested protected arrays within a hard process deadline", () => {
+  const script = `
+    import {createServer} from 'vite';
+    const server=await createServer({configFile:false,envFile:false,server:{middlewareMode:true,hmr:false,watch:null},logLevel:'silent'});
+    try {
+      const api=await server.ssrLoadModule('/src/index.ts');
+      const results=[];
+      for(const leaf of ['A',[]]) {
+        let nested=leaf;
+        for(let index=0;index<96;index++) nested=[nested];
+        const source=JSON.stringify({text:'Z',color:'red',clickEvent:{action:'run_command',value:'/never-execute'},extra:[nested]});
+        const parsed=api.parseText(source,'json').value;
+        const glyphs=api.layoutText(parsed,{profile:api.java1211Profile,width:271}).glyphs;
+        results.push({text:glyphs.map(g=>g.text).join(''),colors:glyphs.map(g=>g.color),sourceUnchanged:api.serializeText(parsed,{format:'json'}).value===source});
+      }
+      console.log(JSON.stringify(results));
+    } finally {await server.close();}
+  `;
+  const result = spawnSync(
+    process.execPath,
+    ["--input-type=module", "-e", script],
+    {
+      encoding: "utf8",
+      timeout: 4000,
+      killSignal: "SIGKILL",
+    },
+  );
+  expect(result.error).toBeUndefined();
+  expect(result.status, result.stderr).toBe(0);
+  expect(JSON.parse(result.stdout)).toEqual([
+    { text: "ZA", colors: ["#ff5555", "#ff5555"], sourceUnchanged: true },
+    { text: "Z", colors: ["#ff5555"], sourceUnchanged: true },
+  ]);
+});
 
 it("displays literal colors and decorations inside a protected action without changing canonical text or exports", () => {
   const literal = {
