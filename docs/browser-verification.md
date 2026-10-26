@@ -18,6 +18,23 @@ compare native event ordering with the failed assertion. Passing cases discard
 their traces and do not attach the event history. Tests are not automatically
 retried; intermittent failures still block validation.
 
+The Windows GitHub Actions job additionally uploads `windows-resource-diagnostics`
+for seven days, including passing runs. Its numeric JSONL snapshots contain TCP
+state counts across the runner and for fixture port 4173, aggregate process
+working/private bytes and handles for the test runner and fixture connection
+owners, and available/committed/commit-limit/pool memory counters. The initial
+sample also records configured IPv4/IPv6 dynamic TCP port ranges. It records no
+addresses, individual connections, process names/arguments, test titles or
+environment. Missing measurements are `null` with fixed error categories.
+
+The reporter samples at suite start/end, after unexpected failures and at test
+starts at most once per 15 seconds. Queries never overlap; each has an eight
+second timeout and a 16 KiB output limit. The artifact is capped at 120 samples
+and 128 KiB, with a final summary. Collection is read-only, enabled only on
+Windows GitHub Actions, and does not change retries, assertions or test status.
+Compare observations with the retained failing trace; a high `TimeWait` count
+alone does not establish port exhaustion or explain `ERR_NO_BUFFER_SPACE` (#89).
+
 Cases that require an exact source caret establish it explicitly before native
 typing or selection. A programmatic focus followed immediately by `Control+End`
 can race ProseMirror's delayed focus correction before the native selection
