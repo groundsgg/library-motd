@@ -1,4 +1,5 @@
 import { defineConfig } from "@playwright/test";
+import { chromiumLaunchOptions } from "./tools/chromium-launch.mjs";
 export default defineConfig({
   testDir: "tests/browser",
   fullyParallel: true,
@@ -25,9 +26,7 @@ export default defineConfig({
       name: "chromium",
       use: {
         browserName: "chromium",
-        launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
-          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE }
-          : undefined,
+        launchOptions: chromiumLaunchOptions(),
       },
     },
     { name: "firefox", use: { browserName: "firefox" } },
