@@ -35,6 +35,18 @@ Windows GitHub Actions, and does not change retries, assertions or test status.
 Compare observations with the retained failing trace; a high `TimeWait` count
 alone does not establish port exhaustion or explain `ERR_NO_BUFFER_SPACE` (#89).
 
+Windows test Chromium temporarily disables `TcpPortRandomizationWin`, following
+[Playwright's upstream fix](https://github.com/microsoft/playwright/pull/43605)
+for the [Windows loopback socket bug](https://issues.chromium.org/issues/572515601).
+Playwright 1.64.1 is still the stable version. Its complete disabled-feature list
+is preserved in one replacement argument; simply appending another
+`--disable-features` argument would discard its defaults. A real CDP command-line
+check compares against an unmodified launch and fails if defaults drift or any
+other launch switches change. Remove the helper when a stable Playwright update
+includes the upstream fix. This affects test browsers only, changes no OS setting,
+and adds no assertion retries, skips or weaker image comparisons. The mitigation
+does not certify every previous resource failure's exact cause.
+
 Cases that require an exact source caret establish it explicitly before native
 typing or selection. A programmatic focus followed immediately by `Control+End`
 can race ProseMirror's delayed focus correction before the native selection
