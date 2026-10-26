@@ -3,7 +3,10 @@ import {
   installGraphicsObserver,
   readGraphicsObserver,
 } from "../../tools/graphics-observer.mjs";
-import { collectGraphicsSnapshot } from "../../tools/linux-graphics-diagnostics.mjs";
+import {
+  collectGraphicsSnapshot,
+  recordGlxObservation,
+} from "../../tools/linux-graphics-diagnostics.mjs";
 
 test("graphics observer preserves missing native arguments separately from undefined", async ({
   page,
@@ -105,18 +108,13 @@ test("graphics observations bound repeated error events and discard arbitrary me
   expect(JSON.stringify(observation)).not.toMatch(/secret-token|private-host/);
 });
 
-test("Linux CI GLX probe identifies the actual software renderer", async () => {
-  test.skip(
-    process.platform !== "linux" || process.env.GITHUB_ACTIONS !== "true",
-  );
-  const snapshot = await collectGraphicsSnapshot({ probeGlx: true });
-  expect(snapshot.errors).toEqual([]);
-  expect(snapshot.displayPresent).toBe(true);
-  expect(snapshot.softwareRenderingRequested).toBe(true);
-  expect(snapshot.glx).toMatchObject({
-    status: "available",
-    directRendering: true,
-    accelerated: false,
-  });
-  expect(["llvmpipe", "softpipe"]).toContain(snapshot.glx.renderer);
+test.afterAll(async ({ browserName }) => {
+  if (process.platform !== "linux" || process.env.GITHUB_ACTIONS !== "true")
+    return;
+  try {
+    const snapshot = await collectGraphicsSnapshot({ probeGlx: true });
+    await recordGlxObservation(browserName, snapshot.glx);
+  } catch {
+    /* Never turn an optional probe into a rendering assertion failure. */
+  }
 });

@@ -70,6 +70,14 @@ This single startup snapshot records memory, the test process's file descriptor
 count and resource limits, installed Mesa/Xvfb versions and whether the expected
 display/software-rendering environment is present. It does not create a GL
 context or retain display addresses, process arguments or environment values.
+After the native API observer tests, the same artifact also retains separate
+GLX worker observations for each engine, with timestamps and unique filenames.
+Writes publish complete JSON files atomically; startup removes only prior
+generated GLX records. These are best effort: utility installation,
+query timeout/missing-command/output-limit/format errors and file-write failures
+cannot fail browser rendering checks. Only fixed capabilities or a fixed reason
+are retained, never raw command output. Native WebGL and panorama assertions
+remain required and unchanged; no new skips or retries are introduced.
 
 The panorama suites observe native WebGL calls and creation/loss events. On an
 unexpected failure, `graphics-diagnostics.json` joins the retained test trace:
