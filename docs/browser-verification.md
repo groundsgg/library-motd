@@ -144,7 +144,15 @@ and 2, including bold, italic, decorations and placeholder text. A controlled
 transparent highlight isolates the ink comparison; a separate case requires
 the native selection background to remain visible. Custom-font and synthetic
 preedit cases keep their live browser foreground. These run on Windows Chromium
-as well as the full three-engine matrix.
+and all three Linux engines.
+
+Protected JSON literal fixtures also compare viewer/editor color, bold, italic,
+underline and actual glyph widths, while their one atomic editor boundary and
+raw click/hover metadata survive neighboring edits, undo and persistence. HTML-like
+literal text remains data; context-dependent components remain unresolved. The
+private styled projection does not change canonical flattening or ordinary
+export. Explicit layout export uses its corrected widths and retains protected
+break refusal.
 
 For the transparent-icon screenshot, Chromium matches the native capture
 exactly. Other engines may differ by at most two 8-bit RGB channel values on

@@ -4,7 +4,7 @@ import type {
   TextDocument,
   TextNode,
 } from "../model.js";
-import { flattenText } from "../text/colors.js";
+import { flattenDisplayText } from "../text/display.js";
 import { diagnostic } from "../diagnostics.js";
 export function layoutText(
   text: TextDocument,
@@ -61,7 +61,7 @@ export function layoutText(
     line++;
     x = 0;
   };
-  const chars = flattenText(text),
+  const chars = flattenDisplayText(text),
     font = options.profile.font,
     native = font.layout === "java-ltr";
   // These scripts/control characters require contextual shaping or bidi order,

@@ -1,14 +1,24 @@
 import { expect, test } from "@playwright/test";
-import { placeCaretAtTextEnd } from "./editor-actions.js";
+import { openEntryTool, placeCaretAtTextEnd } from "./editor-actions.js";
 
 const protectedComponent = {
   text: "<b>Click</b>",
+  color: "red",
+  bold: true,
   clickEvent: {
     action: "open_url",
     value: "https://example.invalid/should-not-open",
   },
   hoverEvent: { action: "show_text", contents: { text: "not MOTD text" } },
-  extra: [{ text: " here" }],
+  extra: [
+    {
+      text: " here",
+      color: "gold",
+      bold: false,
+      italic: true,
+      underlined: true,
+    },
+  ],
 };
 test.beforeEach(async ({ page }) => {
   await page.goto("/tests/browser/host.html");
@@ -85,6 +95,45 @@ test("a neighboring edit and undo keep the protected raw subtree intact", async 
   await expect(input.locator(".mce-token")).toHaveCount(1);
 });
 
+test("protected literal styles and measured glyph widths match in viewer and editor", async ({
+  page,
+}) => {
+  const token = page.locator("#editor .mce-token");
+  const count = "<b>Click</b> here".length;
+  await expect(token.locator(".mce-effect-glyph")).toHaveCount(count);
+  const paint = (elements: Element[]) =>
+    elements.map((element) => {
+      const style = getComputedStyle(element);
+      return {
+        text: element.textContent,
+        color: style.color,
+        bold: style.fontWeight,
+        italic:
+          element.classList.contains("mcp-pixel-italic") ||
+          style.fontStyle === "italic",
+        underlined: element.hasAttribute("data-underlined"),
+        width: element.getBoundingClientRect().width,
+      };
+    });
+  const editor = await token.locator(".mce-effect-glyph").evaluateAll(paint);
+  const viewer = (
+    await page.locator("#preview .mcp-motd .mcp-glyph").evaluateAll(paint)
+  ).slice(0, count);
+  expect(editor).toEqual(viewer);
+  expect(editor[0]).toMatchObject({
+    color: "rgb(255, 85, 85)",
+    bold: "700",
+    italic: false,
+  });
+  expect(editor.at(-1)).toMatchObject({
+    color: "rgb(255, 170, 0)",
+    bold: "400",
+    italic: true,
+    underlined: true,
+  });
+  await expect(token).toHaveAttribute("contenteditable", "false");
+});
+
 test("saved protected components keep their localized approximation warning", async ({
   page,
 }) => {
@@ -100,4 +149,39 @@ test("saved protected components keep their localized approximation warning", as
   await expect(
     page.getByRole("textbox", { name: "MOTD direkt bearbeiten", exact: true }),
   ).toHaveText("<b>Click</b> here tail");
+});
+
+test("custom-font hover fields display protected styles without a MOTD layout or pixel renderer", async ({
+  page,
+}) => {
+  await page.evaluate((component) => {
+    window.doc.hover = {
+      mode: "custom",
+      text: window.api.parseText(JSON.stringify(component), "json").value,
+    };
+    window.context = {
+      ...window.context,
+      assetProvider: () => ({ fontFamily: "monospace" }),
+    };
+    window.setEditorOptions({ document: window.doc, context: window.context });
+  }, protectedComponent);
+  await openEntryTool(page, "Player hover");
+  const token = page.locator("[data-editor-field=hover] .mce-token");
+  await expect(token.locator(".mce-effect-glyph")).toHaveCount(
+    "<b>Click</b> here".length,
+  );
+  await expect(token.locator(".mce-effect-glyph").first()).toHaveCSS(
+    "color",
+    "rgb(255, 85, 85)",
+  );
+  await expect(token.locator(".mce-effect-glyph").first()).toHaveCSS(
+    "font-weight",
+    "700",
+  );
+  await expect(token.locator(".mce-effect-glyph").last()).toHaveCSS(
+    "font-style",
+    "italic",
+  );
+  await expect(token.locator(".mcp-pixel-glyph")).toHaveCount(0);
+  await expect(token.locator("a, b, img, script")).toHaveCount(0);
 });

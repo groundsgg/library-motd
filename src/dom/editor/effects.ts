@@ -7,7 +7,8 @@ import type {
   TextDocument,
 } from "../../core/model.js";
 import { layoutText } from "../../core/layout/layout.js";
-import { flattenText, type StyledChar } from "../../core/text/colors.js";
+import type { StyledChar } from "../../core/text/colors.js";
+import { flattenDisplayText } from "../../core/text/display.js";
 import { resolveText } from "../../core/text/placeholders.js";
 import { applyTextStyle } from "../preview.js";
 import { shadowColor } from "../render.js";
@@ -46,6 +47,9 @@ function decorations(
         : node.attrs.path
     ) as StylePath[] | undefined;
     if (
+      (node.type.name === "token" &&
+        node.attrs.node?.type === "opaque" &&
+        node.attrs.node.format === "json") ||
       path?.some(
         (part) =>
           part.style.gradient ||
@@ -69,7 +73,7 @@ function decorations(
     explicitBreak = true;
   // Layout omits explicit newlines. Keep them in atomic placeholder display,
   // matching each non-newline grapheme with its measured visibility instead.
-  const glyphs: DisplayGlyph[] = flattenText(resolved).map((glyph) => {
+  const glyphs: DisplayGlyph[] = flattenDisplayText(resolved).map((glyph) => {
     const metric =
       glyph.text === "\n" ? undefined : measured?.glyphs[measuredIndex++];
     const line = metric?.line;
