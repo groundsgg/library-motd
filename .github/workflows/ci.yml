@@ -87,7 +87,8 @@ jobs:
         if: always()
         with:
           name: windows-resource-diagnostics
-          path: .browser-diagnostics/
+          path: .browser-diagnostics/resources.jsonl
+          include-hidden-files: true
           retention-days: 7
           if-no-files-found: warn
 
