@@ -37,7 +37,7 @@ export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
             ],
           },
         ];
-      return v.flatMap((v) => visit(v, depth + 1));
+      return [...first, ...v.slice(1).flatMap((v) => visit(v, depth + 1))];
     }
     if (!v || typeof v !== "object")
       throw new TypeError("Expected text component");
