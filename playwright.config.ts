@@ -8,6 +8,7 @@ export default defineConfig({
       ? [["list"], ["./tools/windows-resource-reporter.mjs", { enabled: true }]]
       : undefined,
   timeout: 20000,
+  globalSetup: "./tools/graphics-setup.mjs",
   use: {
     baseURL: "http://127.0.0.1:4173",
     viewport: { width: 1280, height: 900 },

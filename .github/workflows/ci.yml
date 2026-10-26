@@ -113,6 +113,8 @@ jobs:
         run: |
           printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' | sudo tee /etc/apt/apt-mirrors.txt
       - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Install read-only GLX diagnostic utility
+        run: sudo apt-get install -y --no-install-recommends mesa-utils
       - name: Browser matrix with software OpenGL
         run: xvfb-run -a npm run test:browser
         env:
@@ -134,3 +136,11 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: graphics-startup-diagnostics
+          path: .browser-diagnostics/graphics-startup.json
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: warn

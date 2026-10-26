@@ -1,4 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { expect, test } from "./graphics-diagnostics.js";
 import { readFileSync } from "node:fs";
 import { PNG } from "pngjs";
 import { calibrationFaces } from "../../tools/reference/panorama-calibration.mjs";

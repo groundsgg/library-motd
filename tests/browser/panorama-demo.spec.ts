@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./graphics-diagnostics.js";
 
 test("DOM example previews a host-provided, configurable panorama", async ({
   page,
