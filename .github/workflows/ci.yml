@@ -73,7 +73,7 @@ jobs:
       - run: npm ci
       - run: npx playwright install chromium
       - run: node --test tests/tooling/windows-resource-diagnostics.test.mjs
-      - run: npx playwright test tests/browser/text-geometry.spec.ts tests/browser/native-font-reference.spec.ts tests/browser/native-italic.spec.ts tests/browser/native-italic-context.spec.ts tests/browser/pixel-ink.spec.ts tests/browser/selected-ink.spec.ts tests/browser/native-wrapping.spec.ts tests/browser/editor-input-bounds.spec.ts tests/browser/formatting-toggle.spec.ts tests/browser/rainbow-removal.spec.ts tests/browser/localization.spec.ts tests/browser/import-assistance.spec.ts tests/browser/static-icons.spec.ts tests/browser/panorama.spec.ts tests/browser/panorama-demo.spec.ts tests/browser/protected-preview.spec.ts tests/browser/composition-native.spec.ts --project=chromium --workers=1
+      - run: npx playwright test tests/browser/text-geometry.spec.ts tests/browser/native-font-reference.spec.ts tests/browser/native-italic.spec.ts tests/browser/native-italic-context.spec.ts tests/browser/pixel-ink.spec.ts tests/browser/selected-ink.spec.ts tests/browser/native-wrapping.spec.ts tests/browser/editor-input-bounds.spec.ts tests/browser/formatting-toggle.spec.ts tests/browser/rainbow-removal.spec.ts tests/browser/localization.spec.ts tests/browser/import-assistance.spec.ts tests/browser/static-icons.spec.ts tests/browser/panorama.spec.ts tests/browser/panorama-demo.spec.ts tests/browser/graphics-diagnostics.spec.ts tests/browser/protected-preview.spec.ts tests/browser/composition-native.spec.ts --project=chromium --workers=1
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
@@ -113,6 +113,8 @@ jobs:
         run: |
           printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' | sudo tee /etc/apt/apt-mirrors.txt
       - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Install read-only GLX diagnostic utility
+        run: sudo apt-get install -y --no-install-recommends mesa-utils
       - name: Browser matrix with software OpenGL
         run: xvfb-run -a npm run test:browser
         env:
@@ -134,3 +136,11 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: graphics-startup-diagnostics
+          path: .browser-diagnostics/graphics-startup.json
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: warn

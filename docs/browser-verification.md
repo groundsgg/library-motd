@@ -53,6 +53,25 @@ Linux CI uses Xvfb with software OpenGL so Firefox can create a real WebGL
 context. Without an X11 display its headless build correctly uses the static
 fallback, which does not exercise the animated panorama renderer.
 
+Linux GitHub Actions also retains `graphics-startup-diagnostics` for seven days.
+This single startup snapshot records memory, the test process's file descriptor
+count and resource limits, installed Mesa/Xvfb versions and whether the expected
+display/software-rendering environment is present. It does not create a GL
+context or retain display addresses, process arguments or environment values.
+
+The panorama suites observe native WebGL calls and creation/loss events. On an
+unexpected failure, `graphics-diagnostics.json` joins the retained test trace:
+at most 32 events, attempt/outcome counts, numeric capabilities, classified
+renderer and fixed known failure codes/blocked-path flags. Arbitrary driver
+messages are excluded. Linux CI adds a fresh host snapshot and a read-only
+`glxinfo -B` probe with a two-second/16 KiB limit; only booleans, a renderer
+category and numeric GL version are retained. Each JSON artifact is capped at
+16 KiB; missing queries use null values and fixed categories. Diagnostic errors
+never replace test status. There are no new retries, preferences or weakened
+ready-state assertions. These observations support #90's investigation; they
+do not establish its cause. A separate failed GLX probe and a Firefox policy
+refusal are distinct observations even when they occur on the same runner.
+
 A focused Chromium job on Windows also checks regular/bold baselines, mixed
 and fully bold two-line MOTDs, descenders, and the React formatting toggle.
 Supported per-glyph bundled text uses locally generated pixel masks to avoid

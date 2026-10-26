@@ -2,6 +2,7 @@ node_modules/
 dist/
 demo-dist/
 playwright-report/
+.browser-diagnostics/
 test-results/
 tests/fixtures/
 assets/java-1.21.1/
