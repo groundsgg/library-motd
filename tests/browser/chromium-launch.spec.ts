@@ -2,6 +2,9 @@ import { chromium, expect, test } from "@playwright/test";
 import config from "../../playwright.config.js";
 import { chromiumLaunchOptions } from "../../tools/chromium-launch.mjs";
 
+// Exercise the same inherited launch defaults as Windows workers on every OS.
+test.use({ launchOptions: chromiumLaunchOptions("win32") });
+
 test("Windows TCP mitigation preserves Chromium's other default feature switches", async ({
   browserName,
 }) => {
@@ -11,6 +14,7 @@ test("Windows TCP mitigation preserves Chromium's other default feature switches
   )?.use?.launchOptions;
   const baseline = await chromium.launch({
     executablePath: configured?.executablePath,
+    ignoreDefaultArgs: false,
     args: ["--enable-automation"],
   });
   const windows = chromiumLaunchOptions("win32", configured?.executablePath);
@@ -27,6 +31,7 @@ test("Windows TCP mitigation preserves Chromium's other default feature switches
     const actual = await argumentsOf(candidate);
     const featureSwitch = (args: string[]) =>
       args.filter((arg) => arg.startsWith("--disable-features="));
+    expect(featureSwitch(original)).toHaveLength(1);
     expect(featureSwitch(actual)).toHaveLength(1);
     const originalFeatures = featureSwitch(original)[0]!
       .split("=")[1]!
