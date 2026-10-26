@@ -1,5 +1,14 @@
 import { execFile } from "node:child_process";
-import { readFile, readdir } from "node:fs/promises";
+import {
+  mkdir,
+  readFile,
+  readdir,
+  rename,
+  rm,
+  writeFile,
+} from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import path from "node:path";
 import { promisify } from "node:util";
 
 const execute = promisify(execFile);
@@ -132,10 +141,22 @@ export async function collectGraphicsSnapshot({ probeGlx = false } = {}) {
       const parsed = parseGlxInfo(stdout);
       const available =
         parsed.directRendering !== null && parsed.version !== null;
-      glx = { status: available ? "available" : "unparsed", ...parsed };
+      glx = {
+        status: available ? "available" : "unparsed",
+        ...parsed,
+        ...(available ? {} : { reason: "output-format" }),
+      };
       if (!available) errors.push("glx-query");
-    } catch {
-      glx = { status: "unavailable" };
+    } catch (error) {
+      const reason =
+        error?.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER"
+          ? "output-limit"
+          : error?.code === "ENOENT"
+            ? "missing-tool"
+            : error?.killed
+              ? "timeout"
+              : "command-failed";
+      glx = { status: "unavailable", reason };
       errors.push("glx-query");
     }
   }
@@ -151,6 +172,76 @@ export async function collectGraphicsSnapshot({ probeGlx = false } = {}) {
     glx,
     errors,
   };
+}
+
+/** Keep optional tool observations distinct from required browser capabilities. */
+export function formatGlxObservation(value) {
+  if (value?.status === "available") {
+    if (
+      typeof value.version !== "string" ||
+      !/^\d{1,3}\.\d{1,3}(?:\.\d{1,3})?$/.test(value.version)
+    ) {
+      return { status: "unparsed", reason: "output-format" };
+    }
+    return {
+      status: "available",
+      directRendering:
+        typeof value.directRendering === "boolean"
+          ? value.directRendering
+          : null,
+      accelerated:
+        typeof value.accelerated === "boolean" ? value.accelerated : null,
+      renderer: ["llvmpipe", "softpipe", "other", "unknown"].includes(
+        value.renderer,
+      )
+        ? value.renderer
+        : "unknown",
+      version: value.version,
+    };
+  }
+  const status = value?.status === "unparsed" ? "unparsed" : "unavailable";
+  const reason = [
+    "timeout",
+    "output-limit",
+    "missing-tool",
+    "command-failed",
+    "output-format",
+  ].includes(value?.reason)
+    ? value.reason
+    : status === "unparsed"
+      ? "output-format"
+      : "unknown";
+  return { status, reason };
+}
+
+export async function recordGlxObservation(
+  browserName,
+  value,
+  directory = ".browser-diagnostics",
+) {
+  if (!["chromium", "firefox", "webkit"].includes(browserName)) return;
+  let temporary;
+  try {
+    await mkdir(directory, { recursive: true });
+    const identifier = randomUUID();
+    temporary = path.join(directory, `.glx-${identifier}.tmp`);
+    await writeFile(
+      temporary,
+      encodeGraphicsDiagnostics({
+        at: new Date().toISOString(),
+        ...formatGlxObservation(value),
+      }),
+      { flag: "wx" },
+    );
+    await rename(
+      temporary,
+      path.join(directory, `glx-${browserName}-${identifier}.json`),
+    );
+  } catch {
+    /* Optional artifact output cannot replace the browser result. */
+  } finally {
+    if (temporary) await rm(temporary, { force: true }).catch(() => {});
+  }
 }
 
 export function encodeGraphicsDiagnostics(value) {

@@ -114,6 +114,7 @@ jobs:
           printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' | sudo tee /etc/apt/apt-mirrors.txt
       - run: npx playwright install --with-deps chromium firefox webkit
       - name: Install read-only GLX diagnostic utility
+        continue-on-error: true
         run: sudo apt-get install -y --no-install-recommends mesa-utils
       - name: Browser matrix with software OpenGL
         run: xvfb-run -a npm run test:browser
@@ -140,7 +141,11 @@ jobs:
         if: always()
         with:
           name: graphics-startup-diagnostics
-          path: .browser-diagnostics/graphics-startup.json
+          path: |
+            .browser-diagnostics/graphics-startup.json
+            .browser-diagnostics/glx-chromium-*.json
+            .browser-diagnostics/glx-firefox-*.json
+            .browser-diagnostics/glx-webkit-*.json
           include-hidden-files: true
           retention-days: 7
           if-no-files-found: warn

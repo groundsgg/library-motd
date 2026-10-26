@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { mkdtemp, writeFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import {
@@ -9,7 +9,134 @@ import {
   parseMemoryInfo,
   parseResourceLimits,
   parseGlxInfo,
+  formatGlxObservation,
+  recordGlxObservation,
 } from "../../tools/linux-graphics-diagnostics.mjs";
+
+test("GLX observations retain only fixed capabilities or a fixed failure reason", () => {
+  const available = formatGlxObservation({
+    status: "available",
+    directRendering: true,
+    accelerated: false,
+    renderer: "llvmpipe",
+    version: "4.5",
+    stderr: "private-host",
+  });
+  assert.deepEqual(available, {
+    status: "available",
+    directRendering: true,
+    accelerated: false,
+    renderer: "llvmpipe",
+    version: "4.5",
+  });
+  for (const reason of [
+    "timeout",
+    "output-limit",
+    "missing-tool",
+    "command-failed",
+    "output-format",
+  ]) {
+    assert.deepEqual(
+      formatGlxObservation({
+        status: "unavailable",
+        reason,
+        stdout: "private-host",
+      }),
+      { status: "unavailable", reason },
+    );
+  }
+  assert.deepEqual(
+    formatGlxObservation({ status: "available", version: "private-host" }),
+    { status: "unparsed", reason: "output-format" },
+  );
+  assert.doesNotMatch(
+    JSON.stringify(
+      formatGlxObservation({ status: "private-host", reason: "private-host" }),
+    ),
+    /private-host/,
+  );
+});
+
+test("retained GLX observations are bounded and writer failures are contained", async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), "motd-glx-record-"));
+  try {
+    await recordGlxObservation(
+      "firefox",
+      {
+        status: "unavailable",
+        reason: "timeout",
+        stderr: "private-host".repeat(2000),
+      },
+      directory,
+    );
+    const files = (await readdir(directory)).filter((name) =>
+      name.endsWith(".json"),
+    );
+    assert.equal(files.length, 1);
+    const contents = await readFile(path.join(directory, files[0]), "utf8");
+    const { at, ...observation } = JSON.parse(contents);
+    assert.match(at, /^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/);
+    assert.deepEqual(observation, {
+      status: "unavailable",
+      reason: "timeout",
+    });
+    assert.ok(Buffer.byteLength(contents) <= 16384);
+    const blocked = path.join(directory, "file");
+    await writeFile(blocked, "not a directory");
+    assert.equal(
+      await recordGlxObservation(
+        "firefox",
+        { status: "unavailable", reason: "timeout" },
+        blocked,
+      ),
+      undefined,
+    );
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("concurrent worker probes retain separate complete observations", async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), "motd-glx-workers-"));
+  try {
+    await Promise.all(
+      Array.from({ length: 8 }, (_, index) =>
+        recordGlxObservation(
+          "firefox",
+          index % 2
+            ? { status: "unavailable", reason: "timeout" }
+            : {
+                status: "available",
+                directRendering: true,
+                accelerated: false,
+                renderer: "llvmpipe",
+                version: "4.5",
+              },
+          directory,
+        ),
+      ),
+    );
+    const files = (await readdir(directory)).filter((name) =>
+      name.endsWith(".json"),
+    );
+    assert.equal(files.length, 8);
+    const records = await Promise.all(
+      files.map(async (name) =>
+        JSON.parse(await readFile(path.join(directory, name), "utf8")),
+      ),
+    );
+    assert.equal(
+      records.filter((record) => record.status === "unavailable").length,
+      4,
+    );
+    assert.equal(
+      records.filter((record) => record.status === "available").length,
+      4,
+    );
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
 
 test("memory and limits retain numeric observations without unrelated text", () => {
   const memory = parseMemoryInfo(
@@ -114,10 +241,11 @@ test(
     const savedPath = process.env.PATH;
     process.env.PATH = directory + path.delimiter + savedPath;
     try {
-      for (const source of [
-        'console.log("private-driver-data".repeat(2000))',
-        'console.log("private-driver-data")',
-        'setTimeout(()=>console.log("private-driver-data"),10000)',
+      for (const [source, reason] of [
+        ['console.log("private-driver-data".repeat(2000))', "output-limit"],
+        ['console.log("private-driver-data")', "output-format"],
+        ['setTimeout(()=>console.log("private-driver-data"),10000)', "timeout"],
+        ["process.exit(3)", "command-failed"],
       ]) {
         await writeFile(
           path.join(directory, "glxinfo"),
@@ -129,11 +257,16 @@ test(
         assert.ok(Date.now() - started < 6000);
         assert.ok(snapshot.errors.includes("glx-query"));
         assert.notEqual(snapshot.glx.status, "available");
+        assert.equal(snapshot.glx.reason, reason);
         assert.doesNotMatch(
           encodeGraphicsDiagnostics(snapshot),
           /private-driver-data/,
         );
       }
+      await rm(path.join(directory, "glxinfo"));
+      process.env.PATH = directory;
+      const missing = await collectGraphicsSnapshot({ probeGlx: true });
+      assert.equal(missing.glx.reason, "missing-tool");
     } finally {
       process.env.PATH = savedPath;
       await rm(directory, { recursive: true, force: true });
