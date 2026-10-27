@@ -35,7 +35,7 @@ async function preview(
 }
 
 for (const modern of [false, true])
-  test(`native ${modern ? "26.3" : "1.21.1"} obfuscation changes on successive render frames`, async ({
+  test(`native ${modern ? "26.3" : "1.21.1"} obfuscation advances before the old 80ms interval`, async ({
     page,
   }) => {
     await setup(page);
@@ -46,7 +46,7 @@ for (const modern of [false, true])
     await page.evaluate(() => {
       Math.random = () => 0;
     });
-    await page.clock.runFor(16);
+    await page.clock.runFor(32);
     await expect(glyph).toHaveText("A");
   });
 
@@ -298,5 +298,80 @@ test("a parent-created viewer uses its iframe's animation realm and disposes it"
   await page.clock.runFor(80);
   expect(await page.evaluate(() => window.retiredFrameGlyph.textContent)).toBe(
     "B",
+  );
+});
+
+for (const { hz, changes } of [
+  { hz: 30, changes: 30 },
+  { hz: 60, changes: 60 },
+  { hz: 120, changes: 60 },
+  { hz: 144, changes: 60 },
+])
+  test(`native menu frame budget at ${hz} Hz browser refresh`, async ({
+    page,
+  }) => {
+    await setup(page);
+    await page.evaluate(() => {
+      window.pendingRafs = new Map();
+      let id = 0;
+      window.requestAnimationFrame = (callback) => {
+        window.pendingRafs.set(++id, callback);
+        return id;
+      };
+      window.cancelAnimationFrame = (id) => window.pendingRafs.delete(id);
+    });
+    await preview(page);
+    const actual = await page.evaluate((hz) => {
+      let turn = 0,
+        changed = 0;
+      Math.random = () => (++turn % 2 ? 0.99 : 0);
+      const glyph = document.querySelector("#preview .mcp-motd .mcp-glyph")!;
+      let previous = glyph.textContent;
+      for (let frame = 0; frame < hz; frame++) {
+        const callbacks = [...window.pendingRafs.values()];
+        window.pendingRafs.clear();
+        for (const callback of callbacks) callback((frame * 1000) / hz);
+        if (glyph.textContent !== previous) changed++;
+        previous = glyph.textContent;
+      }
+      window.preview.destroy();
+      return changed;
+    }, hz);
+    expect(actual).toBe(changes);
+  });
+
+test("sustained rainbow motion reuses backing surfaces across glyphs and colors", async ({
+  page,
+}) => {
+  await setup(page);
+  await page.evaluate(() => {
+    window.rasterSurfaces = 0;
+    const original = document.createElement.bind(document);
+    document.createElement = ((tag, options) => {
+      const element = original(tag, options);
+      if (tag === "canvas") window.rasterSurfaces++;
+      return element;
+    }) as typeof document.createElement;
+  });
+  await page.evaluate(() => {
+    window.doc = window.api.createDocument(
+      window.api.parseText(
+        `<rainbow><obfuscated>${"W".repeat(40)}<newline>${"W".repeat(40)}`,
+        "minimessage",
+      ).value!,
+    );
+    window.preview.update({ document: window.doc, context: window.context });
+  });
+  const glyphs = page.locator("#preview .mcp-motd .mcp-glyph");
+  await expect(glyphs).toHaveCount(80);
+  for (let frame = 0; frame < 12; frame++) {
+    await page.evaluate((value) => {
+      Math.random = () => value;
+    }, frame / 12);
+    await page.clock.runFor(17);
+  }
+  expect(await glyphs.first().textContent()).not.toBe("W");
+  expect(await page.evaluate(() => window.rasterSurfaces)).toBeLessThanOrEqual(
+    4,
   );
 });

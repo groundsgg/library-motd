@@ -3319,5 +3319,26 @@
         "white": "a51ab708b3db806ff6c5cfd5fc1d9b44f5ed226a405c35bd4bca440dccc8d447"
       }
     }
-  ]
+  ],
+  "sourceAudit": {
+    "evidenceKind": "official class-file inspection, separate from sampled client images",
+    "nativeMenuMaxFps": 60,
+    "methods": {
+      "Font.getGlyph": {
+        "classFile": "net/minecraft/client/gui/Font.class",
+        "sha256": "1b5c83459b1148b87b9b5673e6e026e388c8d0a6ef234e0f1305c2b8e1e7c4d1",
+        "finding": "Obfuscated input except U+0020 requests a replacement using ceil(originalGlyph.info().getAdvance(false)) during text preparation."
+      },
+      "FontSet.getRandomGlyph/selectProviders": {
+        "classFile": "net/minecraft/client/gui/font/FontSet.class",
+        "sha256": "2fe10a7ed8a4ee29532aae0a22c6d71fd5874cff56f6798aa17a37c4aca870f3",
+        "finding": "Provider candidates are grouped by the ceiling of non-bold advance; empty/missing classes return the native missing glyph."
+      },
+      "FramerateLimitTracker.getFramerateLimit/getThrottleReason": {
+        "classFile": "com/mojang/blaze3d/platform/FramerateLimitTracker.class",
+        "sha256": "c74338080dc846c582bc9a84df99a89c5394376ec4008c0c33b2cb8ec45afae2",
+        "finding": "The out-of-level menu path returns 60; inactivity/iconified-window branches can throttle lower."
+      }
+    }
+  }
 }

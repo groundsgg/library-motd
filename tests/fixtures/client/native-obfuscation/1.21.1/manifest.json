@@ -3309,5 +3309,26 @@
         "white": "a51ab708b3db806ff6c5cfd5fc1d9b44f5ed226a405c35bd4bca440dccc8d447"
       }
     }
-  ]
+  ],
+  "sourceAudit": {
+    "evidenceKind": "official class-file inspection, separate from sampled client images",
+    "nativeMenuMaxFps": 60,
+    "methods": {
+      "Font.StringRenderOutput.accept": {
+        "classFile": "fhx$b.class",
+        "sha256": "3de58007a91a863e70f88dd16a2d0b8065005c7c854825324d33961d4819a8e6",
+        "finding": "An original U+0020 bypasses random glyph selection; other obfuscated code points call FontSet.getRandomGlyph while rendering."
+      },
+      "FontSet.getRandomGlyph/selectProviders": {
+        "classFile": "fld.class",
+        "sha256": "0db39bf55a543be1854c59a57988e29f3abae3d3b8c69c8dd949851623d82ff0",
+        "finding": "Width groups use ceil(getAdvance(false)); missing glyphs are excluded from provider candidate collection; a missing group returns the native missing glyph."
+      },
+      "Minecraft.getFramerateLimit": {
+        "classFile": "fgo.class",
+        "sha256": "81b000661c1cc805209d409115897067cfe44987cc452c43767a26f8468748eb",
+        "finding": "The out-of-level menu path returns 60, independently of the configured world FPS limit."
+      }
+    }
+  }
 }

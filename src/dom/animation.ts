@@ -36,27 +36,35 @@ export function animateObfuscation(
       groups.set(advance, group);
     }
   let frameId: number | undefined,
-    disposed = false;
-  function paint() {
+    disposed = false,
+    startedAt: number | undefined,
+    lastTick = -1;
+  function paint(timestamp: number) {
     frameId = undefined;
     if (disposed || reducedMotion.matches) return;
-    for (const { span, style } of glyphs) {
-      const candidates = groups.get(Math.ceil(Number(span.dataset.advance)));
-      if (candidates?.length) {
-        span.textContent =
-          candidates[Math.floor(view!.Math.random() * candidates.length)]!;
-        if (pixelFont)
-          applyPixelInk(
-            span,
-            span.textContent!,
-            style,
-            context.guiScale *
-              (span.ownerDocument.defaultView?.devicePixelRatio ?? 1),
-            parseFloat(span.style.width),
-            !!context.profile.geometry.motdShadow &&
-              !!span.closest(".mcp-motd"),
-            pixelInkOrigin(span),
-          );
+    // Audited 1.21.1/26.3 out-of-level menus cap rendering at 60 FPS.
+    startedAt ??= timestamp;
+    const tick = Math.floor(((timestamp - startedAt) * 60) / 1000 + 1e-7);
+    if (tick > lastTick) {
+      lastTick = tick;
+      for (const { span, style } of glyphs) {
+        const candidates = groups.get(Math.ceil(Number(span.dataset.advance)));
+        if (candidates?.length) {
+          span.textContent =
+            candidates[Math.floor(view!.Math.random() * candidates.length)]!;
+          if (pixelFont)
+            applyPixelInk(
+              span,
+              span.textContent!,
+              style,
+              context.guiScale *
+                (span.ownerDocument.defaultView?.devicePixelRatio ?? 1),
+              parseFloat(span.style.width),
+              !!context.profile.geometry.motdShadow &&
+                !!span.closest(".mcp-motd"),
+              pixelInkOrigin(span),
+            );
+        }
       }
     }
     frameId = view!.requestAnimationFrame(paint);
@@ -64,6 +72,8 @@ export function animateObfuscation(
   function sync() {
     if (frameId !== undefined) view!.cancelAnimationFrame(frameId);
     frameId = undefined;
+    startedAt = undefined;
+    lastTick = -1;
     if (!disposed && !reducedMotion.matches)
       frameId = view!.requestAnimationFrame(paint);
   }
