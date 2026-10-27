@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { resolveFontProviders } from "../../dist/fonts/index.js";
+import { spawnSync } from "node:child_process";
+import {
+  resolveFontProviders,
+  decodeBitmapGlyphs,
+} from "../../dist/fonts/index.js";
 
 test("resolves a local font resource graph without browser globals or React", async () => {
   const files = new Map([
@@ -36,4 +40,42 @@ test("resolves a local font resource graph without browser globals or React", as
   assert.deepEqual(result.value.resources, ["assets/demo/textures/menu.png"]);
   assert.equal(typeof globalThis.document, "undefined");
   assert.equal(typeof globalThis.window, "undefined");
+});
+
+test("pairs local RGBA glyph metrics and pixels without a browser image decoder", () => {
+  const pixels = new Uint8ClampedArray([10, 20, 30, 128, 255, 255, 255, 0]);
+  const result = decodeBitmapGlyphs(
+    { height: 1, ascent: 1, chars: ["A"] },
+    { width: 2, height: 1, pixels },
+  );
+  assert.deepEqual(result.diagnostics, []);
+  assert.equal(result.value.glyphs[0].advance, 2);
+  pixels.fill(0);
+  assert.deepEqual(
+    [...result.value.pixelsFor(65)],
+    [10, 20, 30, 128, 255, 255, 255, 0],
+  );
+});
+
+test("rejects an oversized grid row within a small process memory budget", () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      "--max-old-space-size=48",
+      "--input-type=module",
+      "-e",
+      `
+    import {decodeBitmapGlyphs} from ${JSON.stringify(import.meta.resolve("../../dist/fonts/index.js"))};
+    const result = decodeBitmapGlyphs(
+      {height:1, ascent:1, chars:['A'.repeat(16000000)]},
+      {width:1, height:1, pixels:new Uint8Array(4)},
+      {maxGlyphs:1},
+    );
+    if(result.value !== null || result.diagnostics[0]?.code !== 'font-bitmap-limit') process.exit(1);
+  `,
+    ],
+    { encoding: "utf8", timeout: 5000 },
+  );
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0, result.stderr);
 });

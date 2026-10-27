@@ -1,5 +1,12 @@
 /** Default standalone UI and diagnostic messages. */
 export const englishLabels = {
+  "diagnostic.fontBitmapDefinition":
+    "Invalid or unusable bitmap font geometry.",
+  "diagnostic.fontBitmapImage": "Invalid decoded RGBA bitmap font image.",
+  "diagnostic.fontBitmapOptions": "Invalid bitmap font decoding limits.",
+  "diagnostic.fontBitmapLimit": "Bitmap font decoding exceeded {limit}.",
+  "diagnostic.fontBitmapDuplicates":
+    "Used the last cell for {count} duplicate bitmap character declarations.",
   "diagnostic.fontDefinition": "Invalid font provider definition.",
   "diagnostic.fontResourceId":
     "Invalid or unsafe local font resource identifier.",
