@@ -29,3 +29,10 @@ bounded styled projection. No actions, HTML, resource requests, contextual
 translation/selector/NBT evaluation, new public API, dependency or release change.
 Previously persisted documents that already lost the boundary cannot be
 reconstructed reliably; reimport their JSON source to recover it.
+
+The importer also tolerates empty component arrays, which the measured native
+codec rejects. Such arrays can flatten one source subtree into multiple parsed
+nodes. Track which array boundaries were actually preserved during this parse;
+only reuse an atom's raw/fallback when it owns the complete first subtree.
+Otherwise retain that first subtree directly. Keep all visible text and source
+shape for these tolerated inputs, without claiming native style semantics.

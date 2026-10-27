@@ -127,3 +127,33 @@ it("keeps protected layout splitting and the parsing depth limit enforced", () =
     api.parseText(JSON.stringify([root, deep]), "json", { maxDepth: 8 }).value,
   ).toBeNull();
 });
+
+it.each([
+  { first: [[], root, "B"], visible: "ABC" },
+  { first: [[], root], visible: "AC" },
+])(
+  "retains the entire first subtree after an accepted empty array: $visible",
+  ({ first, visible }) => {
+    // Empty arrays are tolerated by our importer, though the native codec
+    // rejects them. Preserve their source without promising native styling.
+    const value = [first, "C"];
+    const text = parse(value);
+    expect(
+      api
+        .flattenText(text)
+        .map(({ text }) => text)
+        .join(""),
+    ).toBe(visible);
+    expect(
+      api
+        .layoutText(text, { profile: api.java1211Profile, width: 10000 })
+        .glyphs.map(({ text }) => text)
+        .join(""),
+    ).toBe(visible);
+    text.nodes.push({ id: "tail", type: "text", value: "!" });
+    text.revision++;
+    expect(
+      JSON.parse(api.serializeText(text, { format: "json" }).value!).extra,
+    ).toEqual([value, { text: "!" }]);
+  },
+);
