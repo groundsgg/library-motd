@@ -32,7 +32,7 @@ jobs:
       issues: write
     outputs:
       tag: ${{ inputs.tag || steps.release.outputs.tag_name }}
-      publish: ${{ inputs.tag != '' || steps.release.outputs.release_created == 'true' }}
+      publish: ${{ inputs.tag != '' || (steps.current.outputs.current == 'true' && steps.release.outputs.release_created == 'true') }}
     steps:
       - name: Validate recovery tag
         if: inputs.tag != ''
@@ -44,12 +44,22 @@ jobs:
           test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.draft')" = false
       - name: Ensure main is still the verified revision
         if: inputs.tag == ''
+        id: current
         env:
           GH_TOKEN: ${{ github.token }}
           VERIFIED_SHA: ${{ needs.validate.outputs.sha }}
-        run: test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$VERIFIED_SHA"
+        run: |
+          [[ "$VERIFIED_SHA" =~ ^[a-f0-9]{40}$ ]]
+          motd_current_sha="$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)"
+          [[ "$motd_current_sha" =~ ^[a-f0-9]{40}$ ]]
+          if [ "$motd_current_sha" = "$VERIFIED_SHA" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Main advanced after validation; this run is superseded. Release Please and publication are skipped."
+          fi
       - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
-        if: inputs.tag == ''
+        if: inputs.tag == '' && steps.current.outputs.current == 'true'
         id: release
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
