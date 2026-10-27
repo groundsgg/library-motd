@@ -78,6 +78,122 @@ test("candidate classes use the non-bold ceiling and Unicode code points", async
   ).toEqual(geometry);
 });
 
+for (const boldOffset of [0, 0.5, 2])
+  test(`custom profile bold offset ${boldOffset} retains the original regular-width candidate class`, async ({
+    page,
+  }) => {
+    await setup(page);
+    const glyphs = await preview(page, "<obfuscated><b>A</b><newline>A", {
+      A: 4.25,
+      "😀": 4.75,
+      B: 3.5,
+      C: 5.5,
+    });
+    await page.evaluate((boldOffset) => {
+      window.context = {
+        ...window.context,
+        profile: {
+          ...window.context.profile,
+          font: {
+            ...window.context.profile.font,
+            family: "monospace",
+            boldOffset,
+          },
+        },
+      };
+      window.preview.update({ document: window.doc, context: window.context });
+    }, boldOffset);
+    const before = await page.evaluate(() => ({
+      source: JSON.stringify(window.doc),
+      changes: window.changes.length,
+    }));
+    const geometry = await glyphs.evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        left: (node as HTMLElement).style.left,
+        top: (node as HTMLElement).style.top,
+        width: (node as HTMLElement).style.width,
+      })),
+    );
+    expect(geometry.map((g) => parseFloat(g.width))).toEqual([
+      4.25 + boldOffset,
+      4.25,
+    ]);
+    await page.clock.runFor(80);
+    // Both source advances belong to ceiling class 5. B and C intentionally
+    // belong to neighboring classes so a hardcoded bold adjustment is visible.
+    await expect(glyphs).toHaveText(["😀", "😀"]);
+    expect(
+      await glyphs.evaluateAll((nodes) =>
+        nodes.map((node) => ({
+          left: (node as HTMLElement).style.left,
+          top: (node as HTMLElement).style.top,
+          width: (node as HTMLElement).style.width,
+        })),
+      ),
+    ).toEqual(geometry);
+    expect(
+      await page.evaluate(() => ({
+        source: JSON.stringify(window.doc),
+        changes: window.changes.length,
+      })),
+    ).toEqual(before);
+  });
+
+test("bold candidate lookup preserves the original ceiling at floating-point boundaries", async ({
+  page,
+}) => {
+  await setup(page);
+  const glyphs = await preview(page, "<obfuscated><b>A</b><newline>A", {
+    A: 1.0000000000000002,
+    "😀": 1.75,
+    B: 0.5,
+  });
+  await page.evaluate(() => {
+    window.context.profile = {
+      ...window.context.profile,
+      font: {
+        ...window.context.profile.font,
+        family: "monospace",
+        boldOffset: 2,
+      },
+    };
+    window.preview.update({ document: window.doc, context: window.context });
+  });
+  await page.clock.runFor(80);
+  // Adding then subtracting 2 rounds this original advance to 1, the wrong class.
+  await expect(glyphs).toHaveText(["😀", "😀"]);
+});
+
+for (const useNormalized of [false, true])
+  test(`bold candidate lookup shares layout ${useNormalized ? "NFC" : "fallback"} advance resolution`, async ({
+    page,
+  }) => {
+    await setup(page);
+    const glyph = await preview(
+      page,
+      `<obfuscated><b>${useNormalized ? "e\u0301" : "A"}</b>`,
+      {
+        ...(useNormalized ? { é: 2.25 } : {}),
+        "😀": 2.75,
+        B: 1.5,
+      },
+    );
+    await page.evaluate((useNormalized) => {
+      window.context.profile = {
+        ...window.context.profile,
+        font: {
+          ...window.context.profile.font,
+          family: "monospace",
+          boldOffset: 2,
+          fallbackAdvance: useNormalized ? 1.5 : 2.25,
+        },
+      };
+      window.preview.update({ document: window.doc, context: window.context });
+    }, useNormalized);
+    await page.clock.runFor(80);
+    await expect(glyph).toHaveText("😀");
+  });
+
 test("only original U+0020 bypasses obfuscation and spaces remain candidates", async ({
   page,
 }) => {
