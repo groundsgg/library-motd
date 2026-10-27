@@ -13,6 +13,10 @@
     "THIRD_PARTY_NOTICES.md"
   ],
   "exports": {
+    "./fonts": {
+      "types": "./dist/fonts/index.d.ts",
+      "import": "./dist/fonts/index.js"
+    },
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
