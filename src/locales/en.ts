@@ -1,5 +1,14 @@
 /** Default standalone UI and diagnostic messages. */
 export const englishLabels = {
+  "diagnostic.fontUnihexDefinition":
+    "Invalid or unusable Unihex override definition.",
+  "diagnostic.fontUnihexFormat": "Invalid or unsupported Unihex record syntax.",
+  "diagnostic.fontUnihexInput":
+    "Expected explicitly supplied Unihex byte arrays.",
+  "diagnostic.fontUnihexOptions": "Invalid Unihex decoding limits.",
+  "diagnostic.fontUnihexLimit": "Unihex decoding exceeded {limit}.",
+  "diagnostic.fontUnihexDuplicates":
+    "Used the last record for {count} duplicate Unihex character declarations.",
   "diagnostic.fontBitmapDefinition":
     "Invalid or unusable bitmap font geometry.",
   "diagnostic.fontBitmapImage": "Invalid decoded RGBA bitmap font image.",

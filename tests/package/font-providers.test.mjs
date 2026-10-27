@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 import {
   resolveFontProviders,
   decodeBitmapGlyphs,
+  decodeUnihexGlyphs,
 } from "../../dist/fonts/index.js";
 
 test("resolves a local font resource graph without browser globals or React", async () => {
@@ -72,6 +73,40 @@ test("rejects an oversized grid row within a small process memory budget", () =>
       {maxGlyphs:1},
     );
     if(result.value !== null || result.diagnostics[0]?.code !== 'font-bitmap-limit') process.exit(1);
+  `,
+    ],
+    { encoding: "utf8", timeout: 5000 },
+  );
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test("pairs host-extracted Unihex glyphs with native half-pixel offsets", () => {
+  const data = new TextEncoder().encode("0041:" + "38".repeat(16) + "\n");
+  const result = decodeUnihexGlyphs({}, [data]);
+  assert.deepEqual(result.diagnostics, []);
+  assert.equal(result.value.glyphs[0].advance, 2);
+  assert.equal(result.value.glyphs[0].boldOffset, 0.5);
+  assert.equal(result.value.glyphs[0].shadowOffset, 0.5);
+  data.fill(0);
+  assert.deepEqual(
+    [...result.value.pixelsFor(65).subarray(0, 4)],
+    [255, 255, 255, 255],
+  );
+});
+
+test("bounds broad Unihex override processing in an isolated process", () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      "--input-type=module",
+      "-e",
+      `
+    import {decodeUnihexGlyphs} from ${JSON.stringify(import.meta.resolve("../../dist/fonts/index.js"))};
+    const data=new TextEncoder().encode('0041:'+'38'.repeat(16)+'\\n01F600:'+'38'.repeat(16)+'\\n');
+    const ranges=Array.from({length:4096},()=>({from:0,to:1114111,left:0,right:31}));
+    const result=decodeUnihexGlyphs({sizeOverrides:ranges},[data]);
+    if(result.diagnostics.length || result.value?.glyphs.length!==2 || result.value.glyphs.some(g=>g.advance!==17))process.exit(1);
   `,
     ],
     { encoding: "utf8", timeout: 5000 },

@@ -1,5 +1,12 @@
 export { resolveFontProviders } from "./resolve.js";
 export { decodeBitmapGlyphs } from "./bitmap.js";
+export { decodeUnihexGlyphs } from "./unihex.js";
+export type {
+  UnihexFontDefinition,
+  UnihexDecodeLimits,
+  UnihexGlyph,
+  UnihexGlyphSet,
+} from "./unihex.js";
 export type {
   BitmapFontDefinition,
   BitmapFontImage,
@@ -14,4 +21,5 @@ export type {
   FontProviderLimits,
   FontProviderOptions,
   FontFlags,
+  UnihexSizeOverride,
 } from "./types.js";
