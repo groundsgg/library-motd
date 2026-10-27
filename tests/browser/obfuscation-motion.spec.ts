@@ -301,44 +301,65 @@ test("a parent-created viewer uses its iframe's animation realm and disposes it"
   );
 });
 
+async function changesOnFrames(page: Page, timestamps: number[]) {
+  await setup(page);
+  await page.evaluate(() => {
+    window.pendingRafs = new Map();
+    let id = 0;
+    window.requestAnimationFrame = (callback) => {
+      window.pendingRafs.set(++id, callback);
+      return id;
+    };
+    window.cancelAnimationFrame = (id) => window.pendingRafs.delete(id);
+  });
+  await preview(page);
+  return page.evaluate((timestamps) => {
+    let turn = 0,
+      changed = 0;
+    Math.random = () => (++turn % 2 ? 0.99 : 0);
+    const glyph = document.querySelector("#preview .mcp-motd .mcp-glyph")!;
+    let previous = glyph.textContent;
+    for (const timestamp of timestamps) {
+      const callbacks = [...window.pendingRafs.values()];
+      window.pendingRafs.clear();
+      for (const callback of callbacks) callback(timestamp);
+      if (glyph.textContent !== previous) changed++;
+      previous = glyph.textContent;
+    }
+    window.preview.destroy();
+    return changed;
+  }, timestamps);
+}
+
 for (const { hz, changes } of [
   { hz: 30, changes: 30 },
   { hz: 60, changes: 60 },
   { hz: 120, changes: 60 },
   { hz: 144, changes: 60 },
+  { hz: 500, changes: 60 },
 ])
   test(`native menu frame budget at ${hz} Hz browser refresh`, async ({
     page,
   }) => {
-    await setup(page);
-    await page.evaluate(() => {
-      window.pendingRafs = new Map();
-      let id = 0;
-      window.requestAnimationFrame = (callback) => {
-        window.pendingRafs.set(++id, callback);
-        return id;
-      };
-      window.cancelAnimationFrame = (id) => window.pendingRafs.delete(id);
-    });
-    await preview(page);
-    const actual = await page.evaluate((hz) => {
-      let turn = 0,
-        changed = 0;
-      Math.random = () => (++turn % 2 ? 0.99 : 0);
-      const glyph = document.querySelector("#preview .mcp-motd .mcp-glyph")!;
-      let previous = glyph.textContent;
-      for (let frame = 0; frame < hz; frame++) {
-        const callbacks = [...window.pendingRafs.values()];
-        window.pendingRafs.clear();
-        for (const callback of callbacks) callback((frame * 1000) / hz);
-        if (glyph.textContent !== previous) changed++;
-        previous = glyph.textContent;
-      }
-      window.preview.destroy();
-      return changed;
-    }, hz);
-    expect(actual).toBe(changes);
+    const timestamps = Array.from(
+      { length: hz },
+      (_, frame) => (frame * 1000) / hz,
+    );
+    expect(await changesOnFrames(page, timestamps)).toBe(changes);
   });
+
+for (const precision of [0.1, 1, 2])
+  for (const origin of [0, 193.3])
+    test(`rounded ${precision}ms timestamps keep native cadence at phase ${origin}`, async ({
+      page,
+    }) => {
+      const timestamps = Array.from(
+        { length: 120 },
+        (_, frame) =>
+          Math.round((origin + (frame * 1000) / 60) / precision) * precision,
+      );
+      expect(await changesOnFrames(page, timestamps)).toBe(120);
+    });
 
 test("sustained rainbow motion reuses backing surfaces across glyphs and colors", async ({
   page,

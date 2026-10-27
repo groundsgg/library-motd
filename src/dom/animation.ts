@@ -38,13 +38,23 @@ export function animateObfuscation(
   let frameId: number | undefined,
     disposed = false,
     startedAt: number | undefined,
+    previousFrameAt: number | undefined,
     lastTick = -1;
   function paint(timestamp: number) {
     frameId = undefined;
     if (disposed || reducedMotion.matches) return;
     // Audited 1.21.1/26.3 out-of-level menus cap rendering at 60 FPS.
     startedAt ??= timestamp;
-    const tick = Math.floor(((timestamp - startedAt) * 60) / 1000 + 1e-7);
+    // Browsers round timestamps. Bound the precision allowance by half a real
+    // frame gap to preserve the menu budget even on very high-refresh streams.
+    const precision =
+      previousFrameAt === undefined
+        ? 0
+        : Math.min(2, Math.max(0, timestamp - previousFrameAt) / 2);
+    previousFrameAt = timestamp;
+    const tick = Math.floor(
+      ((timestamp - startedAt + precision) * 60) / 1000 + 1e-7,
+    );
     if (tick > lastTick) {
       lastTick = tick;
       for (const { span, style } of glyphs) {
@@ -73,6 +83,7 @@ export function animateObfuscation(
     if (frameId !== undefined) view!.cancelAnimationFrame(frameId);
     frameId = undefined;
     startedAt = undefined;
+    previousFrameAt = undefined;
     lastTick = -1;
     if (!disposed && !reducedMotion.matches)
       frameId = view!.requestAnimationFrame(paint);
