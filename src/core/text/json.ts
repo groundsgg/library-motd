@@ -26,6 +26,20 @@ export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
     if (Array.isArray(v)) {
       if (!v.length) return [];
       const first = visit(v[0]!, depth + 1);
+      if (first[0]?.type === "opaque") {
+        // Later entries depend on the first component's complete native style,
+        // including metadata we cannot represent in an editable group. Keep
+        // this boundary intact for display and subsequent same-format export.
+        const rest = v.slice(1);
+        const tail = rest.map((child) => fallback(child, depth + 1)).join("");
+        return [
+          {
+            ...first[0],
+            raw: `[${first[0].raw}${rest.length ? "," + JSON.stringify(rest).slice(1, -1) : ""}]`,
+            fallback: (first[0].fallback ?? first[0].raw) + tail,
+          },
+        ];
+      }
       // Component-array siblings inherit the first component's style.
       if (first[0]?.type === "group")
         return [

@@ -11,6 +11,10 @@ import { parseJsonText } from "../../src/core/text/json.js";
 it.each([
   { label: "text", leaf: "A" as JsonValue },
   { label: "empty", leaf: [] as JsonValue },
+  {
+    label: "protected",
+    leaf: { text: "A", color: "red", insertion: "preserved" } as JsonValue,
+  },
 ])(
   "processes nested component arrays with linear element reads: $label",
   ({ leaf }) => {
@@ -30,7 +34,7 @@ it.each([
       flattenText(parsed)
         .map((char) => char.text)
         .join(""),
-    ).toBe(leaf === "A" ? "A" : "");
+    ).toBe(Array.isArray(leaf) ? "" : "A");
     // Check the small instrumented shape before attempting the full depth limit:
     // a regressed implementation fails here without hanging the test runner.
     expect(reads).toBeLessThanOrEqual(depth * 2);

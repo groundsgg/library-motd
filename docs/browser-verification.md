@@ -151,7 +151,10 @@ underline and actual glyph widths, while their one atomic editor boundary and
 raw click/hover metadata survive neighboring edits, undo and persistence. HTML-like
 literal text remains data; context-dependent components remain unresolved. The
 private styled projection does not change canonical flattening or ordinary
-export. Explicit layout export uses its corrected widths and retains protected
+export. Protected-first JSON arrays retain their inherited literal styles as
+one inert atom after persistence, neighboring edits and undo in all three
+engines; the complete raw array remains in same-format export. Explicit layout
+export uses its corrected widths and retains protected
 break refusal.
 
 For the transparent-icon screenshot, Chromium matches the native capture
