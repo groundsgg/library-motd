@@ -1,5 +1,10 @@
 /** Default standalone UI and diagnostic messages. */
 export const englishLabels = {
+  "diagnostic.fontSourceInput": "Invalid runtime font source data.",
+  "diagnostic.fontSourceOptions": "Invalid runtime font source limits.",
+  "diagnostic.fontSourceLimit": "Runtime font source exceeded {limit}.",
+  "diagnostic.fontSourceRaster":
+    "The selected runtime glyph could not provide valid RGBA pixels.",
   "diagnostic.fontUnihexDefinition":
     "Invalid or unusable Unihex override definition.",
   "diagnostic.fontUnihexFormat": "Invalid or unsupported Unihex record syntax.",

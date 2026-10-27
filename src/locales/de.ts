@@ -1,6 +1,14 @@
 import type { englishLabels } from "./en.js";
 /** Complete German catalog; override individual keys for host terminology. */
 export const germanLabels = {
+  "diagnostic.fontSourceInput":
+    "Ungültige Daten für die Laufzeit-Schriftquelle.",
+  "diagnostic.fontSourceOptions":
+    "Ungültige Limits für die Laufzeit-Schriftquelle.",
+  "diagnostic.fontSourceLimit":
+    "Die Laufzeit-Schriftquelle überschreitet {limit}.",
+  "diagnostic.fontSourceRaster":
+    "Die gewählte Laufzeit-Glyphe konnte keine gültigen RGBA-Pixel liefern.",
   "diagnostic.fontUnihexDefinition":
     "Ungültige oder unbrauchbare Unihex-Bereichsdefinition.",
   "diagnostic.fontUnihexFormat":
