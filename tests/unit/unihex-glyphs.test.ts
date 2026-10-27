@@ -341,6 +341,29 @@ it("keeps selected files fixed between validation and parsing", () => {
   expect(result.value!.glyphs.map((g: any) => g.codePoint)).toEqual([65]);
 });
 
+it("keeps an earlier selected extent fixed when a later file grows its real backing buffer", () => {
+  const small = bytes(record("0041")),
+    large = bytes(record("0041") + record("0042"));
+  const shared = new SharedArrayBuffer(small.length, {
+    maxByteLength: large.length,
+  });
+  const tracking = new Uint8Array(shared);
+  tracking.set(small);
+  const empty = new Uint8Array(),
+    files = [tracking, empty];
+  Object.defineProperty(files, 1, {
+    get() {
+      shared.grow(large.length);
+      tracking.set(large);
+      return empty;
+    },
+  });
+  const result = decodeUnihexGlyphs({}, files, { maxBytes: small.length });
+  expect(shared.byteLength).toBe(large.length);
+  expect(result.diagnostics).toEqual([]);
+  expect(result.value!.glyphs.map((g: any) => g.codePoint)).toEqual([65]);
+});
+
 it("validates real byte storage rather than tags or lengths on instances", () => {
   const data = bytes(record("0041"));
   Object.defineProperty(data, "byteLength", { value: 1 });
