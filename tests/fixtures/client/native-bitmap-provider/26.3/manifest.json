@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "clientVersion": "26.3",
+  "clientSha1": "e877b6a07acd633fb3bb475002175cec036e7b87",
+  "classSha256": {
+    "net/minecraft/client/gui/font/providers/BitmapProvider$Definition": "fd2bfdc999b653386029b90f07d28fa6d4b14996f199c3bb381efd1ecd8cd7da",
+    "net/minecraft/client/gui/font/providers/BitmapProvider$Glyph": "d19d45e224af3a3d1631bb53aeed9969d2e63980ddb9402f0624e026f879516c",
+    "net/minecraft/client/gui/font/providers/BitmapProvider$Glyph$1": "4001f9dddc71c834bde435eb75ee9f9c605f2ccae0ece6ff6dae7eb1c0b50aeb"
+  },
+  "method": "Executed official BitmapProvider.Definition.load and glyph.info/bake in an isolated headless JVM; the supplied stitcher only observes the GlyphBitmap and performs no GPU upload. Not a rendered client capture.",
+  "input": {
+    "width": 41,
+    "height": 82,
+    "definition": {
+      "height": 1,
+      "ascent": 1,
+      "chars": [
+        "A"
+      ]
+    },
+    "pixels": [
+      {
+        "x": 40,
+        "y": 0,
+        "rgba": [
+          255,
+          255,
+          255,
+          1
+        ]
+      }
+    ],
+    "otherPixels": "RGBA zero",
+    "pngSha256": "a4ba106d01fbbd7294c604e19c6bcdfba6227458dd88045970bafe144387a20e",
+    "rgbaSha256": "7ccf3ec75ff690e4d694b5421717f300025de4acadeabcfc4c38536d20bba1aa"
+  },
+  "expected": {
+    "codePoint": 65,
+    "advance": 1.0,
+    "boldOffset": 1.0,
+    "shadowOffset": 1.0,
+    "scale": 0.012195121496915817,
+    "sourceX": 0.0,
+    "sourceY": 0.0,
+    "pixelWidth": 41.0,
+    "pixelHeight": 82.0,
+    "bearingTop": 1.0,
+    "oversample": 82.0
+  }
+}

@@ -1,6 +1,8 @@
 import { expect, it } from "vitest";
 import { decodeBitmapGlyphs } from "../../src/fonts/bitmap.js";
 import { runInNewContext } from "node:vm";
+import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 // Original synthetic, unpremultiplied RGBA data. No game image is used.
 const atlas = (width = 8, height = 4) => ({
@@ -69,6 +71,28 @@ it("uses float32 scaling and native advance rounding", () => {
     scale: 1.6666666269302368,
     oversample: 0.6000000238418579,
   });
+});
+
+it("matches an executed Vanilla provider at the float32 half-pixel boundary", () => {
+  const reference = JSON.parse(
+    readFileSync(
+      new URL(
+        "../fixtures/client/native-bitmap-provider/26.3/manifest.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  );
+  const image = atlas(reference.input.width, reference.input.height);
+  for (const pixel of reference.input.pixels)
+    set(image, pixel.x, pixel.y, pixel.rgba);
+  expect(createHash("sha256").update(image.pixels).digest("hex")).toBe(
+    reference.input.rgbaSha256,
+  );
+  const result = decodeBitmapGlyphs(reference.input.definition, image);
+  expect(result.diagnostics).toEqual([]);
+  // Vanilla reports advance 1 here; unrounded JavaScript division would report 2.
+  expect(result.value!.glyphs[0]).toMatchObject(reference.expected);
 });
 
 it("preserves blank-cell advance and ignores U+0000 without shifting the grid", () => {
