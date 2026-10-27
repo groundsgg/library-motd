@@ -6,13 +6,13 @@
 
 A standalone Minecraft Java server-list editor and preview. Use the TypeScript core in Node, the DOM editor in any framework, or the optional React adapter. Grounds is one consumer; no Portal, account or server connection is required.
 
-The viewer targets Vanilla Java behavior for the selected client profile. MOTDs and servericons remain supplied status snapshots; client-owned obfuscation and panorama motion are separate effects. Preview-only MOTD animation timelines are outside its scope. Profile-specific evidence and approximations remain explicit; see [native behavior and limits](docs/animation-capabilities.md).
+The viewer targets Vanilla Java behavior for the selected client profile. MOTDs and servericons remain supplied status snapshots; client-owned obfuscation and panorama motion are separate effects. Preview-only MOTD animation timelines are outside its scope. Profile-specific evidence and approximations remain explicit; see [native behavior and limits](https://docs.grounds.gg/reference/development/motd/vanilla-behavior).
 
 ```sh
 npm install @groundsgg/motd
 ```
 
-npmjs.com is the primary registry; the same package is also published to GitHub Packages. See [registry configuration and releases](docs/releasing.md).
+npmjs.com is the primary registry; the same package is also published to GitHub Packages. See [registry configuration and releases](https://docs.grounds.gg/reference/development/motd/releasing).
 
 ```ts
 import { createDocument, parseText, java1211Profile } from "@groundsgg/motd";
@@ -50,21 +50,21 @@ const editor = createEditor(host, {
 // editor.update({...}); editor.getDocument(); editor.destroy();
 ```
 
-Use `createComparison` (DOM) or `ServerListComparison` (React) for [side-by-side client comparisons](docs/comparison.md) with per-client context and diagnostics.
+Use `createComparison` (DOM) or `ServerListComparison` (React) for [side-by-side client comparisons](https://docs.grounds.gg/reference/development/motd/comparison) with per-client context and diagnostics.
 
 React: import `ServerListEditor` or `ServerListPreview` from `@groundsgg/motd/react`, pass the same options as props, and return `onChange` values through controlled state. React >=18 is an optional peer; core and DOM consumers need no React. SSR renders an empty host and initializes in the browser.
 
-- [Public API](docs/api.md)
-- [Text formats](docs/formats.md)
-- [Embedding and configuration](docs/embedding.md)
-- [Localization, catalogs and diagnostics](docs/localization.md)
-- [Opt-in gradient and alignment import assistance](docs/import-assistance.md)
-- [Static server icons and animation limits](docs/icon-animation.md)
-- [Vanilla viewer behavior and native MOTD timing](docs/animation-capabilities.md)
-- [Client profile and reference evidence](docs/profiles.md)
-- [Known limits](docs/limitations.md)
+- [Public API](https://docs.grounds.gg/reference/development/motd/api)
+- [Text formats](https://docs.grounds.gg/reference/development/motd/formats)
+- [Embedding and configuration](https://docs.grounds.gg/reference/development/motd/embedding)
+- [Localization, catalogs and diagnostics](https://docs.grounds.gg/reference/development/motd/localization)
+- [Opt-in gradient and alignment import assistance](https://docs.grounds.gg/reference/development/motd/import-assistance)
+- [Static server icons and animation limits](https://docs.grounds.gg/reference/development/motd/icons)
+- [Vanilla viewer behavior and native MOTD timing](https://docs.grounds.gg/reference/development/motd/vanilla-behavior)
+- [Client profile and reference evidence](https://docs.grounds.gg/reference/development/motd/profiles)
+- [Known limits](https://docs.grounds.gg/reference/development/motd/limitations)
 
-Develop with Node 24: `npm ci`, `npm run dev`, then open `/examples/dom/` or `/examples/react/`. All fonts are bundled locally. `npm run typecheck`, `npm test`, `npm run build`, `npm run test:browser`, `npm run test:package` and `npm run build:examples` validate the sources, package and examples. Install the engines and dependencies with `npx playwright install --with-deps chromium firefox webkit` before browser tests. The same suite runs in all three engines; see [browser verification](docs/browser-verification.md) for coverage and limits.
+Develop with Node 24: `npm ci`, `npm run dev`, then open `/examples/dom/` or `/examples/react/`. Bundled fonts are local; host asset providers remain optional. `npm run typecheck`, `npm test`, `npm run build`, `npm run test:browser`, `npm run test:package` and `npm run build:examples` validate the sources, package and examples. Install the engines and dependencies with `npx playwright install --with-deps chromium firefox webkit` before browser tests. The same suite runs in all three engines; see [browser verification](https://docs.grounds.gg/reference/development/motd/browser-verification) for coverage and limits.
 
 See [contributing](CONTRIBUTING.md) for formatting, linting, checks and release conventions. Issue and PR templates come from the shared `groundsgg/.github` repository.
 

@@ -9,3 +9,5 @@ playwright-report/
 *.class
 
 demo-dist/
+**/.superpowers/
+**/superpowers/

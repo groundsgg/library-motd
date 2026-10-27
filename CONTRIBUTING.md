@@ -31,4 +31,8 @@ Issue and pull request templates are inherited from [groundsgg/.github](https://
 
 Do not commit Minecraft client binaries, extracted proprietary textures, credentials or downloaded dependencies. Client screenshots under `tests/fixtures/client` are comparison evidence and are excluded from the package. See [third-party notices](THIRD_PARTY_NOTICES.md).
 
-Maintainers: see [releasing](docs/releasing.md).
+Maintainers: see [releasing](https://docs.grounds.gg/reference/development/motd/releasing).
+
+## Documentation
+
+Maintain usage guides, concepts, architecture, and verification procedures in [groundsgg/docs](https://github.com/groundsgg/docs/tree/main/reference/development/motd). Keep README quick starts and source/tool links here. Do not commit implementation plans, agent transcripts, task ledgers, or generated planning directories. Track work in GitHub issues and PRs; keep temporary execution notes and local client runtimes outside the checkout.
