@@ -1,9 +1,32 @@
 # MOTD animation capabilities and timing
 
-Frames, scrolling, blinking and automatic gradient/rainbow playback are not
-implemented public APIs. This document separates measured native behavior from
-a proposed future playback model for #12. Static gradient/rainbow phase and the
-existing obfuscated-text decoration remain available; see [inline effects](inline-effects.md).
+The viewer targets the selected **Vanilla Java client profile**. It displays
+one supplied server-status snapshot with the client behavior that profile
+supports. It does not offer an optional simulation of server-supplied MOTD
+frames, scrolling, blinking, moving gradients or rainbow phase playback.
+Static gradient/rainbow phase and native obfuscated text remain available;
+see [inline effects](inline-effects.md).
+
+## Viewer contract
+
+| Content or effect                           | Viewer behavior                                                                                                                                    |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MOTD, version, player data and servericon   | Display the supplied snapshot. A host can provide a new snapshot; the viewer does not invent repeated status requests or a refresh cadence.        |
+| Gradient and rainbow                        | Render the chosen phase as ordinary static text colors. Do not advance the phase automatically.                                                    |
+| Obfuscated text (`§k`)                      | Reproduce the client-side effect using the selected profile's glyph metrics. Native timing and rasterization still need profile-specific evidence. |
+| Menu panorama                               | Reproduce the selected profile's client-owned background motion when configured. This is independent of status-response updates.                   |
+| Servericon animation                        | Use the static/default PNG image. GIF/APNG playback is not a native Java status-icon capability; see [server icons](icon-animation.md).            |
+| MOTD frame timelines, scrolling or blinking | Outside the Vanilla viewer's scope, including an opt-in preview-only mode.                                                                         |
+
+Pause/reduced-motion settings can freeze supported client effects without
+changing source documents. A host can select different text for each actual
+status request, but that does not animate a response already cached by a client.
+The standalone core remains independent of Portal services and network polling.
+
+Vanilla fidelity is the target, not a claim that every client version, custom
+font or resource pack is already pixel-verified. Keep profile evidence,
+approximation diagnostics and [known limits](limitations.md) explicit. Unknown
+context-dependent components must not be replaced with invented game data.
 
 ## What the native client demonstrated
 
@@ -37,56 +60,24 @@ See the repository's [reference procedure](https://github.com/groundsgg/library-
 to repeat the experiment with an authorized local client. The research manifest
 and maintainer tools are not installed with the npm package.
 
-## Keep the three behaviors distinct
+## Snapshot selection and export
 
-| Behavior                  | Meaning                                                                                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| One status snapshot       | The existing status API evaluates one document with supplied context.                                                                            |
-| Frame selection per ping  | A host may choose a different document for each actual status request. A client that already cached a response need not change.                  |
-| Explicit preview playback | A future opt-in simulation could show timed frames, scrolling or blinking. It must be labeled as a simulation and must not imply native support. |
+A host may choose a different static document for each real ping, including
+server-side gradient/rainbow phase choices. Resolve placeholders and player
+rules with the supplied context; do not persist live counts into the document
+or assume that one proxy's count represents the whole network.
 
-Native obfuscated text is a different mechanism: it is a text decoration whose
-glyphs the client changes. It is not evidence that arbitrary frame lists, moving
-CSS gradients or scrolling text are understood by the status protocol.
+An ordinary Java status export contains one description and icon snapshot.
+It must not invent timeline protocol fields, export CSS as native animation or
+promise that a Vanilla client will continuously update an already displayed
+response. Client-owned obfuscation and panorama motion do not establish support
+for arbitrary server-supplied animation.
 
-## Future model proposal — not an exported type
+## Scope decision
 
-Keep sequence data independent of a static `ServerListDocument`, the Portal and
-network transport. A possible sequence has:
-
-| Data           | Proposed semantics                                                                 |
-| -------------- | ---------------------------------------------------------------------------------- |
-| Revision       | Version the sequence contract independently before public use.                     |
-| Ordered frames | Each frame holds a `TextDocument` and a positive integer duration in milliseconds. |
-| Loop mode      | Loop repeats at total duration; once holds the final frame after completion.       |
-| Initial offset | Explicit position within the sequence; no hidden wall clock.                       |
-| Sampling time  | A caller-supplied finite elapsed time selects exactly one frame.                   |
-
-A public implementation must reject empty sequences and invalid durations,
-bound frame count and total duration, and specify boundary behavior before
-accepting input. Selection at a frame boundary should choose the following
-frame. Sampling first chooses text, then resolves placeholders and player rules
-with the supplied runtime context; live values never become saved frame data.
-The library must not fetch a server or assume a player's current proxy. Hosts
-supplying player counts still need network-wide presence data.
-
-Server-side per-ping sampling and a preview playback clock are separate inputs.
-A future preview must preserve document, selection, caret and undo during
-playback and seeking. Pause, reduced motion, hidden instances and disposal stop
-automatic playback; explicit deterministic sampling remains available. Scrolling
-distance and blink visibility belong to the simulation output, not silently
-inserted source characters or native protocol fields.
-
-## Export boundary
-
-An ordinary Java status export can contain the chosen frame at one supplied
-time. A future timeline exporter would need an explicit diagnostic when timing,
-scrolling or blinking cannot be represented by the selected target. It must not
-silently advertise CSS playback as native MOTD animation, invent status fields
-or promise client update frequency. A custom/modded target needs its own declared
-capability and independent evidence.
-
-This proposal does not change parsing, serialization, playback controls or the
-current status/document APIs. Implementation and broader client verification
-remain separate work. The opt-in playback proposal is tracked in
-[#84](https://github.com/groundsgg/library-motd/issues/84).
+The native timing investigation in #12 remains valid research evidence. The
+preview-only animation proposals [#11](https://github.com/groundsgg/library-motd/issues/11)
+and [#84](https://github.com/groundsgg/library-motd/issues/84) are not planned for
+the Vanilla-faithful viewer. Their timeline-model sketches are not exported
+APIs or pending viewer features. A custom/modded client would require a separate
+explicit target, contract and verification rather than changing Vanilla behavior.

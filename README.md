@@ -6,6 +6,8 @@
 
 A standalone Minecraft Java server-list editor and preview. Use the TypeScript core in Node, the DOM editor in any framework, or the optional React adapter. Grounds is one consumer; no Portal, account or server connection is required.
 
+The viewer targets Vanilla Java behavior for the selected client profile. MOTDs and servericons remain supplied status snapshots; client-owned obfuscation and panorama motion are separate effects. Preview-only MOTD animation timelines are outside its scope. Profile-specific evidence and approximations remain explicit; see [native behavior and limits](docs/animation-capabilities.md).
+
 ```sh
 npm install @groundsgg/motd
 ```
@@ -58,7 +60,7 @@ React: import `ServerListEditor` or `ServerListPreview` from `@groundsgg/motd/re
 - [Localization, catalogs and diagnostics](docs/localization.md)
 - [Opt-in gradient and alignment import assistance](docs/import-assistance.md)
 - [Static server icons and animation limits](docs/icon-animation.md)
-- [Native MOTD timing and playback proposal](docs/animation-capabilities.md)
+- [Vanilla viewer behavior and native MOTD timing](docs/animation-capabilities.md)
 - [Client profile and reference evidence](docs/profiles.md)
 - [Known limits](docs/limitations.md)
 
