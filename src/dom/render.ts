@@ -7,6 +7,7 @@ import type {
   TextStyle,
 } from "../core/model.js";
 import { layoutText } from "../core/layout/layout.js";
+import { regularGlyphAdvance } from "../core/layout/metrics.js";
 import {
   applyPixelInk,
   pixelInkOrigin,
@@ -134,7 +135,9 @@ export function renderText(
       );
     if (glyph.style.obfuscated && glyph.text !== " ") {
       span.dataset.obfuscated = "";
-      span.dataset.advance = String(glyph.advance - (glyph.style.bold ? 1 : 0));
+      span.dataset.advance = String(
+        regularGlyphAdvance(context.profile.font, glyph.text),
+      );
     }
     root.append(span);
   }

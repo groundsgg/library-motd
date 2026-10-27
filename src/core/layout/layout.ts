@@ -6,6 +6,7 @@ import type {
 } from "../model.js";
 import { flattenDisplayText } from "../text/display.js";
 import { diagnostic } from "../diagnostics.js";
+import { regularGlyphAdvance } from "./metrics.js";
 export function layoutText(
   text: TextDocument,
   options: LayoutOptions,
@@ -84,8 +85,6 @@ export function layoutText(
     );
   const advances = chars.map((c) => {
     if (c.text === "\n") return 0;
-    const normalized = c.text.normalize("NFC"),
-      font = options.profile.font;
     if (c.text === "\r" || !font.supported(c.text))
       diagnostics.push(
         diagnostic(
@@ -98,9 +97,7 @@ export function layoutText(
         ),
       );
     return (
-      (font.advances[c.text] ??
-        font.advances[normalized] ??
-        font.fallbackAdvance) + (c.style.bold ? font.boldOffset : 0)
+      regularGlyphAdvance(font, c.text) + (c.style.bold ? font.boldOffset : 0)
     );
   });
   let start = 0;
