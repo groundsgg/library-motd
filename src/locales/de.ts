@@ -1,6 +1,16 @@
 import type { englishLabels } from "./en.js";
 /** Complete German catalog; override individual keys for host terminology. */
 export const germanLabels = {
+  "diagnostic.fontBitmapDefinition":
+    "Ungültige oder unbrauchbare Bitmap-Fontgeometrie.",
+  "diagnostic.fontBitmapImage":
+    "Ungültiges decodiertes RGBA-Bild der Bitmap-Schrift.",
+  "diagnostic.fontBitmapOptions":
+    "Ungültige Limits zur Bitmap-Fontdecodierung.",
+  "diagnostic.fontBitmapLimit":
+    "Die Bitmap-Fontdecodierung hat {limit} überschritten.",
+  "diagnostic.fontBitmapDuplicates":
+    "Für {count} doppelte Bitmap-Zeichendeklarationen wurde die letzte Zelle verwendet.",
   "diagnostic.fontDefinition": "Ungültige Fontprovider-Definition.",
   "diagnostic.fontResourceId":
     "Ungültiger oder unsicherer lokaler Font-Ressourcenbezeichner.",

@@ -29,7 +29,7 @@ if (existsSync(join(directory, "node_modules/react")))
   throw Error("Core consumer unexpectedly installed React");
 writeFileSync(
   join(directory, "font-providers.test.mjs"),
-  readFileSync("tests/package/font-providers.test.mjs", "utf8").replace(
+  readFileSync("tests/package/font-providers.test.mjs", "utf8").replaceAll(
     "../../dist/fonts/index.js",
     "@groundsgg/motd/fonts",
   ),
