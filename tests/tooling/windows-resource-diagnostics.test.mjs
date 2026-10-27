@@ -11,8 +11,118 @@ import {
   sanitizeSnapshot,
 } from "../../tools/windows-resource-diagnostics.mjs";
 import WindowsResourceReporter from "../../tools/windows-resource-reporter.mjs";
+import * as resourceDiagnostics from "../../tools/windows-resource-diagnostics.mjs";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
+
+async function query(command, args) {
+  assert.equal(typeof resourceDiagnostics.querySnapshotCommand, "function");
+  return resourceDiagnostics.querySnapshotCommand(command, args);
+}
+
+test("bounded subprocess query retains sanitized numeric observations", async () => {
+  const snapshot = await query(process.execPath, [
+    "-e",
+    `process.stdout.write(JSON.stringify({memory:{availableBytes:123},secret:'private-token'}))`,
+  ]);
+  assert.equal(snapshot.memory.availableBytes, 123);
+  assert.deepEqual(snapshot.errors, []);
+  assert.doesNotMatch(JSON.stringify(snapshot), /private-token|secret/);
+});
+
+const commandFailures = [
+  [
+    "missing executable",
+    "snapshot-start",
+    "motd-nonexistent-command-8fb312",
+    [],
+  ],
+  [
+    "nonzero exit",
+    "snapshot-exit",
+    process.execPath,
+    ["-e", "process.stderr.write('private-token');process.exit(7)"],
+  ],
+  [
+    "stdout bound",
+    "snapshot-output-limit",
+    process.execPath,
+    ["-e", "process.stdout.write('private-token'.repeat(4096))"],
+  ],
+  [
+    "stderr bound",
+    "snapshot-output-limit",
+    process.execPath,
+    ["-e", "process.stderr.write('private-token'.repeat(4096))"],
+  ],
+  [
+    "invalid JSON",
+    "snapshot-parse",
+    process.execPath,
+    ["-e", "process.stdout.write('private-token')"],
+  ],
+  [
+    "null JSON root",
+    "snapshot-parse",
+    process.execPath,
+    ["-e", "process.stdout.write('null')"],
+  ],
+  [
+    "array JSON root",
+    "snapshot-parse",
+    process.execPath,
+    ["-e", "process.stdout.write('[]')"],
+  ],
+  [
+    "primitive JSON root",
+    "snapshot-parse",
+    process.execPath,
+    ["-e", "process.stdout.write('123')"],
+  ],
+  [
+    "8-second deadline",
+    "snapshot-timeout",
+    process.execPath,
+    ["-e", "process.stderr.write('private-token');setInterval(()=>{},1000)"],
+  ],
+];
+for (const [name, category, command, args] of commandFailures) {
+  test(
+    `bounded subprocess query classifies ${name} without leaking raw details`,
+    { timeout: 20000 },
+    async () => {
+      const snapshot = await query(command, args);
+      assert.deepEqual(snapshot.errors, [category]);
+      assert.equal(snapshot.memory.availableBytes, null);
+      assert.equal(snapshot.tcp.states.Listen, null);
+      assert.doesNotMatch(
+        JSON.stringify(snapshot),
+        /private-token|nonexistent-command|stderr|stdout|command|stack/,
+      );
+    },
+  );
+}
+
+test("JSONL retains only fixed command failure categories", (t) => {
+  const directory = temporaryDirectory(t);
+  const log = new DiagnosticLog(directory);
+  const categories = [
+    "snapshot-timeout",
+    "snapshot-output-limit",
+    "snapshot-start",
+    "snapshot-exit",
+    "snapshot-parse",
+  ];
+  log.sample("unexpected-failure", {
+    errors: [...categories, "private-token", ...categories],
+    stdout: "private-token",
+  });
+  log.finish("failed", 1);
+  const entries = readEntries(directory);
+  assert.deepEqual(entries[0].observation.errors, categories);
+  assert.doesNotMatch(JSON.stringify(entries), /private-token|stdout/);
+  assert.equal(entries.at(-1).status, "failed");
+});
 
 function temporaryDirectory(t) {
   const directory = mkdtempSync(path.join(tmpdir(), "motd-resource-test-"));
