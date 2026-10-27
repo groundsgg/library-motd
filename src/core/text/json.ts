@@ -58,6 +58,7 @@ export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
             ...first[0],
             children: [
               ...first[0].children,
+              ...first.slice(1),
               ...v.slice(1).flatMap((v) => visit(v, depth + 1)),
             ],
           },
