@@ -1,6 +1,7 @@
 import { diagnostic } from "../core/diagnostics.js";
 import type { DiagnosticMessage } from "../core/localization.js";
 import type { Diagnostic, Outcome } from "../core/model.js";
+import { fontByteView } from "./bytes.js";
 
 export interface BitmapFontDefinition {
   readonly height?: number;
@@ -123,14 +124,8 @@ export function decodeBitmapGlyphs(
     limit("maxDimension", width, "image.width");
     limit("maxDimension", imageHeight, "image.height");
     limit("maxPixels", width * imageHeight, "image");
-    const data = image.pixels;
-    if (
-      !ArrayBuffer.isView(data) ||
-      !["[object Uint8Array]", "[object Uint8ClampedArray]"].includes(
-        Object.prototype.toString.call(data),
-      ) ||
-      data.byteLength !== width * imageHeight * 4
-    )
+    const data = fontByteView(image.pixels, true);
+    if (!data || data.byteLength !== width * imageHeight * 4)
       fail("font-bitmap-image", "image.pixels", "diagnostic.fontBitmapImage");
     if (!object(definition)) invalid("definition");
     const height = definition.height === undefined ? 8 : definition.height,
@@ -181,11 +176,7 @@ export function decodeBitmapGlyphs(
       pixelHeight = Math.floor(imageHeight / grid.length);
     if (pixelWidth < 1 || pixelHeight < 1) invalid("definition.chars");
     // Own the source before metrics are measured; caller mutation cannot split ink and advances.
-    const pixels = new Uint8Array(
-      data.buffer,
-      data.byteOffset,
-      data.byteLength,
-    ).slice();
+    const pixels = data.slice();
     const scale = Math.fround(height / pixelHeight),
       oversample = Math.fround(1 / scale);
     const byCodePoint = new Map<number, BitmapGlyph>();

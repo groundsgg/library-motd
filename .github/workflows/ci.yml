@@ -72,7 +72,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - run: node --test tests/package/font-providers.test.mjs
+      - run: node --test tests/package/font-providers.test.mjs tests/package/font-byte-bounds.test.mjs
       - run: npx playwright install chromium
       - run: node --test tests/tooling/windows-resource-diagnostics.test.mjs
       - run: npx playwright test tests/browser/chromium-launch.spec.ts tests/browser/text-geometry.spec.ts tests/browser/native-font-reference.spec.ts tests/browser/obfuscation-motion.spec.ts tests/browser/native-italic.spec.ts tests/browser/native-italic-context.spec.ts tests/browser/pixel-ink.spec.ts tests/browser/selected-ink.spec.ts tests/browser/native-wrapping.spec.ts tests/browser/editor-input-bounds.spec.ts tests/browser/formatting-toggle.spec.ts tests/browser/rainbow-removal.spec.ts tests/browser/localization.spec.ts tests/browser/import-assistance.spec.ts tests/browser/static-icons.spec.ts tests/browser/panorama.spec.ts tests/browser/panorama-demo.spec.ts tests/browser/graphics-diagnostics.spec.ts tests/browser/protected-preview.spec.ts tests/browser/composition-native.spec.ts --project=chromium --workers=1

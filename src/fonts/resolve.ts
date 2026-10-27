@@ -1,6 +1,7 @@
 import { diagnostic } from "../core/diagnostics.js";
 import type { DiagnosticMessage } from "../core/localization.js";
 import type { Diagnostic, Outcome } from "../core/model.js";
+import { fontByteView } from "./bytes.js";
 import type {
   FontFlags,
   FontProvider,
@@ -204,18 +205,15 @@ export async function resolveFontProviders(
       cancelled(path);
       if (data === undefined)
         fail("font-resource-missing", path, "diagnostic.fontResourceMissing");
-      if (
-        !ArrayBuffer.isView(data) ||
-        Object.prototype.toString.call(data) !== "[object Uint8Array]"
-      )
-        fail("font-read", path, "diagnostic.fontRead");
-      limit("maxDefinitionBytes", data.byteLength, path);
-      limit("maxTotalBytes", totalBytes + data.byteLength, path);
-      totalBytes += data.byteLength;
+      const bytes = fontByteView(data);
+      if (!bytes) fail("font-read", path, "diagnostic.fontRead");
+      limit("maxDefinitionBytes", bytes.byteLength, path);
+      limit("maxTotalBytes", totalBytes + bytes.byteLength, path);
+      totalBytes += bytes.byteLength;
       let definition: unknown;
       try {
         definition = JSON.parse(
-          new TextDecoder("utf-8", { fatal: true }).decode(data),
+          new TextDecoder("utf-8", { fatal: true }).decode(bytes),
         );
       } catch {
         invalid(path);
