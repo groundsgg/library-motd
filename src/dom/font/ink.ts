@@ -10,6 +10,15 @@ export function usesBundledPixelFont(context: PreviewContext): boolean {
 }
 
 const caches = new WeakMap<Document, Map<string, string>>();
+const paintResources = new WeakMap<
+  Document,
+  {
+    canvas: HTMLCanvasElement;
+    context: CanvasRenderingContext2D;
+    colorContext: CanvasRenderingContext2D;
+    colors: Map<string, number[]>;
+  }
+>();
 /** Align the bitmap box to the native half-pixel-centered label origins. */
 export function pixelInkOrigin(element: HTMLElement): number {
   return element.closest(
@@ -49,21 +58,40 @@ export function pixelInkStyle(
   if (!cache) caches.set(doc, (cache = new Map()));
   const previous = cache.get(key);
   if (previous) return previous;
-  const canvas = doc.createElement("canvas");
+  let resources = paintResources.get(doc);
+  if (!resources) {
+    const canvas = doc.createElement("canvas");
+    const context = canvas.getContext("2d");
+    const colorCanvas = doc.createElement("canvas");
+    colorCanvas.width = colorCanvas.height = 1;
+    const colorContext = colorCanvas.getContext("2d", {
+      willReadFrequently: true,
+    });
+    if (!context || !colorContext) return undefined;
+    resources = { canvas, context, colorContext, colors: new Map() };
+    paintResources.set(doc, resources);
+  }
+  const { canvas, context: ctx, colorContext, colors } = resources;
   const size = Math.ceil(20 * scale);
   // U+3000 has a 16px advance (17px bold). Its decoration must fit too.
   const width = Math.ceil(Math.max(20, Math.min(64, advance + 5)) * scale);
-  canvas.width = width;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return undefined;
+  if (canvas.width !== width) canvas.width = width;
+  if (canvas.height !== size) canvas.height = size;
   const image = ctx.createImageData(width, size);
   const shadowImage = ctx.createImageData(width, size);
   // Align each bitmap box with its label/MOTD origin. Integral paint positions
   // avoid browsers rounding fractional background origins in opposite directions.
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, 1, 1);
-  const rgb = [...ctx.getImageData(0, 0, 1, 1).data.slice(0, 3)];
+  let rgb = colors.get(color);
+  if (!rgb) {
+    // Preserve fresh-canvas parsing: transparent/invalid colors cannot inherit ink.
+    colorContext.clearRect(0, 0, 1, 1);
+    colorContext.fillStyle = "#000000";
+    colorContext.fillStyle = color;
+    colorContext.fillRect(0, 0, 1, 1);
+    rgb = [...colorContext.getImageData(0, 0, 1, 1).data.slice(0, 3)];
+    if (colors.size >= 512) colors.delete(colors.keys().next().value!);
+    colors.set(color, rgb);
+  }
   const shade = rgb.map((value) => Math.floor(value / 4));
   const decorated = (x: number, y: number) =>
     x >= -0.5 &&

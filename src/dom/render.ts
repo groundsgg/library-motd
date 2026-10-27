@@ -132,7 +132,7 @@ export function renderText(
           root.classList.contains("mcp-motd"),
         pixelInkOrigin(root),
       );
-    if (glyph.style.obfuscated && glyph.text.trim()) {
+    if (glyph.style.obfuscated && glyph.text !== " ") {
       span.dataset.obfuscated = "";
       span.dataset.advance = String(glyph.advance - (glyph.style.bold ? 1 : 0));
     }
