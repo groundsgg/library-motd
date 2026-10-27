@@ -5,6 +5,7 @@ import {
   resolveFontProviders,
   decodeBitmapGlyphs,
   decodeUnihexGlyphs,
+  createFontGlyphSource,
 } from "../../dist/fonts/index.js";
 
 test("resolves a local font resource graph without browser globals or React", async () => {
@@ -113,4 +114,40 @@ test("bounds broad Unihex override processing in an isolated process", () => {
   );
   assert.equal(result.error, undefined);
   assert.equal(result.status, 0, result.stderr);
+});
+
+test("composes paired runtime sources from the installed font export without React or DOM", () => {
+  const bitmap = decodeBitmapGlyphs(
+    { height: 1, ascent: 1, chars: ["A"] },
+    { width: 1, height: 1, pixels: new Uint8Array([20, 40, 60, 128]) },
+  ).value;
+  const unihex = decodeUnihexGlyphs({}, [
+    new TextEncoder().encode(
+      "0041:" + "38".repeat(16) + "\n01F600:" + "00".repeat(16),
+    ),
+  ]).value;
+  const result = createFontGlyphSource([
+    { type: "space", advances: { " ": 4 } },
+    { type: "bitmap", glyphs: bitmap },
+    { type: "unihex", glyphs: unihex },
+  ]);
+  assert.deepEqual(result.diagnostics, []);
+  assert.deepEqual(result.value.codePoints, [32, 65, 128512]);
+  assert.equal(result.value.glyphFor(32).bitmap, null);
+  const a = result.value.glyphFor(65);
+  assert.equal(a.advance, 2);
+  assert.equal(a.boldOffset, 1);
+  const first = a.bitmap.pixels();
+  assert.deepEqual(first.diagnostics, []);
+  assert.deepEqual([...first.value], [20, 40, 60, 128]);
+  first.value.fill(0);
+  assert.deepEqual([...a.bitmap.pixels().value], [20, 40, 60, 128]);
+  const supplementary = result.value.glyphFor(128512);
+  assert.equal(supplementary.advance, 5);
+  assert.equal(supplementary.boldOffset, 0.5);
+  assert.equal(supplementary.shadowOffset, 0.5);
+  assert.equal(supplementary.bitmap.oversample, 2);
+  assert.equal(result.value.glyphFor(66), undefined);
+  assert.equal(typeof globalThis.document, "undefined");
+  assert.equal(typeof globalThis.window, "undefined");
 });
