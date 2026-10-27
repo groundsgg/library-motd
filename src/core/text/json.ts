@@ -3,6 +3,7 @@ import { COLORS } from "./minimessage.js";
 export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
   let serial = 0;
   const id = () => `j${serial++}`;
+  const protectedArrays = new WeakSet<JsonValue[]>();
   // Only visible literal contents are inspected. Event payloads and contextual
   // component types remain inert, while the full subtree stays in `raw`.
   const fallback = (v: JsonValue, depth: number): string => {
@@ -25,7 +26,31 @@ export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
     if (typeof v === "string") return [{ id: id(), type: "text", value: v }];
     if (Array.isArray(v)) {
       if (!v.length) return [];
-      const first = visit(v[0]!, depth + 1);
+      const firstValue = v[0]!;
+      const first = visit(firstValue, depth + 1);
+      if (first[0]?.type === "opaque") {
+        // Later entries depend on the first component's complete native style,
+        // including metadata we cannot represent in an editable group. Keep
+        // this boundary intact for display and subsequent same-format export.
+        const rest = v.slice(1);
+        const tail = rest.map((child) => fallback(child, depth + 1)).join("");
+        // Tolerated empty arrays can flatten the first value to several nodes.
+        // Reuse raw only when the atom owns that complete source boundary.
+        const reuse =
+          !Array.isArray(firstValue) || protectedArrays.has(firstValue);
+        const raw = reuse ? first[0].raw : JSON.stringify(firstValue);
+        const visible = reuse
+          ? (first[0].fallback ?? first[0].raw)
+          : fallback(firstValue, depth + 1);
+        protectedArrays.add(v);
+        return [
+          {
+            ...first[0],
+            raw: `[${raw}${rest.length ? "," + JSON.stringify(rest).slice(1, -1) : ""}]`,
+            fallback: visible + tail,
+          },
+        ];
+      }
       // Component-array siblings inherit the first component's style.
       if (first[0]?.type === "group")
         return [

@@ -24,3 +24,11 @@ The fallback walk obeys the parsing depth limit. Layout emits the localized
 The full raw JSON stays atomic and is preserved in same-format output; other
 formats still require explicit loss reduction. The source examples and scope
 are recorded in the repository's [protected-preview design](https://github.com/groundsgg/library-motd/blob/main/docs/superpowers/specs/2026-10-25-protected-literal-previews-design.md).
+
+If the first entry in a JSON component array is protected, its complete native
+style and metadata can affect every following entry. The parser keeps that
+dependent array as one protected atom, including nested arrays. Known literal
+styles render across the boundary, and same-format export preserves the whole
+array after surrounding text edits. Use source editing for dependent entries;
+unrelated surrounding components remain inline editable. Older persisted trees
+that already lost this boundary need their original JSON reimported.

@@ -20,6 +20,80 @@ const protectedComponent = {
     },
   ],
 };
+
+test("protected-first arrays retain inherited paint and source through neighboring edit and undo", async ({
+  page,
+}) => {
+  const dependent = [
+    {
+      text: "A",
+      color: "red",
+      bold: true,
+      insertion: "preserve inherited metadata",
+    },
+    { text: "B", bold: false },
+    "C",
+  ];
+  await page.evaluate((dependent) => {
+    window.editor.execute({
+      type: "replace-source",
+      format: "json",
+      source: JSON.stringify({ text: "", extra: [dependent, " tail"] }),
+    });
+    const saved = window.api.readDocument(
+      window.api.writeDocument(window.doc),
+    ).value;
+    window.setEditorOptions({ document: saved });
+  }, dependent);
+  const input = page.getByRole("textbox", {
+    name: "MOTD inline editor",
+    exact: true,
+  });
+  await expect(input).toHaveText("ABC tail");
+  const token = input.locator(".mce-token");
+  await expect(token).toHaveCount(1);
+  await expect(token).toHaveText("ABC");
+  await expect(token).toHaveAttribute("contenteditable", "false");
+  const paint = (elements: Element[]) =>
+    elements.map((element) => ({
+      text: element.textContent,
+      color: getComputedStyle(element).color,
+      bold: getComputedStyle(element).fontWeight,
+      width: element.getBoundingClientRect().width,
+    }));
+  const editor = await token.locator(".mce-effect-glyph").evaluateAll(paint);
+  const viewer = (
+    await page.locator("#preview .mcp-motd .mcp-glyph").evaluateAll(paint)
+  ).slice(0, 3);
+  expect(editor).toEqual(viewer);
+  expect(
+    editor.map(({ text, color, bold }) => ({ text, color, bold })),
+  ).toEqual([
+    { text: "A", color: "rgb(255, 85, 85)", bold: "700" },
+    { text: "B", color: "rgb(255, 85, 85)", bold: "400" },
+    { text: "C", color: "rgb(255, 85, 85)", bold: "700" },
+  ]);
+  await expect(token.locator("a, img, script")).toHaveCount(0);
+  await placeCaretAtTextEnd(input);
+  await page.keyboard.type("!");
+  await expect(input).toHaveText("ABC tail!");
+  const exported = await page.evaluate(
+    () =>
+      window.api.serializeText(window.doc.motd.text, { format: "json" }).value,
+  );
+  expect(JSON.parse(exported!).extra[0].extra[0]).toEqual(dependent);
+  await input.press("Control+z");
+  await expect(input).toHaveText("ABC tail");
+  const undone = await page.evaluate(
+    () =>
+      window.api.serializeText(window.doc.motd.text, { format: "json" }).value,
+  );
+  expect(JSON.parse(undone!).extra[0]).toEqual(dependent);
+  await expect(input.locator(".mce-token")).toHaveText("ABC");
+  await expect(page.locator("#editor .mce-diagnostics")).toContainText(
+    "Protected component is shown approximately",
+  );
+});
 test.beforeEach(async ({ page }) => {
   await page.goto("/tests/browser/host.html");
   await page.waitForFunction(
