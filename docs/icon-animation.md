@@ -46,9 +46,11 @@ resource request, animation timer or reduced-motion exception is introduced:
 ordinary status icons remain static with either animation preference.
 
 Generic URLs supplied through host presentation assets are separate from status
-favicon data. They do not establish native icon-animation support; the host owns
-their resources and motion behavior. Modded clients or protocol extensions would
-need a separate capability/model and verification before animated support.
+favicon data. Hosts must supply static icon resources for a Vanilla-faithful
+result; an animated custom URL does not establish native icon-animation support
+and falls outside that contract. The host owns those resources. Modded clients
+or protocol extensions would need a separate capability/model and verification
+before animated support.
 
 ## Native evidence and limits
 

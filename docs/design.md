@@ -13,6 +13,7 @@ Der abgestimmte Umfang umfasst MOTD, Protokollhinweis, Servericon, Spieleranzeig
 - Vorschau, visuelle Bearbeitung und Quelltextmodus verwenden dasselbe Dokumentmodell.
 - Darstellung und Export verwenden dieselben Schriftmetriken und Layoutregeln.
 - Funktionen, Werkzeugleisten, Beschriftungen und Gestaltung sind konfigurierbar.
+- Der Viewer bildet das Verhalten des gewählten Vanilla-Java-Clientprofils nach. Nicht native MOTD-Animationen werden auch nicht als optionale Vorschau-Simulation ergänzt.
 - Fremde Formatinformationen bleiben beim Import erhalten, auch wenn der visuelle Editor sie nicht bearbeiten kann.
 - Die erste Oberfläche konzentriert sich auf die Java-Edition. Der Textkern bleibt auch für spätere Chat-, Tablist- und Kicknachrichten verwendbar. Bedrock-Darstellung ist eine spätere Erweiterung mit eigenen Profilen.
 
@@ -62,7 +63,7 @@ Du kannst direkt in den beiden MOTD-Zeilen schreiben, Text markieren und über e
 - Stabile Auswahl beim Öffnen der Werkzeugleiste und beim Anwenden einer Formatierung.
 - Gemeinsam markierbare Textbereiche über Formatgrenzen hinweg.
 
-Textauswahl wird über stabile Dokumentpositionen abgebildet. Animationen dürfen weder den ursprünglichen Text noch Cursorpositionen verändern. Sichtbare Grapheme und die Regeln des ausgewählten Minecraft-Schriftprofils bestimmen Darstellung und Eingabeverhalten; UTF-16-Längen werden nicht als universelle Zeichenbreiten verwendet.
+Textauswahl wird über stabile Dokumentpositionen abgebildet. Nativ unterstützte Bewegung, etwa Obfuscation, darf weder den ursprünglichen Text noch Cursorpositionen verändern. Sichtbare Grapheme und die Regeln des ausgewählten Minecraft-Schriftprofils bestimmen Darstellung und Eingabeverhalten; UTF-16-Längen werden nicht als universelle Zeichenbreiten verwendet.
 
 Die visuelle Oberfläche begrenzt die MOTD auf zwei sichtbare Zeilen. Importierter längerer Inhalt bleibt im Quelltext erhalten und bekommt eine Diagnose für die ausgewählte Serverlisten-Darstellung. Die Bibliothek entfernt keine überzähligen Zeilen ohne ausdrückliche Bearbeitung.
 
