@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "clientVersion": "26.3",
+  "clientSha1": "e877b6a07acd633fb3bb475002175cec036e7b87",
+  "classSha256": {
+    "UnihexProvider": "5ad38448ffba35878037da852132a05b31ec1e672731a621a2730c5bde1c9e7f",
+    "UnihexProvider$Definition": "3500a743dc7884c0545bb84da54f39a07af7789b1f2c9b6f90343aa6fa893e85",
+    "UnihexProvider$LineData": "3a52b3f3c1c4494f882c885798a1634ae66b5b7d86837187dcc6f4ffe0fed589",
+    "UnihexProvider$Glyph": "23b474f643e26fb8468ba7c5a7e957655a3d2bc05a5d785c7928b3a00c110107",
+    "UnihexProvider$Glyph$1": "c56e1a2679cce0a1dc59b1c30796419cfafb6a69907174af7618885a76d490fe",
+    "UnihexProvider$Glyph$2": "9b88fb6a2cf39df50f5121265e65125a41debd99cbd17b43ac092c66a2bc1a43"
+  },
+  "method": "Executed official Definition.loadData on an in-memory ZIP containing original owned.hex data, glyph.info/bake with an observational stitcher, and CPU unpackBitsToBytes. No GPU upload or rendered client capture.",
+  "files": [
+    "0041:38383838383838383838383838383838\n0042:00000000000000000000000000000000\n01F600:00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+  ],
+  "inputSha256": "60fe6d1ac9bf3060fa0aa76e14de43f6d5e3dc679775e83c493b67fce536b70f",
+  "cases": [
+    {
+      "id": "default",
+      "definition": {},
+      "glyphs": [
+        {
+          "metrics": {
+            "codePoint": 65,
+            "advance": 2.0,
+            "boldOffset": 0.5,
+            "shadowOffset": 0.5,
+            "left": 2.0,
+            "right": 4.0,
+            "pixelWidth": 3.0,
+            "pixelHeight": 16.0,
+            "bearingTop": 7.0,
+            "oversample": 2.0
+          },
+          "rgbaSha256": "8f62c344eff1568474fb693b8c18526629db443b9653a84264189c97693605de"
+        },
+        {
+          "metrics": {
+            "codePoint": 66,
+            "advance": 5.0,
+            "boldOffset": 0.5,
+            "shadowOffset": 0.5,
+            "left": 0.0,
+            "right": 8.0,
+            "pixelWidth": 9.0,
+            "pixelHeight": 16.0,
+            "bearingTop": 7.0,
+            "oversample": 2.0
+          },
+          "rgbaSha256": "1a0295f4bf5986c5f74eca9153a6a4cb10b073a01a76ba4a457fd862c78966a4"
+        },
+        {
+          "metrics": {
+            "codePoint": 128512,
+            "advance": 17.0,
+            "boldOffset": 0.5,
+            "shadowOffset": 0.5,
+            "left": 0.0,
+            "right": 32.0,
+            "pixelWidth": 33.0,
+            "pixelHeight": 16.0,
+            "bearingTop": 7.0,
+            "oversample": 2.0
+          },
+          "rgbaSha256": "80b67b115f8e28f3b67fddcd4cd1daac24a054603d1dd0cb13793a299a5dadfc"
+        }
+      ]
+    },
+    {
+      "id": "override",
+      "definition": {
+        "sizeOverrides": [
+          {
+            "from": 65,
+            "to": 66,
+            "left": 0,
+            "right": 7
+          },
+          {
+            "from": 65,
+            "to": 66,
+            "left": 0,
+            "right": 15
+          }
+        ]
+      },
+      "glyphs": [
+        {
+          "metrics": {
+            "codePoint": 65,
+            "advance": 5.0,
+            "boldOffset": 0.5,
+            "shadowOffset": 0.5,
+            "left": 0.0,
+            "right": 7.0,
+            "pixelWidth": 8.0,
+            "pixelHeight": 16.0,
+            "bearingTop": 7.0,
+            "oversample": 2.0
+          },
+          "rgbaSha256": "395ad8514c1b4f8d74b4e28a3f9a5bc8f7ba0b395edf986a3be1f0dfe0b51cdc"
+        },
+        {
+          "metrics": {
+            "codePoint": 66,
+            "advance": 5.0,
+            "boldOffset": 0.5,
+            "shadowOffset": 0.5,
+            "left": 0.0,
+            "right": 7.0,
+            "pixelWidth": 8.0,
+            "pixelHeight": 16.0,
+            "bearingTop": 7.0,
+            "oversample": 2.0
+          },
+          "rgbaSha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+        },
+        {
+          "metrics": {
+            "codePoint": 128512,
+            "advance": 17.0,
+            "boldOffset": 0.5,
+            "shadowOffset": 0.5,
+            "left": 0.0,
+            "right": 32.0,
+            "pixelWidth": 33.0,
+            "pixelHeight": 16.0,
+            "bearingTop": 7.0,
+            "oversample": 2.0
+          },
+          "rgbaSha256": "80b67b115f8e28f3b67fddcd4cd1daac24a054603d1dd0cb13793a299a5dadfc"
+        }
+      ]
+    }
+  ],
+  "rejected": [
+    {
+      "source": "1f600:38383838383838383838383838383838\n",
+      "reason": "Native decoder accepts uppercase hexadecimal digits only."
+    }
+  ]
+}

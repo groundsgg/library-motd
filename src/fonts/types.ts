@@ -27,6 +27,12 @@ interface Source {
   readonly fontId: string;
   readonly providerIndex: number;
 }
+export interface UnihexSizeOverride {
+  readonly from: number;
+  readonly to: number;
+  readonly left: number;
+  readonly right: number;
+}
 export type FontProvider = Source &
   (
     | {
@@ -45,12 +51,7 @@ export type FontProvider = Source &
         readonly type: "unihex";
         readonly hexFile: string;
         readonly resourcePath: string;
-        readonly sizeOverrides: readonly {
-          readonly from: number;
-          readonly to: number;
-          readonly left: number;
-          readonly right: number;
-        }[];
+        readonly sizeOverrides: readonly UnihexSizeOverride[];
       }
   );
 /** Metadata only: this is not a renderable FontProfile or a decoded font. */

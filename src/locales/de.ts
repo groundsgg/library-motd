@@ -1,6 +1,17 @@
 import type { englishLabels } from "./en.js";
 /** Complete German catalog; override individual keys for host terminology. */
 export const germanLabels = {
+  "diagnostic.fontUnihexDefinition":
+    "Ungültige oder unbrauchbare Unihex-Bereichsdefinition.",
+  "diagnostic.fontUnihexFormat":
+    "Ungültige oder nicht unterstützte Unihex-Zeilensyntax.",
+  "diagnostic.fontUnihexInput":
+    "Explizit bereitgestellte Unihex-Bytearrays werden erwartet.",
+  "diagnostic.fontUnihexOptions": "Ungültige Limits zur Unihex-Decodierung.",
+  "diagnostic.fontUnihexLimit":
+    "Die Unihex-Decodierung hat {limit} überschritten.",
+  "diagnostic.fontUnihexDuplicates":
+    "Für {count} doppelte Unihex-Zeichendeklarationen wurde die letzte Zeile verwendet.",
   "diagnostic.fontBitmapDefinition":
     "Ungültige oder unbrauchbare Bitmap-Fontgeometrie.",
   "diagnostic.fontBitmapImage":
