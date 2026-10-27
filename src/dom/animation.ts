@@ -9,13 +9,9 @@ export function animateObfuscation(
   context: PreviewContext,
   enabled: boolean,
 ): () => void {
-  if (
-    !enabled ||
-    root.ownerDocument.defaultView?.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches
-  )
-    return () => {};
+  const view = root.ownerDocument.defaultView;
+  if (!enabled || !view) return () => {};
+  const reducedMotion = view.matchMedia("(prefers-reduced-motion: reduce)");
   const glyphs = [
     ...root.querySelectorAll<HTMLElement>("[data-obfuscated]"),
   ].map((span) => ({
@@ -33,17 +29,22 @@ export function animateObfuscation(
   const pixelFont = usesBundledPixelFont(context);
   const groups = new Map<number, string[]>();
   for (const [text, width] of Object.entries(context.profile.font.advances))
-    if (text.trim() && text.length === 1) {
-      const group = groups.get(width) ?? [];
+    if ([...text].length === 1) {
+      const advance = Math.ceil(width);
+      const group = groups.get(advance) ?? [];
       group.push(text);
-      groups.set(width, group);
+      groups.set(advance, group);
     }
-  const interval = setInterval(() => {
+  let frameId: number | undefined,
+    disposed = false;
+  function paint() {
+    frameId = undefined;
+    if (disposed || reducedMotion.matches) return;
     for (const { span, style } of glyphs) {
-      const candidates = groups.get(Number(span.dataset.advance));
+      const candidates = groups.get(Math.ceil(Number(span.dataset.advance)));
       if (candidates?.length) {
         span.textContent =
-          candidates[Math.floor(Math.random() * candidates.length)]!;
+          candidates[Math.floor(view!.Math.random() * candidates.length)]!;
         if (pixelFont)
           applyPixelInk(
             span,
@@ -58,6 +59,19 @@ export function animateObfuscation(
           );
       }
     }
-  }, 80);
-  return () => clearInterval(interval);
+    frameId = view!.requestAnimationFrame(paint);
+  }
+  function sync() {
+    if (frameId !== undefined) view!.cancelAnimationFrame(frameId);
+    frameId = undefined;
+    if (!disposed && !reducedMotion.matches)
+      frameId = view!.requestAnimationFrame(paint);
+  }
+  reducedMotion.addEventListener("change", sync);
+  sync();
+  return () => {
+    disposed = true;
+    sync();
+    reducedMotion.removeEventListener("change", sync);
+  };
 }

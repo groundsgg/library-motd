@@ -4,6 +4,7 @@ Read the maintained [verification guide](https://docs.grounds.gg/reference/devel
 
 - `status-server.py` serves a supplied status response on localhost and does not accept game logins.
 - `CapturePanorama.java` is a capture helper for a dedicated Linux Xvfb display.
+- `CaptureObfuscation.java` records timestamped MOTD crops and foreground-mask hashes on an owned Xvfb `:96`; raw PNGs stay outside the checkout.
 - `panorama-calibration.mjs` compares the original calibration faces.
 - `status-icon-probe.c` exercises the decoder used in the favicon study.
 
