@@ -340,8 +340,14 @@ test("disabled context animations pause the panorama clock", async ({
 test("pause and speed changes preserve accumulated panorama phase", async ({
   page,
 }) => {
-  await page.clock.install();
+  await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
   await mount(page);
+  await expect(page.locator("#preview .mcp-background")).toHaveAttribute(
+    "data-panorama-state",
+    "ready",
+  );
+  // Stop host scheduling from adding time between explicit runFor steps.
+  await page.clock.pauseAt(new Date("2026-01-01T00:01:00Z"));
   const cube = page.locator(".mcp-panorama-canvas");
   await expect(cube).toBeAttached();
   const update = (paused: boolean, speed: number) =>
