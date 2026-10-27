@@ -1,6 +1,19 @@
 import type { englishLabels } from "./en.js";
 /** Complete German catalog; override individual keys for host terminology. */
 export const germanLabels = {
+  "diagnostic.fontDefinition": "Ungültige Fontprovider-Definition.",
+  "diagnostic.fontResourceId":
+    "Ungültiger oder unsicherer lokaler Font-Ressourcenbezeichner.",
+  "diagnostic.fontOptions": "Ungültige Optionen zur Fontauflösung.",
+  "diagnostic.fontCancelled": "Die Fontauflösung wurde abgebrochen.",
+  "diagnostic.fontLimit": "Die Fontauflösung hat {limit} überschritten.",
+  "diagnostic.fontRead":
+    "Der Host konnte die Fontdefinition nicht als Bytes lesen.",
+  "diagnostic.fontResourceMissing":
+    "Eine benötigte lokale Fontdefinition fehlt.",
+  "diagnostic.fontReferenceCycle": "Fontreferenzen enthalten einen Zyklus.",
+  "diagnostic.fontProviderUnsupported":
+    "Dieser aktive Fontprovider-Typ wird nicht unterstützt.",
   comparisonProtocol: "Protokoll",
   comparisonScale: "GUI-Skalierung",
   comparisonBackground: "Hintergrund",

@@ -1,5 +1,18 @@
 /** Default standalone UI and diagnostic messages. */
 export const englishLabels = {
+  "diagnostic.fontDefinition": "Invalid font provider definition.",
+  "diagnostic.fontResourceId":
+    "Invalid or unsafe local font resource identifier.",
+  "diagnostic.fontOptions": "Invalid font resolver options.",
+  "diagnostic.fontCancelled": "Font resolution was cancelled.",
+  "diagnostic.fontLimit": "Font resolution exceeded {limit}.",
+  "diagnostic.fontRead":
+    "The host could not read the font definition as bytes.",
+  "diagnostic.fontResourceMissing":
+    "A required local font definition is missing.",
+  "diagnostic.fontReferenceCycle": "Font references contain a cycle.",
+  "diagnostic.fontProviderUnsupported":
+    "This active font provider type is not supported.",
   comparisonProtocol: "Protocol",
   comparisonScale: "GUI scale",
   comparisonBackground: "Background",
