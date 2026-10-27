@@ -23,6 +23,11 @@ const states = [
 const errorCategories = [
   "unsupported-platform",
   "snapshot-query",
+  "snapshot-timeout",
+  "snapshot-output-limit",
+  "snapshot-start",
+  "snapshot-exit",
+  "snapshot-parse",
   "tcp-query",
   "memory-query",
   "process-query",
@@ -73,36 +78,59 @@ export function sanitizeSnapshot(value) {
   };
 }
 
+/** Run the collector subprocess under the same fixed deadline and output budget. */
+export async function querySnapshotCommand(command, args) {
+  let stdout;
+  try {
+    ({ stdout } = await execute(command, args, {
+      timeout: 8000,
+      maxBuffer: 16 * 1024,
+      windowsHide: true,
+    }));
+  } catch (error) {
+    // execFile reports timeouts as killed children, not necessarily ETIMEDOUT.
+    // Output-limit errors take precedence because they can also kill the child.
+    const category =
+      error?.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER"
+        ? "snapshot-output-limit"
+        : error?.killed === true && error?.signal === "SIGTERM"
+          ? "snapshot-timeout"
+          : typeof error?.syscall === "string" &&
+              error.syscall.startsWith("spawn")
+            ? "snapshot-start"
+            : typeof error?.code === "number" ||
+                typeof error?.signal === "string"
+              ? "snapshot-exit"
+              : "snapshot-query";
+    return sanitizeSnapshot({ errors: [category] });
+  }
+  try {
+    const value = JSON.parse(stdout);
+    if (value === null || typeof value !== "object" || Array.isArray(value))
+      return sanitizeSnapshot({ errors: ["snapshot-parse"] });
+    return sanitizeSnapshot(value);
+  } catch {
+    return sanitizeSnapshot({ errors: ["snapshot-parse"] });
+  }
+}
+
 export async function collectSnapshot(includeRanges = false) {
   if (process.platform !== "win32" || process.env.GITHUB_ACTIONS !== "true") {
     return sanitizeSnapshot({ errors: ["unsupported-platform"] });
   }
-  try {
-    const script = fileURLToPath(
-      new URL("./windows-resource-snapshot.ps1", import.meta.url),
-    );
-    const { stdout } = await execute(
-      "pwsh",
-      [
-        "-NoLogo",
-        "-NoProfile",
-        "-NonInteractive",
-        "-File",
-        script,
-        "-TestRunnerPid",
-        String(process.pid),
-        ...(includeRanges ? ["-IncludeRanges"] : []),
-      ],
-      {
-        timeout: 8000,
-        maxBuffer: 16 * 1024,
-        windowsHide: true,
-      },
-    );
-    return sanitizeSnapshot(JSON.parse(stdout));
-  } catch {
-    return sanitizeSnapshot({ errors: ["snapshot-query"] });
-  }
+  const script = fileURLToPath(
+    new URL("./windows-resource-snapshot.ps1", import.meta.url),
+  );
+  return querySnapshotCommand("pwsh", [
+    "-NoLogo",
+    "-NoProfile",
+    "-NonInteractive",
+    "-File",
+    script,
+    "-TestRunnerPid",
+    String(process.pid),
+    ...(includeRanges ? ["-IncludeRanges"] : []),
+  ]);
 }
 
 export class DiagnosticLog {
