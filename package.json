@@ -1,6 +1,6 @@
 {
   "name": "@groundsgg/motd",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Standalone Minecraft Java server-list editor and preview with inline editing, MiniMessage, DOM and React adapters.",
   "type": "module",
   "license": "MIT",
