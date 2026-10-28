@@ -91,6 +91,7 @@ export function evaluateStatus(
             layout: {
               profile: context.motdLayout?.profile ?? java1211Profile,
               width: context.motdLayout?.width ?? 271,
+              fontSource: context.motdLayout?.fontSource,
               maxLines: 2,
               alignments: document.motd.alignments,
             },

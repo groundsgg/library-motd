@@ -1,0 +1,107 @@
+import { expect, it } from "vitest";
+import {
+  createFontGlyphSource,
+  decodeBitmapGlyphs,
+} from "../../src/fonts/index.js";
+import { rasterizeRuntimeGlyph } from "../../src/dom/font/runtime-raster.js";
+
+// A 7px design height, ascent 7, gives the original one-pixel cell a 7x7 quad.
+const sample = (rgba: number[]) =>
+  createFontGlyphSource([
+    {
+      type: "bitmap",
+      glyphs: decodeBitmapGlyphs(
+        { height: 7, ascent: 7, chars: ["A"] },
+        { width: 1, height: 1, pixels: new Uint8Array(rgba) },
+      ).value!,
+    },
+  ]).value!.glyphFor(65)!;
+const clip = { left: 0, top: 0, right: 20, bottom: 20 };
+
+it("applies the audited text alpha threshold and tint without changing source bytes", () => {
+  for (const [alpha, expected] of [
+    [25, 0],
+    [26, 26],
+    [128, 128],
+    [255, 255],
+  ]) {
+    const g = sample([200, 100, 50, alpha]),
+      pixels = g.bitmap!.pixels().value!;
+    const result = rasterizeRuntimeGlyph(
+      g,
+      pixels,
+      {},
+      0,
+      0,
+      g.advance,
+      "#ff8000",
+      false,
+      1,
+      clip,
+    );
+    expect(result.diagnostics).toEqual([]);
+    expect([...result.value!.pixels.subarray(0, 4)]).toEqual(
+      expected ? [200, 50, 0, expected] : [0, 0, 0, 0],
+    );
+    expect([...pixels]).toEqual([200, 100, 50, alpha]);
+  }
+});
+
+it("bounds oversized logical quads by the viewport without stretching the texture", () => {
+  const g = sample([255, 255, 255, 255]);
+  const result = rasterizeRuntimeGlyph(
+    g,
+    g.bitmap!.pixels().value!,
+    {},
+    0,
+    0,
+    g.advance,
+    "#ffffff",
+    false,
+    2,
+    { left: 0, top: 0, right: 2, bottom: 3 },
+  );
+  expect(result.value).toMatchObject({ width: 4, height: 6, left: 0, top: 0 });
+  expect(
+    [...result.value!.pixels]
+      .filter((_, i) => i % 4 === 3)
+      .every((a) => a === 255),
+  ).toBe(true);
+});
+
+it("rejects work beyond the physical paint budget before allocation", () => {
+  const g = sample([255, 255, 255, 255]);
+  const result = rasterizeRuntimeGlyph(
+    g,
+    g.bitmap!.pixels().value!,
+    {},
+    0,
+    0,
+    g.advance,
+    "#ffffff",
+    false,
+    1e8,
+    clip,
+  );
+  expect(result.value).toBeNull();
+  expect(result.diagnostics[0]?.code).toBe("font-runtime-limit");
+});
+
+it("honours the remaining viewer-wide pixel budget before allocating a frame", () => {
+  const g = sample([255, 255, 255, 255]);
+  const result = rasterizeRuntimeGlyph(
+    g,
+    g.bitmap!.pixels().value!,
+    {},
+    0,
+    0,
+    g.advance,
+    "#ffffff",
+    false,
+    1,
+    clip,
+    0,
+  );
+  expect(result.value).toBeNull();
+  expect(result.diagnostics[0]?.code).toBe("font-runtime-limit");
+});

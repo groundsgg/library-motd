@@ -8,6 +8,7 @@ import {
   ServerListPreview,
 } from "../../dist/react/index.js";
 import { createDocument } from "../../dist/index.js";
+import { createFontGlyphSource } from "../../dist/fonts/index.js";
 test("React adapter imports and renders on the server without DOM", () => {
   assert.equal(
     renderToString(
@@ -15,6 +16,22 @@ test("React adapter imports and renders on the server without DOM", () => {
         document: createDocument(),
         context: {},
         onChange() {},
+      }),
+    ),
+    "<div></div>",
+  );
+});
+
+test("React viewer accepts an explicit runtime source during SSR without materializing it", () => {
+  const motdFontSource = createFontGlyphSource([
+    { type: "space", advances: { A: 3 } },
+  ]).value;
+  assert.equal(
+    renderToString(
+      createElement(ServerListPreview, {
+        document: createDocument(),
+        context: {},
+        motdFontSource,
       }),
     ),
     "<div></div>",

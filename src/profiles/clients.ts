@@ -60,6 +60,7 @@ export const java263Profile: ClientProfile = {
   id: "java-26.3",
   clientVersion: "26.3",
   protocol: 777,
+  font: { ...java261Profile.font, runtimeGlyphGeometry: "java-26.3" },
 };
 export const clientProfiles: readonly ClientProfile[] = [
   java1204Profile,

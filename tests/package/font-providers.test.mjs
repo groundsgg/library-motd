@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { spawnSync } from "node:child_process";
+import { layoutText, parseText, java263Profile } from "../../dist/index.js";
 import {
   resolveFontProviders,
   decodeBitmapGlyphs,
@@ -167,4 +168,38 @@ test("composes paired runtime sources from the installed font export without Rea
   assert.equal(result.value.glyphFor(66), undefined);
   assert.equal(typeof globalThis.document, "undefined");
   assert.equal(typeof globalThis.window, "undefined");
+});
+
+test("uses paired runtime metrics in installed Node layout without loading raster data", () => {
+  const glyphs = decodeBitmapGlyphs(
+    { height: 1, ascent: 1, chars: ["A"] },
+    { width: 1, height: 1, pixels: new Uint8Array([255, 255, 255, 255]) },
+  ).value;
+  let reads = 0;
+  const fontSource = createFontGlyphSource([
+    {
+      type: "bitmap",
+      glyphs: {
+        ...glyphs,
+        pixelsFor() {
+          reads++;
+          throw Error("layout must not paint");
+        },
+      },
+    },
+  ]).value;
+  const result = layoutText(parseText("<b>AA", "minimessage").value, {
+    profile: java263Profile,
+    width: 100,
+    fontSource,
+  });
+  assert.deepEqual(
+    result.glyphs.map((g) => [g.advance, g.x]),
+    [
+      [3, 0],
+      [3, 3],
+    ],
+  );
+  assert.equal(reads, 0);
+  assert.deepEqual(result.diagnostics, []);
 });

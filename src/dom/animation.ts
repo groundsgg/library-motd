@@ -8,6 +8,7 @@ export function animateObfuscation(
   root: HTMLElement,
   context: PreviewContext,
   enabled: boolean,
+  runtimeMotd?: () => void,
 ): () => void {
   const view = root.ownerDocument.defaultView;
   if (!enabled || !view) return () => {};
@@ -25,7 +26,7 @@ export function animateObfuscation(
       strikethrough: span.hasAttribute("data-strikethrough"),
     },
   }));
-  if (!glyphs.length) return () => {};
+  if (!glyphs.length && !runtimeMotd) return () => {};
   const pixelFont = usesBundledPixelFont(context);
   const groups = new Map<number, string[]>();
   for (const [text, width] of Object.entries(context.profile.font.advances))
@@ -57,6 +58,7 @@ export function animateObfuscation(
     );
     if (tick > lastTick) {
       lastTick = tick;
+      runtimeMotd?.();
       for (const { span, style } of glyphs) {
         const candidates = groups.get(Math.ceil(Number(span.dataset.advance)));
         if (candidates?.length) {

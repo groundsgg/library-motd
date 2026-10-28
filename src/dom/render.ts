@@ -14,10 +14,14 @@ import {
   usesBundledPixelFont,
 } from "./font/ink.js";
 import { appendLabelText, type LabelText } from "./localization.js";
+import type { FontGlyphSource } from "../fonts/source.js";
+import type { RuntimeFontPainter } from "./font/runtime.js";
 export interface PreviewOptions {
   document: ServerListDocument;
   context: PreviewContext;
   labels?: Readonly<Record<string, string>>;
+  /** Optional runtime MOTD font; never saved in the document or used by the editor. */
+  motdFontSource?: FontGlyphSource;
 }
 export interface PreviewHandle {
   update(options: PreviewOptions): void;
@@ -86,12 +90,19 @@ export function renderText(
   maxLines = 2,
   alignments?: Alignment[],
   defaultColor?: string,
+  runtime?: RuntimeFontPainter,
 ): Diagnostic[] {
+  runtime?.beginFrame();
   const layout = layoutText(text, {
     profile: context.profile,
     width,
     maxLines,
     alignments,
+    fontSource: runtime?.source,
+    obfuscationRandom:
+      runtime && context.animations
+        ? () => root.ownerDocument.defaultView?.Math.random() ?? 0
+        : undefined,
   });
   root.style.width = width + "px";
   root.style.height =
@@ -107,7 +118,7 @@ export function renderText(
       root.ownerDocument,
       "span",
       "mcp-glyph",
-      glyph.text === "\r" ? "?" : glyph.text,
+      glyph.text === "\r" && !runtime ? "?" : glyph.text,
     );
     span.style.left = glyph.x + "px";
     span.style.top = glyph.line * context.profile.font.lineHeight + "px";
@@ -122,7 +133,35 @@ export function renderText(
         ? defaultColor
         : glyph.color,
     );
-    if (pixelFont)
+    if (runtime) {
+      span.classList.add("mcp-runtime-glyph");
+      layout.diagnostics.push(
+        ...runtime.paint(
+          span,
+          glyph.fontGlyph,
+          glyph.style,
+          glyph.x,
+          glyph.line * context.profile.font.lineHeight,
+          glyph.advance,
+          span.style.color.startsWith("#")
+            ? span.style.color
+            : defaultColor &&
+                !glyph.style.color &&
+                !glyph.style.gradient &&
+                !glyph.style.rainbow
+              ? defaultColor
+              : glyph.color,
+          !!context.profile.geometry.motdShadow,
+          pixelScale,
+          {
+            left: -1,
+            top: 0,
+            right: width,
+            bottom: maxLines * context.profile.font.lineHeight + 2,
+          },
+        ),
+      );
+    } else if (pixelFont)
       applyPixelInk(
         span,
         span.textContent!,
@@ -133,7 +172,7 @@ export function renderText(
           root.classList.contains("mcp-motd"),
         pixelInkOrigin(root),
       );
-    if (glyph.style.obfuscated && glyph.text !== " ") {
+    if (!runtime && glyph.style.obfuscated && glyph.text !== " ") {
       span.dataset.obfuscated = "";
       span.dataset.advance = String(
         regularGlyphAdvance(context.profile.font, glyph.text),

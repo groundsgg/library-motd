@@ -17,6 +17,8 @@ import {
   type PreviewOptions,
 } from "./render.js";
 import type { EditableField } from "./editor/types.js";
+import { RuntimeFontPainter } from "./font/runtime.js";
+import { diagnostic } from "../core/diagnostics.js";
 
 export interface EntryHandle extends PreviewHandle {
   getAnchors(): {
@@ -33,6 +35,7 @@ export interface EntryHandle extends PreviewHandle {
 export function createEntry(
   host: HTMLElement,
   initial: PreviewOptions,
+  onDiagnosticsChange?: () => void,
 ): EntryHandle {
   const doc = host.ownerDocument;
   const wrapper = element(doc, "div", "mcp-wrap"),
@@ -60,6 +63,8 @@ export function createEntry(
     diagnostics: Diagnostic[] = [],
     stop = () => {},
     playerTipEnabled = false;
+  let runtime: RuntimeFontPainter | undefined;
+  let runtimeDiagnostics: Diagnostic[] = [];
   statusAction.type = "button";
   ping.type = "button";
   Object.assign(statusAction.style, {
@@ -115,6 +120,16 @@ export function createEntry(
     if (destroyed) return;
     options = next;
     stop();
+    const fontSource =
+      next.context.profile.font.runtimeGlyphGeometry === "java-26.3"
+        ? next.motdFontSource
+        : undefined;
+    const unsupportedSource = !!next.motdFontSource && !fontSource;
+    if (runtime?.source !== fontSource) {
+      runtime?.destroy();
+      runtime = fontSource ? new RuntimeFontPainter(fontSource) : undefined;
+    }
+    runtimeDiagnostics = [];
     const { document: state, context } = next,
       labels = next.labels ?? {};
     const evaluated = evaluateStatus(state, {
@@ -122,10 +137,32 @@ export function createEntry(
         motdLayout: {
           profile: context.profile,
           width: entryTextWidth(context),
+          fontSource,
         },
       }),
       value = evaluated.value ?? context.base;
     diagnostics = [...evaluated.diagnostics];
+    if (unsupportedSource)
+      diagnostics.push(
+        diagnostic(
+          "font-runtime-profile",
+          "motd",
+          {
+            key: "diagnostic.fontRuntimeProfile",
+            parameters: { version: context.profile.clientVersion },
+          },
+          "warning",
+        ),
+      );
+    if (runtime)
+      diagnostics.push(
+        diagnostic(
+          "font-runtime-unverified",
+          "motd",
+          { key: "diagnostic.fontRuntimeUnverified" },
+          "warning",
+        ),
+      );
     const scale = Math.max(0.5, context.guiScale),
       g = context.profile.geometry;
     const width = Math.max(
@@ -445,29 +482,36 @@ export function createEntry(
       width: textWidth,
       maxLines: 2,
       alignments: state.motd.alignments,
+      fontSource,
     });
     motd.style.width = textWidth + "px";
     motd.style.setProperty(
       "--mcp-shadow-offset",
       g.motdShadow ? "1px 1px" : "0px 0px",
     );
-    put("motd", motd, () => {
-      renderText(
+    const paintMotd = () => {
+      motd.replaceChildren();
+      runtimeDiagnostics = renderText(
         motd,
         resolved.value!,
         context,
         textWidth,
         2,
         state.motd.alignments,
+        undefined,
+        runtime,
       );
-    });
+      motd.style.height = parseFloat(motd.style.height) + 2 + "px";
+      if (runtime) onDiagnosticsChange?.();
+    };
+    put("motd", motd, paintMotd);
     // Descenders, the native underline and its shadow extend below the 9px line.
     // Keep the line advance fixed while allowing both lines' ink to remain visible.
     motd.style.height =
       Math.min(2, layout.lines.length) * context.profile.font.lineHeight +
       2 +
       "px";
-    diagnostics.push(...layout.diagnostics);
+    if (!runtime) diagnostics.push(...layout.diagnostics);
     playerTipEnabled = !!(compatible && value.players?.sample.length);
     if (!playerTipEnabled) playerHover.hidden = true;
     put("hover", playerHover, () => {
@@ -495,17 +539,35 @@ export function createEntry(
     pingTip.textContent = compatible
       ? `${context.pingMs} ms`
       : (labels.incompatible ?? "Incompatible version!");
-    stop = animateObfuscation(wrapper, context, context.animations);
-    wrapper.dataset.profileVerified = String(context.profile.verified);
-    wrapper.title = context.profile.verified
-      ? ""
-      : (labels.unverifiedProfile ??
-        "Client profile has partial native reference coverage");
+    stop = animateObfuscation(
+      wrapper,
+      context,
+      context.animations,
+      runtime && layout.glyphs.some((g) => g.style.obfuscated && g.text !== " ")
+        ? paintMotd
+        : undefined,
+    );
+    wrapper.dataset.profileVerified = String(
+      context.profile.verified && !next.motdFontSource,
+    );
+    wrapper.title = unsupportedSource
+      ? formatLabel(
+          "diagnostic.fontRuntimeProfile",
+          { version: context.profile.clientVersion },
+          labels,
+        )
+      : runtime
+        ? formatLabel("diagnostic.fontRuntimeUnverified", {}, labels)
+        : context.profile.verified
+          ? ""
+          : (labels.unverifiedProfile ??
+            "Client profile has partial native reference coverage");
   }
   update(initial);
   return {
     update,
-    getDiagnostics: () => diagnostics,
+    getDiagnostics: () =>
+      runtime ? [...diagnostics, ...runtimeDiagnostics] : diagnostics,
     getAnchors: () => ({ icon, motd, status, ping, playerHover }),
     bindText(field, content) {
       if (destroyed || bindings.get(field) === (content ?? undefined)) return;
@@ -519,6 +581,7 @@ export function createEntry(
       destroyed = true;
       stop();
       panorama.destroy();
+      runtime?.destroy();
       disposeTips.forEach((dispose) => dispose());
       wrapper.remove();
       bindings.clear();

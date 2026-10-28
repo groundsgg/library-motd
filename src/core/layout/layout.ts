@@ -14,6 +14,10 @@ export function layoutText(
   const diagnostics: LayoutResult["diagnostics"] = [],
     glyphs: LayoutResult["glyphs"] = [],
     lines: LayoutResult["lines"] = [];
+  const source = options.fontSource;
+  const add = source
+    ? (a: number, b: number) => Math.fround(a + b)
+    : (a: number, b: number) => a + b;
   const warnProtected = (nodes: TextNode[]) => {
     for (const node of nodes) {
       if (node.type === "group") warnProtected(node.children);
@@ -33,12 +37,15 @@ export function layoutText(
   warnProtected(text.nodes);
   let line = 0,
     x = 0,
-    lineStart = 0;
+    lineStart = 0,
+    insertedSpaces = 0;
   const finish = () => {
     const align = options.alignments?.[line] ?? "left",
       remaining = Math.max(0, options.width - x),
-      space = options.profile.font.advances[" "] ?? 4;
-    const padding =
+      space = source
+        ? (source.glyphFor(32)?.advance ?? 0)
+        : (options.profile.font.advances[" "] ?? 4);
+    let count =
       align === "left" || space <= 0
         ? 0
         : Math.min(
@@ -46,7 +53,24 @@ export function layoutText(
               (align === "center" ? remaining / 2 : remaining) / space,
             ),
             Math.floor(remaining / space),
-          ) * space;
+          );
+    if (source && (!Number.isFinite(count) || count > 16384 - insertedSpaces)) {
+      count = 0;
+      diagnostics.push(
+        diagnostic(
+          "font-runtime-alignment-limit",
+          "motd",
+          { key: "diagnostic.fontRuntimeAlignmentLimit" },
+          "warning",
+        ),
+      );
+    }
+    insertedSpaces += count;
+    let padding = count ? count * space : 0;
+    if (source) {
+      padding = 0;
+      for (let i = 0; i < count; i++) padding = add(padding, space);
+    }
     if (align !== "left" && space <= 0)
       diagnostics.push(
         diagnostic(
@@ -56,15 +80,51 @@ export function layoutText(
           "warning",
         ),
       );
-    lines.push({ width: x, padding });
-    for (let i = lineStart; i < glyphs.length; i++) glyphs[i]!.x += padding;
+    lines.push({
+      width: x,
+      padding,
+      ...(source && count ? { spaceCount: count } : {}),
+    });
+    let positioned = padding;
+    for (let i = lineStart; i < glyphs.length; i++) {
+      if (source) {
+        glyphs[i]!.x = positioned;
+        positioned = add(positioned, glyphs[i]!.advance);
+      } else glyphs[i]!.x += padding;
+    }
     lineStart = glyphs.length;
     line++;
     x = 0;
   };
-  const chars = flattenDisplayText(text),
+  const displayed = flattenDisplayText(text);
+  const chars = source
+      ? displayed.flatMap((c) => {
+          let offset = 0;
+          return [...c.text].map((text) => {
+            const part = {
+              ...c,
+              text,
+              offset: c.offset + offset,
+              position: c.position + offset,
+            };
+            offset += text.length;
+            return part;
+          });
+        })
+      : displayed,
     font = options.profile.font,
-    native = font.layout === "java-ltr";
+    native = !!source || font.layout === "java-ltr";
+  const selected = chars.map((c) => {
+    const glyph =
+      c.text === "\n" ? undefined : source?.glyphFor(c.text.codePointAt(0)!);
+    return glyph &&
+      c.style.obfuscated &&
+      c.text !== " " &&
+      options.obfuscationRandom
+      ? (source?.randomGlyphFor?.(glyph.advance, options.obfuscationRandom()) ??
+          glyph)
+      : glyph;
+  });
   // These scripts/control characters require contextual shaping or bidi order,
   // beyond the declared LTR grapheme capability, even with custom glyph metrics.
   if (
@@ -83,9 +143,10 @@ export function layoutText(
         "warning",
       ),
     );
-  const advances = chars.map((c) => {
+  const advances = chars.map((c, index) => {
     if (c.text === "\n") return 0;
-    if (c.text === "\r" || !font.supported(c.text))
+    const glyph = selected[index];
+    if (source ? !glyph : c.text === "\r" || !font.supported(c.text))
       diagnostics.push(
         diagnostic(
           "missing-glyph",
@@ -96,8 +157,9 @@ export function layoutText(
           "warning",
         ),
       );
-    return (
-      regularGlyphAdvance(font, c.text) + (c.style.bold ? font.boldOffset : 0)
+    return add(
+      glyph?.advance ?? regularGlyphAdvance(font, c.text),
+      c.style.bold ? (glyph?.boldOffset ?? font.boldOffset) : 0,
     );
   });
   let start = 0;
@@ -114,13 +176,14 @@ export function layoutText(
       if (native && c.text === " ") lastSpace = end;
       if (
         hasWidth &&
-        width + advance > (native ? Math.max(1, options.width) : options.width)
+        add(width, advance) >
+          (native ? Math.max(1, options.width) : options.width)
       ) {
         if (lastSpace >= start) end = lastSpace;
         wrapped = true;
         break;
       }
-      width += advance;
+      width = add(width, advance);
       hasWidth ||= advance !== 0;
     }
     let next = end;
@@ -128,8 +191,14 @@ export function layoutText(
     if (delimiter === "\n" || (native && wrapped && delimiter === " ")) next++;
     for (let i = start; i < end; i++) {
       const advance = advances[i]!;
-      glyphs.push({ ...chars[i]!, advance, x, line });
-      x += advance;
+      glyphs.push({
+        ...chars[i]!,
+        advance,
+        x,
+        line,
+        ...(selected[i] ? { fontGlyph: selected[i] } : {}),
+      });
+      x = add(x, advance);
     }
     if (native && wrapped && delimiter === " ")
       glyphs.push({ ...chars[end]!, advance: 0, x, line, suppressed: true });

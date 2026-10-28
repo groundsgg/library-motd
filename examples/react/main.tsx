@@ -13,6 +13,10 @@ import {
 } from "../shared/data.js";
 import "../../src/dom/styles.css";
 import "../shared/page.css";
+import {
+  runtimeFontExample,
+  runtimeFontDocument,
+} from "../shared/runtime-font.js";
 function App() {
   const [document, setDocument] = useState(initialDocument);
   const [language, setLanguage] = useState("en");
@@ -24,6 +28,7 @@ function App() {
   );
   const [panoramaPaused, setPanoramaPaused] = useState(false);
   const [panoramaSpeed, setPanoramaSpeed] = useState(1);
+  const [showRuntimeFont, setShowRuntimeFont] = useState(false);
   const previewContext = {
     ...context,
     profile,
@@ -165,6 +170,42 @@ function App() {
         labels,
       }),
     ),
+    createElement(
+      "label",
+      null,
+      createElement("input", {
+        type: "checkbox",
+        checked: showRuntimeFont,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+          setShowRuntimeFont(e.target.checked),
+      }),
+      " Show local font example",
+    ),
+    showRuntimeFont &&
+      createElement(
+        "section",
+        { id: "runtime-font-example" },
+        createElement(
+          "div",
+          { className: "output-label" },
+          "Runtime MOTD font",
+        ),
+        createElement(
+          "p",
+          null,
+          "Original bitmap A and Unihex B. Viewer-only source; no game assets are included.",
+        ),
+        createElement(
+          "div",
+          { className: "preview-output" },
+          createElement(ServerListPreview, {
+            document: runtimeFontDocument,
+            context: previewContext,
+            labels,
+            motdFontSource: runtimeFontExample,
+          }),
+        ),
+      ),
   );
 }
 createRoot(document.getElementById("root")!).render(

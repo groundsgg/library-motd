@@ -1,5 +1,15 @@
 /** Default standalone UI and diagnostic messages. */
 export const englishLabels = {
+  "diagnostic.fontRuntimeProfile":
+    "Imported MOTD fonts require the calibrated java-26.3 CPU geometry (selected client: {version}). The profile font is used instead.",
+  "diagnostic.fontRuntimeAlignmentLimit":
+    "Imported-font alignment exceeded the output space budget.",
+  "diagnostic.fontRuntimeUnavailable":
+    "Runtime font ink is unavailable in this environment.",
+  "diagnostic.fontRuntimeLimit":
+    "Runtime font ink exceeded the viewer's bounded paint budget.",
+  "diagnostic.fontRuntimeUnverified":
+    "Imported MOTD font rendering has CPU geometry coverage; native GPU rendering is not certified.",
   "diagnostic.fontSourceInput": "Invalid runtime font source data.",
   "diagnostic.fontSourceOptions": "Invalid runtime font source limits.",
   "diagnostic.fontSourceLimit": "Runtime font source exceeded {limit}.",
