@@ -67,6 +67,84 @@ test("focusing text adds no underline decoration to the rendered MOTD", async ({
   expect(after.data.equals(before.data)).toBe(true);
 });
 
+for (const zoom of [1, 0.9])
+  test(`a host image reset cannot move the caret after the second-line placeholder to a third row at zoom ${zoom}`, async ({
+    page,
+  }) => {
+    await setup(page, "First<newline>{{end}}", true);
+    await page.evaluate((zoom) => {
+      document.body.style.zoom = String(zoom);
+      window.context = { ...window.context, values: { end: "Second" } };
+      window.setEditorOptions({ context: window.context });
+      window.changes = [];
+    }, zoom);
+    // Common responsive image resets must not turn the editor's invisible
+    // cursor separator into a block or a full-width image.
+    await page.addStyleTag({
+      content:
+        "img { display:block!important; width:100%; max-width:100%; height:auto; border:2px solid red; margin:4px; }",
+    });
+    const input = field(page);
+    await input.scrollIntoViewIfNeeded();
+    const paragraphs = input.locator("p");
+    await expect(paragraphs).toHaveCount(2);
+    for (const p of await paragraphs.all())
+      expect((await p.boundingBox())!.height).toBeCloseTo(18 * zoom, 1);
+    const before = await sourceText(page);
+    const token = await paragraphs.last().locator(".mce-token").boundingBox();
+    await page.mouse.click(
+      token!.x + token!.width + 8,
+      token!.y + token!.height / 2,
+    );
+    await expect(input).toBeFocused();
+    expect(await sourceText(page)).toBe(before);
+    expect(await page.evaluate(() => window.changes.length)).toBe(0);
+    const rootBox = (await input.boundingBox())!;
+    const breakBox = (await paragraphs
+      .last()
+      .locator(".ProseMirror-trailingBreak")
+      .boundingBox())!;
+    expect(Math.abs(breakBox.y - rootBox.y - 18 * zoom)).toBeLessThan(0.25);
+    await page.keyboard.type("!");
+    await expect(input).toHaveText("FirstSecond!");
+    expect(await sourceText(page)).toBe("First\n{{end}}!");
+    await input.evaluate(
+      (root) =>
+        new Promise<void>((resolve) => {
+          root.ownerDocument.defaultView!.requestAnimationFrame(() =>
+            resolve(),
+          );
+        }),
+    );
+    const caretLine = await input.evaluate((root) => {
+      const selection = root.ownerDocument.getSelection()!;
+      const prefix = root.ownerDocument.createRange();
+      prefix.selectNodeContents(root);
+      prefix.setEnd(selection.anchorNode!, selection.anchorOffset);
+      // Firefox/WebKit may report an empty rectangle for a collapsed element
+      // boundary. Measure the preceding typed character on that caret line.
+      const walker = root.ownerDocument.createTreeWalker(
+        root,
+        NodeFilter.SHOW_TEXT,
+      );
+      let last: Node | null = null,
+        node: Node | null;
+      while ((node = walker.nextNode())) last = node;
+      const range = root.ownerDocument.createRange();
+      range.setStart(last!, last!.textContent!.length - 1);
+      range.setEnd(last!, last!.textContent!.length);
+      const rect = range.getBoundingClientRect();
+      return {
+        prefix: prefix.cloneContents().textContent,
+        y: rect.y - root.getBoundingClientRect().y,
+      };
+    });
+    expect(caretLine.prefix).toBe("FirstSecond!");
+    // Font ascenders round differently across engines under fractional zoom.
+    expect(Math.abs(caretLine.y - 18 * zoom)).toBeLessThan(1.1);
+    await expect(paragraphs).toHaveCount(2);
+  });
+
 for (const [label, source, extra, modern] of [
   ["regular", "M".repeat(90), "M", false],
   ["bold", "<b>" + "M".repeat(76), "M", false],
