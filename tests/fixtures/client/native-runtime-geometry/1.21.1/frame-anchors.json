@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "clientVersion": "1.21.1",
+  "clientSha1": "30c73b1c5da787909b2f73340419fdf13b9def88",
+  "observedAt": "2026-10-28",
+  "method": "Executed the official offline client on dedicated Xvfb97 using software OpenGL and an original local resource pack. Captured its real server-list framebuffer after a localhost status response. Only numeric samples from the original test glyphs are retained; screenshots/game assets stay private.",
+  "viewport": [
+    854,
+    480
+  ],
+  "guiScale": 2,
+  "clientScreenshotSha256": "fa7938f77a6b6f9750d9d854e0f71d189b102b9507ba1511115d973e2cb30ff8",
+  "rowIconOrigin": [
+    126,
+    72
+  ],
+  "font": {
+    "id": "grounds:probe",
+    "provider": {
+      "type": "bitmap",
+      "height": 14,
+      "ascent": 14,
+      "chars": [
+        "A"
+      ]
+    },
+    "image": {
+      "width": 1,
+      "height": 14,
+      "rgba": "all channels255",
+      "sha256": "528ff50ab05e77bbbd224a9ec86165dbb6824a9a9efb544be0a1d57d5b416457"
+    }
+  },
+  "motd": "<red><u>A</u></red>\n<green>A",
+  "samples": {
+    "secondLineGreen": {
+      "rgba": [
+        85,
+        255,
+        85,
+        255
+      ],
+      "boundsRelativeToIcon": [
+        70,
+        28,
+        71,
+        55
+      ],
+      "pixelCount": 52
+    },
+    "firstLineUnderline": {
+      "rgba": [
+        255,
+        85,
+        85,
+        255
+      ],
+      "boundsRelativeToIcon": [
+        68,
+        40,
+        73,
+        41
+      ],
+      "pixelCount": 12
+    }
+  },
+  "scope": "One original opaque tall bitmap at scale2, two text lines and underline. Confirms supplied-font placement and that the earlier underline remains above later-line ink in this case. Oversized upward ink is visible natively but remains deliberately clipped by the viewer; this probe is not full GPU/font/atlas/alpha/depth certification."
+}

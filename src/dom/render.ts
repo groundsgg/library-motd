@@ -104,9 +104,17 @@ export function renderText(
         ? () => root.ownerDocument.defaultView?.Math.random() ?? 0
         : undefined,
   });
+  // Align supplied legacy rasters to the native integer drawString origin.
+  // The bundled face's text box has a half-pixel horizontal bearing and starts
+  // one GUI pixel higher. Fractional canvas origins also snap between engines.
+  const runtimeTop =
+    runtime && context.profile.font.runtimeGlyphGeometry === "java-1.21.1"
+      ? 1
+      : 0;
   root.style.width = width + "px";
   root.style.height =
     Math.min(maxLines, layout.lines.length) * context.profile.font.lineHeight +
+    runtimeTop +
     "px";
   root.setAttribute("aria-label", layout.glyphs.map((g) => g.text).join(""));
   const pixelFont = usesBundledPixelFont(context);
@@ -120,8 +128,9 @@ export function renderText(
       "mcp-glyph",
       glyph.text === "\r" && !runtime ? "?" : glyph.text,
     );
-    span.style.left = glyph.x + "px";
-    span.style.top = glyph.line * context.profile.font.lineHeight + "px";
+    span.style.left = glyph.x + (runtimeTop ? 0.5 : 0) + "px";
+    span.style.top =
+      glyph.line * context.profile.font.lineHeight + runtimeTop + "px";
     span.style.width = glyph.advance + "px";
     applyTextStyle(
       span,

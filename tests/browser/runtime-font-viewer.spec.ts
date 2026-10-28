@@ -1,5 +1,16 @@
 import { expect, test, type Page } from "@playwright/test";
 import { PNG } from "pngjs";
+import { readFileSync } from "node:fs";
+
+const nativeAnchor = JSON.parse(
+  readFileSync(
+    new URL(
+      "../fixtures/client/native-runtime-geometry/1.21.1/frame-anchors.json",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+);
 
 async function mount(
   page: Page,
@@ -404,18 +415,18 @@ test("legacy text passes keep earlier foreground over later shadows and redraw t
     return JSON.stringify(window.doc);
   });
   await expect(page.locator("#preview .mcp-runtime-ink")).toHaveCount(4);
-  const pixel = async () => {
+  const pixel = async (y = 9) => {
     const image = PNG.sync.read(
       await page.locator("#preview .mcp-motd").screenshot(),
     );
     return [
       ...image.data.subarray(
-        (9 * image.width + 9) * 4,
-        (9 * image.width + 9) * 4 + 4,
+        (y * image.width + 9) * 4,
+        (y * image.width + 9) * 4 + 4,
       ),
     ];
   };
-  expect(await pixel()).toEqual([255, 255, 255, 255]);
+  expect(await pixel(11)).toEqual([255, 255, 255, 255]);
   await page.evaluate(() => {
     window.context = { ...window.context, profile: window.api.java263Profile };
     window.preview.update({
@@ -428,6 +439,68 @@ test("legacy text passes keep earlier foreground over later shadows and redraw t
   expect(await pixel()).toEqual([63, 63, 63, 255]);
   expect(await page.evaluate(() => window.legacyReads)).toBe(2);
   expect(await page.evaluate(() => JSON.stringify(window.doc))).toBe(saved);
+});
+
+test("legacy supplied glyphs use the native MOTD origin and preserve the sampled two-line underline depth", async ({
+  page,
+}) => {
+  await mount(page, "A");
+  await page.evaluate(async () => {
+    const fonts = await import("/src/fonts/index.ts");
+    const bitmap = fonts.decodeBitmapGlyphs(
+      { height: 14, ascent: 14, chars: ["A"] },
+      { width: 1, height: 14, pixels: new Uint8Array(56).fill(255) },
+    ).value;
+    const motdFontSource = fonts.createFontGlyphSource([
+      { type: "bitmap", glyphs: bitmap },
+    ]).value;
+    window.doc = window.api.createDocument(
+      window.api.parseText("<red><u>A</u></red>\n<green>A", "minimessage")
+        .value,
+    );
+    window.context = {
+      ...window.context,
+      profile: window.api.java1211Profile,
+      guiScale: 2,
+      background: "none",
+    };
+    window.preview.update({
+      document: window.doc,
+      context: window.context,
+      motdFontSource,
+    });
+  });
+  const image = PNG.sync.read(
+    await page.locator("#preview .mcp-row").screenshot(),
+  );
+  const points = [];
+  for (let y = 0; y < image.height; y++)
+    for (let x = 0; x < image.width; x++) {
+      const i = (y * image.width + x) * 4;
+      if (
+        image.data[i] === 85 &&
+        image.data[i + 1] === 255 &&
+        image.data[i + 2] === 85
+      )
+        points.push([x, y]);
+    }
+  const bounds = [
+    Math.min(...points.map((p) => p[0])),
+    Math.min(...points.map((p) => p[1])),
+    Math.max(...points.map((p) => p[0])),
+    Math.max(...points.map((p) => p[1])),
+  ];
+  expect(bounds).toEqual(
+    nativeAnchor.samples.secondLineGreen.boundsRelativeToIcon,
+  );
+  expect(points).toHaveLength(nativeAnchor.samples.secondLineGreen.pixelCount);
+  for (const y of [40, 41])
+    for (let x = 68; x <= 73; x++) {
+      const i = (y * image.width + x) * 4;
+      expect([...image.data.subarray(i, i + 4)]).toEqual(
+        nativeAnchor.samples.firstLineUnderline.rgba,
+      );
+    }
 });
 
 for (const failure of [2, 4])
