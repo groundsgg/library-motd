@@ -98,19 +98,13 @@
   width: 10px;
   height: 8px;
 }
-.mcp-ping i {
-  position: absolute;
-  bottom: 1px;
-  width: 1px;
-  background: #00ff21;
-  box-shadow: 1px 1px #00870f;
-}
-.mcp-ping-cross {
+.mcp-ping-graphic {
   position: absolute;
   left: 0;
   top: 0;
-  width: 1px;
-  height: 1px;
+  display: block;
+  width: 10px;
+  height: 8px;
 }
 .mcp-incompatible {
   font-size: 10px;
