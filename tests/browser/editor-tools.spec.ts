@@ -388,3 +388,81 @@ test("inline alignment uses the same quantized padding as the viewer", async ({
   });
   expect(positions.editor).toBeCloseTo(positions.viewer, 1);
 });
+
+for (const profile of ["java263Profile", "java1211Profile"] as const)
+  test(`native fine padding stays shared by inline editor and viewer (${profile})`, async ({
+    page,
+  }) => {
+    await page.evaluate((profile) => {
+      Object.assign(window.context, {
+        profile: window.api[profile],
+        viewportWidth: 618,
+        guiScale: 2,
+        background: "none",
+        presentation: "row",
+        values: { region: "eu" },
+        animations: false,
+      });
+      window.setEditorOptions({ context: window.context });
+      window.editor.execute({
+        type: "replace-source",
+        source: "<b>GROUNDS NETWORK</b><newline>Stage System | {{region}}",
+      });
+      for (const line of [0, 1])
+        window.editor.execute({ type: "align", line, align: "center" });
+      window.preview.update({ document: window.doc, context: window.context });
+      window.changes = [];
+    }, profile);
+    await page.evaluate(() => document.fonts.ready);
+    const before = await page.evaluate(() => JSON.stringify(window.doc));
+    for (const region of ["eu", "europe"]) {
+      await page.evaluate((region) => {
+        window.context.values = { region };
+        window.setEditorOptions({ context: window.context });
+        window.preview.update({
+          document: window.doc,
+          context: window.context,
+        });
+      }, region);
+      const expected =
+        profile === "java263Profile"
+          ? [82, region === "eu" ? 90 : 78]
+          : [84, region === "eu" ? 92 : 80];
+      for (const host of ["#editor", "#preview"]) {
+        const positions = await page
+          .locator(`${host} .mcp-motd`)
+          .evaluate((root) => {
+            const bounds = root.getBoundingClientRect();
+            const padding = parseFloat(getComputedStyle(root).paddingLeft) || 0;
+            const walker = root.ownerDocument.createTreeWalker(
+              root,
+              NodeFilter.SHOW_TEXT,
+            );
+            const lines = new Map<number, number>();
+            let node: Node | null;
+            while ((node = walker.nextNode())) {
+              const text = node.textContent ?? "";
+              for (let i = 0; i < text.length; i++) {
+                if (/\s/.test(text[i]!)) continue;
+                const range = root.ownerDocument.createRange();
+                range.setStart(node, i);
+                range.setEnd(node, i + 1);
+                const box = range.getBoundingClientRect();
+                const line = Math.round((box.y - bounds.y) / 18);
+                if (!lines.has(line))
+                  lines.set(line, (box.x - bounds.x) / 2 - padding);
+              }
+            }
+            return [...lines.values()];
+          });
+        expect(positions).toHaveLength(2);
+        positions.forEach((x, line) =>
+          expect(x).toBeCloseTo(expected[line]!, 1),
+        );
+      }
+      expect(await page.evaluate(() => JSON.stringify(window.doc))).toBe(
+        before,
+      );
+      expect(await page.evaluate(() => window.changes.length)).toBe(0);
+    }
+  });
