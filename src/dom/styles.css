@@ -317,6 +317,15 @@
   min-height: 9px;
   line-height: 9px;
 }
+/* ProseMirror's cursor helper after inline atoms must remain a zero-size inline
+   image, including under responsive host image resets (for example Tailwind). */
+.mce-inline .ProseMirror img.ProseMirror-separator {
+  display: inline !important;
+  width: 0 !important;
+  height: 0 !important;
+  border: none !important;
+  margin: 0 !important;
+}
 .mce-inline .ProseMirror-selectednode {
   outline: 1px solid #fff;
 }
