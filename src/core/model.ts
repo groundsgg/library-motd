@@ -96,9 +96,10 @@ export interface RuntimeContext {
   /** Profile and logical width used when materializing aligned MOTD output. */
   motdLayout?: Pick<LayoutOptions, "profile" | "width" | "fontSource">;
 }
+export type RuntimeGlyphGeometry = "java-1.21.1" | "java-26.3";
 export interface FontProfile {
   /** Explicit CPU geometry supported by the optional imported-font viewer. */
-  runtimeGlyphGeometry?: "java-26.3";
+  runtimeGlyphGeometry?: RuntimeGlyphGeometry;
   /** Native ASCII-space wrapping with LTR grapheme metrics; omission keeps legacy wrapping. */
   layout?: "java-ltr";
   family: string;

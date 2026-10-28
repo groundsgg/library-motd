@@ -1,7 +1,7 @@
 /** Default standalone UI and diagnostic messages. */
 export const englishLabels = {
   "diagnostic.fontRuntimeProfile":
-    "Imported MOTD fonts require the calibrated java-26.3 CPU geometry (selected client: {version}). The profile font is used instead.",
+    "Imported MOTD fonts require calibrated CPU geometry for this profile (selected client: {version}). The profile font is used instead.",
   "diagnostic.fontRuntimeAlignmentLimit":
     "Imported-font alignment exceeded the output space budget.",
   "diagnostic.fontRuntimeUnavailable":

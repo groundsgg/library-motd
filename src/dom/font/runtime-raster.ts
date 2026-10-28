@@ -1,5 +1,9 @@
 import type { FontSourceGlyph } from "../../fonts/source.js";
-import type { Outcome, TextStyle } from "../../core/model.js";
+import type {
+  Outcome,
+  RuntimeGlyphGeometry,
+  TextStyle,
+} from "../../core/model.js";
 import { diagnostic } from "../../core/diagnostics.js";
 import { runtimeGlyphQuads, type RuntimeQuad } from "./runtime-geometry.js";
 
@@ -36,6 +40,12 @@ export interface RuntimeRasterPlan extends Omit<RuntimeRaster, "pixels"> {
   originY: number;
   draws: (RuntimeQuad & { texture: boolean })[];
 }
+export type RuntimeGlyphLayer =
+  "shadow-ink" | "shadow-effects" | "foreground-ink" | "foreground-effects";
+export interface RuntimeRasterOptions {
+  geometry?: RuntimeGlyphGeometry;
+  layer?: RuntimeGlyphLayer;
+}
 
 /** Geometry and allocation preflight; never reads host pixels. */
 export function planRuntimeGlyph(
@@ -48,39 +58,57 @@ export function planRuntimeGlyph(
   scale: number,
   clip: RasterClip,
   pixelBudget = 1048576,
+  options: RuntimeRasterOptions = {},
 ): Outcome<RuntimeRasterPlan> {
   if (!Number.isFinite(scale) || scale < 0.5 || scale > 16)
     return runtimeLimit();
   const bitmap = glyph.bitmap;
   if (bitmap && bitmap.pixelWidth * bitmap.pixelHeight * 4 > runtimeRasterLimit)
     return runtimeLimit();
-  const draws: (RuntimeQuad & { texture: boolean })[] = runtimeGlyphQuads(
+  const legacy = options.geometry === "java-1.21.1";
+  let draws: (RuntimeQuad & { texture: boolean })[] = runtimeGlyphQuads(
     glyph,
     style,
     x,
     y,
     shadow,
+    options.geometry,
   ).map((q) => ({ ...q, texture: true }));
   const effect = (top: number, offset: number, isShadow: boolean) => {
-    const left = x - 0.5 + offset,
-      right = x + advance + 0.5 + offset;
+    const left = legacy
+        ? Math.fround(Math.fround(x + offset) - 1)
+        : x - 0.5 + offset,
+      right = legacy
+        ? Math.fround(Math.fround(x + offset) + advance)
+        : x + advance + 0.5 + offset;
+    const y1 = legacy
+        ? Math.fround(Math.fround(y + offset) + (top + 1))
+        : y + top + 1 + offset,
+      y0 = legacy ? Math.fround(y1 - 1) : y + top + offset;
     draws.push({
       shadow: isShadow,
       texture: false,
       points: [
-        [left, y + top + offset],
-        [left, y + top + 1 + offset],
-        [right, y + top + 1 + offset],
-        [right, y + top + offset],
+        [left, y0],
+        [left, y1],
+        [right, y1],
+        [right, y0],
       ],
     });
   };
   for (const top of [
-    ...(style.strikethrough ? [4.5] : []),
-    ...(style.underlined ? [9] : []),
+    ...(style.strikethrough ? [legacy ? 3.5 : 4.5] : []),
+    ...(style.underlined ? [legacy ? 8 : 9] : []),
   ]) {
-    if (shadow) effect(top, glyph.shadowOffset, true);
+    if (shadow) effect(top, legacy ? 1 : glyph.shadowOffset, true);
     effect(top, 0, false);
+  }
+  if (options.layer) {
+    const isShadow = options.layer.startsWith("shadow-"),
+      texture = options.layer.endsWith("-ink");
+    draws = draws.filter(
+      (draw) => draw.shadow === isShadow && draw.texture === texture,
+    );
   }
   const all = draws.flatMap((q) => q.points);
   if (

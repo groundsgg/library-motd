@@ -157,6 +157,11 @@
   font-size: 0;
   text-shadow: none !important;
 }
+.mcp-runtime-glyph[data-runtime-geometry="java-1.21.1"] {
+  /* Native legacy text paints complete shadow/effect passes before foreground.
+     Let layer canvases from different glyphs share the scene stacking context. */
+  z-index: auto;
+}
 .mcp-runtime-glyph::before,
 .mcp-runtime-glyph::after {
   content: none !important;

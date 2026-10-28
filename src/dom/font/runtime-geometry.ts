@@ -1,5 +1,5 @@
 import type { FontSourceGlyph } from "../../fonts/source.js";
-import type { TextStyle } from "../../core/model.js";
+import type { RuntimeGlyphGeometry, TextStyle } from "../../core/model.js";
 
 export interface RuntimeQuad {
   /** Native TL, BL, BR, TR order, logical GUI coordinates. */
@@ -8,13 +8,20 @@ export interface RuntimeQuad {
 }
 const f = Math.fround;
 
-/** Executed 26.3 CPU geometry; this does not certify GPU texture sampling. */
+export function isRuntimeGlyphGeometry(
+  value: unknown,
+): value is RuntimeGlyphGeometry {
+  return value === "java-1.21.1" || value === "java-26.3";
+}
+
+/** Executed version-specific CPU geometry; does not certify GPU sampling. */
 export function runtimeGlyphQuads(
   glyph: FontSourceGlyph,
   style: TextStyle,
   x: number,
   y: number,
   shadow: boolean,
+  geometry: RuntimeGlyphGeometry = "java-26.3",
 ): RuntimeQuad[] {
   const offsets = glyph;
   const bitmap = glyph.bitmap;
@@ -27,7 +34,8 @@ export function runtimeGlyphQuads(
     down = f(up + f(bitmap.pixelHeight / bitmap.oversample));
   const shearTop = style.italic ? f(1 - f(up * 0.25)) : 0;
   const shearBottom = style.italic ? f(1 - f(down * 0.25)) : 0;
-  const thick = style.bold ? f(0.1) : 0;
+  const legacy = geometry === "java-1.21.1";
+  const thick = style.bold && !legacy ? f(0.1) : 0;
   const quads: RuntimeQuad[] = [];
   const emit = (ox: number, oy: number, shadow: boolean) => {
     const l = f(ox + left),
@@ -48,7 +56,9 @@ export function runtimeGlyphQuads(
     emit(f(x + offsets.shadowOffset), f(y + offsets.shadowOffset), true);
     if (style.bold)
       emit(
-        f(f(x + offsets.boldOffset) + offsets.shadowOffset),
+        legacy
+          ? f(f(x + offsets.shadowOffset) + offsets.boldOffset)
+          : f(f(x + offsets.boldOffset) + offsets.shadowOffset),
         f(y + offsets.shadowOffset),
         true,
       );

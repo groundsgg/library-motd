@@ -80,7 +80,7 @@ console.log(
 const { build, preview } = await import("vite");
 writeFileSync(
   join(directory, "index.html"),
-  '<div id="editor"></div><div id="packed-viewer"></div><script type="module" src="/main.js"></script>',
+  '<div id="editor"></div><div id="packed-viewer"></div><div id="packed-legacy-viewer"></div><script type="module" src="/main.js"></script>',
 );
 writeFileSync(
   join(directory, "main.js"),
@@ -92,7 +92,8 @@ const context={base:{version:{protocol:767,name:'1.21.1'},players:{online:8,max:
 createEditor(document.querySelector('#editor'),{document:createDocument(),context,onChange(){}});
 const glyphs=decodeBitmapGlyphs({height:1,ascent:1,chars:['A']},{width:1,height:1,pixels:new Uint8Array([255,0,0,255])}).value;
 const motdFontSource=createFontGlyphSource([{type:'bitmap',glyphs}]).value;
-createPreview(document.querySelector('#packed-viewer'),{document:createDocument(parseText('<white>A','minimessage').value),context:{...context,profile:java263Profile,clientProtocol:777},motdFontSource});`,
+createPreview(document.querySelector('#packed-viewer'),{document:createDocument(parseText('<white>A','minimessage').value),context:{...context,profile:java263Profile,clientProtocol:777},motdFontSource});
+createPreview(document.querySelector('#packed-legacy-viewer'),{document:createDocument(parseText('<white><u>A</u>','minimessage').value),context:{...context,profile:{...java1211Profile,geometry:{...java1211Profile.geometry,motdShadow:true}}},motdFontSource});`,
 );
 await build({ root: directory, logLevel: "warn", build: { outDir: "build" } });
 const server = await preview({
@@ -136,8 +137,24 @@ try {
   });
   if (!paintedRed)
     throw Error("Packed runtime font did not preserve its original RGBA ink");
+  const legacy = page.locator("#packed-legacy-viewer .mcp-runtime-glyph");
+  await legacy.waitFor();
+  const layers = await legacy.evaluate((span) => ({
+    stacking: getComputedStyle(span).zIndex,
+    passes: [...span.querySelectorAll("canvas")].map(
+      (c) => c.dataset.runtimeLayer,
+    ),
+  }));
+  if (
+    layers.stacking !== "auto" ||
+    layers.passes.join(",") !==
+      "shadow-ink,shadow-effects,foreground-ink,foreground-effects"
+  )
+    throw Error(
+      "Packed legacy runtime font lost its native text-pass stacking",
+    );
   console.log(
-    "Packed production bundle preserves properties, inline version editing and runtime font ink",
+    "Packed production bundle preserves properties, inline version editing, runtime font ink and legacy text passes",
   );
 } finally {
   await browser?.close();
