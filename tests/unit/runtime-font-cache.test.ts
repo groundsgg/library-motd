@@ -81,6 +81,41 @@ it("checks unsupported paint geometry before invoking a lazy host reader", () =>
   expect(reads).toBe(0);
 });
 
+it("preflights the combined legacy layer storage before a host pixel read", () => {
+  let reads = 0;
+  const source = createFontGlyphSource([
+    {
+      type: "bitmap",
+      glyphs: {
+        schemaVersion: 1,
+        imageWidth: 512,
+        imageHeight: 512,
+        glyphs: [{ ...seed, pixelWidth: 512, pixelHeight: 512 }],
+        pixelsFor() {
+          reads++;
+          return new Uint8Array(512 * 512 * 4);
+        },
+      },
+    },
+  ]).value!;
+  const painter = new RuntimeFontPainter(source);
+  const errors = painter.paint(
+    {} as HTMLElement,
+    source.glyphFor(65),
+    { underlined: true },
+    4,
+    4,
+    2,
+    "#ffffff",
+    true,
+    2,
+    { left: 0, top: 0, right: 2000, bottom: 2000 },
+    "java-1.21.1",
+  );
+  expect(errors[0]?.code).toBe("font-runtime-limit");
+  expect(reads).toBe(0);
+});
+
 it("evicts raw rasters when the viewer byte budget is full and stops reads after disposal", () => {
   let reads = 0;
   const raw = new Uint8Array(512 * 512 * 4);

@@ -18,6 +18,7 @@ import {
 } from "./render.js";
 import type { EditableField } from "./editor/types.js";
 import { RuntimeFontPainter } from "./font/runtime.js";
+import { isRuntimeGlyphGeometry } from "./font/runtime-geometry.js";
 import { diagnostic } from "../core/diagnostics.js";
 
 export interface EntryHandle extends PreviewHandle {
@@ -120,10 +121,11 @@ export function createEntry(
     if (destroyed) return;
     options = next;
     stop();
-    const fontSource =
-      next.context.profile.font.runtimeGlyphGeometry === "java-26.3"
-        ? next.motdFontSource
-        : undefined;
+    const fontSource = isRuntimeGlyphGeometry(
+      next.context.profile.font.runtimeGlyphGeometry,
+    )
+      ? next.motdFontSource
+      : undefined;
     const unsupportedSource = !!next.motdFontSource && !fontSource;
     if (runtime?.source !== fontSource) {
       runtime?.destroy();

@@ -193,7 +193,7 @@ function App() {
         createElement(
           "p",
           null,
-          "Original bitmap A and Unihex B. Viewer-only source; no game assets are included.",
+          "Original bitmap A and Unihex B for 1.21.1 and 26.3. Viewer-only source; no game assets are included.",
         ),
         createElement(
           "div",

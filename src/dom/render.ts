@@ -159,6 +159,7 @@ export function renderText(
             right: width,
             bottom: maxLines * context.profile.font.lineHeight + 2,
           },
+          context.profile.font.runtimeGlyphGeometry,
         ),
       );
     } else if (pixelFont)

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { PNG } from "pngjs";
 
 async function mount(
   page: Page,
@@ -213,24 +214,29 @@ test("bounds the total active canvas storage for repeated oversized transparent 
   expect(observed.limited).toBe(true);
 });
 
-test("React viewer mounts, updates and unmounts an explicit local font source", async ({
-  page,
-}) => {
-  await page.goto("/examples/react/");
-  await page.getByLabel("Show local font example").check();
-  await expect(
-    page.locator("#runtime-font-example .mcp-runtime-ink"),
-  ).toHaveCount(8);
-  await page
-    .getByLabel("Presentation", { exact: true })
-    .selectOption("server-list");
-  await expect(
-    page.locator("#runtime-font-example .mcp-menu-title"),
-  ).toBeVisible();
-  await expect(page.locator(".mce-root .mcp-runtime-glyph")).toHaveCount(0);
-  await page.getByLabel("Show local font example").uncheck();
-  await expect(page.locator("#runtime-font-example")).toHaveCount(0);
-});
+for (const [profile, canvases] of [
+  ["java-26.3", 8],
+  ["java-1.21.1", 10],
+] as const)
+  test(`React viewer mounts, updates and unmounts an explicit local font source for ${profile}`, async ({
+    page,
+  }) => {
+    await page.goto("/examples/react/");
+    await page.getByLabel("Client version").selectOption(profile);
+    await page.getByLabel("Show local font example").check();
+    await expect(
+      page.locator("#runtime-font-example .mcp-runtime-ink"),
+    ).toHaveCount(canvases);
+    await page
+      .getByLabel("Presentation", { exact: true })
+      .selectOption("server-list");
+    await expect(
+      page.locator("#runtime-font-example .mcp-menu-title"),
+    ).toBeVisible();
+    await expect(page.locator(".mce-root .mcp-runtime-glyph")).toHaveCount(0);
+    await page.getByLabel("Show local font example").uncheck();
+    await expect(page.locator("#runtime-font-example")).toHaveCount(0);
+  });
 
 test("runtime obfuscation redraws candidate metrics and respects reduced motion and pause", async ({
   page,
@@ -328,7 +334,7 @@ test("uncalibrated profile geometry does not guess imported rendering or read it
 }) => {
   await mount(page, "A");
   await page.evaluate(() => {
-    window.context = { ...window.context, profile: window.api.java1211Profile };
+    window.context = { ...window.context, profile: window.api.java1204Profile };
     window.preview.update({
       document: window.doc,
       context: window.context,
@@ -349,6 +355,130 @@ test("uncalibrated profile geometry does not guess imported rendering or read it
     "false",
   );
 });
+
+test("legacy text passes keep earlier foreground over later shadows and redraw the same source for26.3", async ({
+  page,
+}) => {
+  await mount(page, "A");
+  const saved = await page.evaluate(async () => {
+    const fonts = await import("/src/fonts/index.ts");
+    const solid = fonts.decodeBitmapGlyphs(
+      { height: 4, ascent: 4, chars: ["A"] },
+      { width: 4, height: 4, pixels: new Uint8Array(64).fill(255) },
+    ).value;
+    const top = new Uint8Array(16);
+    top.fill(255, 0, 4);
+    const strip = fonts.decodeBitmapGlyphs(
+      { height: 4, ascent: 4, chars: ["B"] },
+      { width: 1, height: 4, pixels: top },
+    ).value;
+    window.legacyReads = 0;
+    const counted = (glyphs) => ({
+      ...glyphs,
+      pixelsFor(cp) {
+        window.legacyReads++;
+        return glyphs.pixelsFor(cp);
+      },
+    });
+    window.legacySource = fonts.createFontGlyphSource([
+      { type: "bitmap", glyphs: counted(solid) },
+      { type: "bitmap", glyphs: counted(strip) },
+      { type: "space", advances: { " ": -3 } },
+    ]).value;
+    window.doc = window.api.createDocument(
+      window.api.parseText("<white>A B", "minimessage").value,
+    );
+    window.context = {
+      ...window.context,
+      background: "none",
+      profile: {
+        ...window.api.java1211Profile,
+        geometry: { ...window.api.java1211Profile.geometry, motdShadow: true },
+      },
+    };
+    window.preview.update({
+      document: window.doc,
+      context: window.context,
+      motdFontSource: window.legacySource,
+    });
+    return JSON.stringify(window.doc);
+  });
+  await expect(page.locator("#preview .mcp-runtime-ink")).toHaveCount(4);
+  const pixel = async () => {
+    const image = PNG.sync.read(
+      await page.locator("#preview .mcp-motd").screenshot(),
+    );
+    return [
+      ...image.data.subarray(
+        (9 * image.width + 9) * 4,
+        (9 * image.width + 9) * 4 + 4,
+      ),
+    ];
+  };
+  expect(await pixel()).toEqual([255, 255, 255, 255]);
+  await page.evaluate(() => {
+    window.context = { ...window.context, profile: window.api.java263Profile };
+    window.preview.update({
+      document: window.doc,
+      context: window.context,
+      motdFontSource: window.legacySource,
+    });
+  });
+  await expect(page.locator("#preview .mcp-runtime-ink")).toHaveCount(2);
+  expect(await pixel()).toEqual([63, 63, 63, 255]);
+  expect(await page.evaluate(() => window.legacyReads)).toBe(2);
+  expect(await page.evaluate(() => JSON.stringify(window.doc))).toBe(saved);
+});
+
+for (const failure of [2, 4])
+  test(`legacy glyph discards staged layers if canvas context ${failure} fails`, async ({
+    page,
+  }) => {
+    await mount(page, "A");
+    const result = await page.evaluate(async (failure) => {
+      const { RuntimeFontPainter } = await import("/src/dom/font/runtime.ts");
+      const span = document.createElement("span"),
+        painter = new RuntimeFontPainter(window.runtimeSource);
+      const original = HTMLCanvasElement.prototype.getContext;
+      const canvases: HTMLCanvasElement[] = [];
+      HTMLCanvasElement.prototype.getContext = function (...args) {
+        canvases.push(this);
+        return canvases.length === failure
+          ? null
+          : Reflect.apply(original, this, args);
+      };
+      try {
+        const diagnostics = painter.paint(
+          span,
+          window.runtimeSource.glyphFor(65),
+          { underlined: true },
+          0,
+          0,
+          7,
+          "#ffffff",
+          true,
+          2,
+          { left: -1, top: 0, right: 100, bottom: 40 },
+          "java-1.21.1",
+        );
+        return {
+          diagnostics,
+          visible: span.childElementCount,
+          storage: canvases.map((c) => c.width * c.height),
+          contexts: canvases.length,
+        };
+      } finally {
+        HTMLCanvasElement.prototype.getContext = original;
+        painter.destroy();
+      }
+    }, failure);
+    expect(result.contexts).toBe(failure);
+    expect(result.diagnostics.map((d) => d.code)).toEqual([
+      "font-runtime-unavailable",
+    ]);
+    expect(result.visible).toBe(0);
+    expect(result.storage.every((size) => size === 0)).toBe(true);
+  });
 
 test("comparisons expose and display raster failures from a later obfuscation frame", async ({
   page,

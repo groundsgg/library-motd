@@ -5,6 +5,7 @@ import { java1211Profile } from "./java-1.21.1.js";
 export const java1204Profile: ClientProfile = {
   ...java1211Profile,
   id: "java-1.20.4",
+  font: { ...java1211Profile.font, runtimeGlyphGeometry: undefined },
   clientVersion: "1.20.4",
   protocol: 765,
   background: "dirt",
@@ -19,6 +20,7 @@ export const java1204Profile: ClientProfile = {
 export const java12111Profile: ClientProfile = {
   ...java1211Profile,
   id: "java-1.21.11",
+  font: { ...java1211Profile.font, runtimeGlyphGeometry: undefined },
   clientVersion: "1.21.11",
   protocol: 774,
   geometry: {

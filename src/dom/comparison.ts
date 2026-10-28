@@ -8,6 +8,7 @@ import { element, type PreviewHandle } from "./preview.js";
 import { createEntry } from "./entry.js";
 import { entryTextWidth } from "./render.js";
 import type { FontGlyphSource } from "../fonts/source.js";
+import { isRuntimeGlyphGeometry } from "./font/runtime-geometry.js";
 
 export interface ComparisonClient {
   motdFontSource?: FontGlyphSource;
@@ -115,10 +116,11 @@ export function createComparison(
           motdLayout: {
             profile: client.context.profile,
             width: entryTextWidth(client.context),
-            fontSource:
-              client.context.profile.font.runtimeGlyphGeometry === "java-26.3"
-                ? client.motdFontSource
-                : undefined,
+            fontSource: isRuntimeGlyphGeometry(
+              client.context.profile.font.runtimeGlyphGeometry,
+            )
+              ? client.motdFontSource
+              : undefined,
           },
         }).value,
     );
