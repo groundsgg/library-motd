@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { PNG } from "pngjs";
 import { openEntryTool, selectRenderedText } from "./editor-actions.js";
 import { expect, test, type Page } from "@playwright/test";
 
@@ -406,7 +408,8 @@ for (const profile of ["java263Profile", "java1211Profile"] as const)
       window.setEditorOptions({ context: window.context });
       window.editor.execute({
         type: "replace-source",
-        source: "<b>GROUNDS NETWORK</b><newline>Stage System | {{region}}",
+        source:
+          "<#e8c17c><b>GROUNDS NETWORK</b></#e8c17c><newline><gray>Stage System | </gray><gold>{{region}}</gold>",
       });
       for (const line of [0, 1])
         window.editor.execute({ type: "align", line, align: "center" });
@@ -459,6 +462,46 @@ for (const profile of ["java263Profile", "java1211Profile"] as const)
         positions.forEach((x, line) =>
           expect(x).toBeCloseTo(expected[line]!, 1),
         );
+        const native = JSON.parse(
+          readFileSync(
+            new URL(
+              `../fixtures/client/native-alignment/${profile === "java263Profile" ? "26.3" : "1.21.1"}.json`,
+              import.meta.url,
+            ),
+            "utf8",
+          ),
+        );
+        const sample = native.cases.find(
+          (c: { region: string }) => c.region === region,
+        );
+        const motd = page.locator(`${host} .mcp-motd`);
+        const pad = await motd.evaluate(
+          (el) => parseFloat(getComputedStyle(el).paddingLeft) || 0,
+        );
+        const png = PNG.sync.read(await motd.screenshot({ caret: "hide" }));
+        for (const line of sample.foreground) {
+          const colors = line.foregroundColors.map((c: string) =>
+            Number.parseInt(c.slice(1), 16),
+          );
+          const xs: number[] = [];
+          for (let y = 0; y < png.height; y++)
+            for (let x = 0; x < png.width; x++) {
+              const i = (y * png.width + x) * 4;
+              const rgb =
+                (png.data[i]! << 16) |
+                (png.data[i + 1]! << 8) |
+                png.data[i + 2]!;
+              if (colors.includes(rgb)) xs.push(x);
+            }
+          expect(xs.length).toBeGreaterThan(0);
+          expect(Math.min(...xs) - pad * 2).toBeCloseTo(
+            line.bounds[0] - native.textOriginX,
+            1,
+          );
+          expect(Math.max(...xs) - Math.min(...xs) + 1).toBe(
+            line.bounds[2] - line.bounds[0],
+          );
+        }
       }
       expect(await page.evaluate(() => JSON.stringify(window.doc))).toBe(
         before,
