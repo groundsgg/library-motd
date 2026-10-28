@@ -20,6 +20,7 @@ import type { EditableField } from "./editor/types.js";
 import { RuntimeFontPainter } from "./font/runtime.js";
 import { isRuntimeGlyphGeometry } from "./font/runtime-geometry.js";
 import { diagnostic } from "../core/diagnostics.js";
+import { createPingGraphic } from "./ping.js";
 
 export interface EntryHandle extends PreviewHandle {
   getAnchors(): {
@@ -398,7 +399,6 @@ export function createEntry(
       content.style.display = "block";
       statusAction.append(content);
     }
-    ping.replaceChildren();
     const active = !compatible
       ? 0
       : context.pingMs < 150
@@ -410,60 +410,7 @@ export function createEntry(
             : context.pingMs < 1000
               ? 2
               : 1;
-    for (let i = 0; i < 5; i++) {
-      const bar = element(doc, "i", "");
-      bar.style.left = i * 2 + "px";
-      bar.style.height = i + 2 + "px";
-      if (i >= active) {
-        bar.style.background = "#5b5b5b";
-        bar.style.boxShadow = "1px 1px #383838";
-      }
-      ping.append(bar);
-    }
-    if (!compatible) {
-      // Draw the bars and diagonal mark procedurally, without a game texture.
-      const pixels = new Map<string, string>();
-      for (let bar = 0; bar < 5; bar++)
-        for (let y = 5 - bar; y <= 6; y++) {
-          pixels.set(`${bar * 2},${y}`, "#5b5b5b");
-          pixels.set(`${bar * 2 + 1},${y + 1}`, "#383838");
-        }
-      for (let y = 1; y <= 7; y++) {
-        const x = 8 - y;
-        for (const [offset, opacity] of [
-          [1, 63],
-          [2, 127],
-        ] as const) {
-          const key = `${x + offset},${y + 1}`,
-            color = pixels.get(key);
-          if (color) {
-            const channel = Math.floor(
-              (parseInt(color.slice(1, 3), 16) * opacity) / 255,
-            )
-              .toString(16)
-              .padStart(2, "0");
-            pixels.set(key, `#${channel.repeat(3)}`);
-          }
-        }
-      }
-      for (let y = 1; y <= 7; y++) {
-        const edge = `${7 - y},${y}`;
-        if (pixels.get(edge) === "#5b5b5b") pixels.set(edge, "#2d2d2d");
-      }
-      for (let y = 1; y <= 7; y++)
-        for (const x of new Set([y, 8 - y])) {
-          pixels.set(`${x},${y}`, "#ff0000");
-          pixels.set(`${x + 1},${y}`, "#820000");
-        }
-      const cross = element(doc, "span", "mcp-ping-cross");
-      cross.style.boxShadow = [...pixels]
-        .map(([position, color]) => {
-          const [x, y] = position.split(",");
-          return `${x}px ${y}px ${color}`;
-        })
-        .join(",");
-      ping.replaceChildren(cross);
-    }
+    ping.replaceChildren(createPingGraphic(doc, active, !compatible));
     ping.setAttribute(
       "aria-label",
       labels.connectionStatus ?? "Connection status",

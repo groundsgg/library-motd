@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { PNG } from "pngjs";
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 const packed = process.env.MOTD_PACKAGE_TARBALL
   ? { filename: process.env.MOTD_PACKAGE_TARBALL }
@@ -153,8 +154,32 @@ try {
     throw Error(
       "Packed legacy runtime font lost its native text-pass stacking",
     );
+  await page.keyboard.press("Escape");
+  await page.evaluate(() => {
+    document.body.style.zoom = "0.9";
+  });
+  const image = PNG.sync.read(
+    await page.locator("#packed-legacy-viewer .mcp-ping").screenshot(),
+  );
+  let runs = 0,
+    previous = false;
+  for (let x = 0; x < image.width; x++) {
+    let foreground = false;
+    for (let y = 0; y < image.height; y++) {
+      const i = (y * image.width + x) * 4;
+      if (
+        image.data[i] === 0 &&
+        image.data[i + 1] === 255 &&
+        image.data[i + 2] === 33
+      )
+        foreground = true;
+    }
+    if (foreground && !previous) runs++;
+    previous = foreground;
+  }
+  if (runs !== 5) throw Error("Packed ping bars merged under layout zoom");
   console.log(
-    "Packed production bundle preserves properties, inline version editing, runtime font ink and legacy text passes",
+    "Packed production bundle preserves properties, inline version editing, runtime font ink, legacy text passes and separated ping bars",
   );
 } finally {
   await browser?.close();
