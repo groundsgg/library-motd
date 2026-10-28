@@ -95,6 +95,34 @@ it("matches an executed Vanilla provider at the float32 half-pixel boundary", ()
   expect(result.value!.glyphs[0]).toMatchObject(reference.expected);
 });
 
+const float32AdvanceReference = JSON.parse(
+  readFileSync(
+    new URL(
+      "../fixtures/client/native-bitmap-advance-float32/26.3/manifest.json",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+);
+for (const reference of float32AdvanceReference.cases)
+  it(`matches the native final float32 advance: ${reference.name}`, () => {
+    const image = atlas(reference.input.width, reference.input.height);
+    for (const pixel of reference.input.pixels)
+      set(image, pixel.x, pixel.y, pixel.rgba);
+    expect(createHash("sha256").update(image.pixels).digest("hex")).toBe(
+      reference.input.rgbaSha256,
+    );
+    const result = decodeBitmapGlyphs(
+      reference.input.definition,
+      image,
+      reference.input.options,
+    );
+    expect(result.diagnostics).toEqual([]);
+    expect(result.value!.glyphs[0]).toMatchObject(reference.expected);
+    // Converting metrics must not scale, crop or replace the original cell.
+    expect(result.value!.pixelsFor(65)).toEqual(image.pixels);
+  });
+
 it("preserves blank-cell advance and ignores U+0000 without shifting the grid", () => {
   const image = atlas(6, 2);
   set(image, 0, 0, [255, 255, 255, 255]);

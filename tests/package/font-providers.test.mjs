@@ -59,6 +59,23 @@ test("pairs local RGBA glyph metrics and pixels without a browser image decoder"
   );
 });
 
+for (const [width, height, advance, options] of [
+  [4096, 4096, 16777216, {}],
+  [4097, 4098, 16789508, { maxDimension: 8192 }],
+])
+  test(`exposes the native float32 bitmap advance ${advance} without DOM or React`, () => {
+    const pixels = new Uint8Array(width * 4);
+    pixels.set([255, 255, 255, 255], (width - 1) * 4);
+    const result = decodeBitmapGlyphs(
+      { height, ascent: 1, chars: ["A"] },
+      { width, height: 1, pixels },
+      options,
+    );
+    assert.deepEqual(result.diagnostics, []);
+    assert.equal(result.value.glyphs[0].advance, advance);
+    assert.deepEqual(result.value.pixelsFor(65), pixels);
+  });
+
 test("rejects an oversized grid row within a small process memory budget", () => {
   const result = spawnSync(
     process.execPath,
