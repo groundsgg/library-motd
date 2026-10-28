@@ -203,7 +203,10 @@ export function decodeBitmapGlyphs(
           Object.freeze({
             text,
             codePoint,
-            advance: Math.trunc(0.5 + Math.fround(inkWidth * scale)) + 1,
+            // Glyph.info converts the stored integer advance back to float32.
+            advance: Math.fround(
+              Math.trunc(0.5 + Math.fround(inkWidth * scale)) + 1,
+            ),
             boldOffset: 1,
             shadowOffset: 1,
             pixelWidth,

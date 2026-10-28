@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "clientVersion": "26.3",
+  "clientSha1": "e877b6a07acd633fb3bb475002175cec036e7b87",
+  "classSha256": {
+    "net/minecraft/client/gui/font/providers/BitmapProvider$Definition": "fd2bfdc999b653386029b90f07d28fa6d4b14996f199c3bb381efd1ecd8cd7da",
+    "net/minecraft/client/gui/font/providers/BitmapProvider$Glyph": "d19d45e224af3a3d1631bb53aeed9969d2e63980ddb9402f0624e026f879516c",
+    "net/minecraft/client/gui/font/providers/BitmapProvider$Glyph$1": "4001f9dddc71c834bde435eb75ee9f9c605f2ccae0ece6ff6dae7eb1c0b50aeb"
+  },
+  "method": "Executed official BitmapProvider.Definition.load and glyph.info/bake in an isolated headless JVM on 2026-10-28; the supplied stitcher observes GlyphBitmap without GPU upload. Original synthetic PNG inputs, not rendered client captures. The stored integer advance is observed separately from GlyphInfo float32 advance.",
+  "cases": [
+    {
+      "name": "round-down-at-default-limit",
+      "input": {
+        "width": 4096,
+        "height": 1,
+        "definition": {
+          "height": 4096,
+          "ascent": 1,
+          "chars": [
+            "A"
+          ]
+        },
+        "pixels": [
+          {
+            "x": 4095,
+            "y": 0,
+            "rgba": [
+              255,
+              255,
+              255,
+              255
+            ]
+          }
+        ],
+        "otherPixels": "RGBA zero",
+        "options": {},
+        "pngSha256": "ca702416af30462a7eb1b57f5069dbcb5b660df0cc6219553b6f8657c5c100b0",
+        "rgbaSha256": "b40aa3731589a4d9749eb9bf06cde967fff4f542057805349ce17c88e23419d6"
+      },
+      "nativeStoredAdvance": 16777217,
+      "nativeBoldAdvance": 16777216,
+      "expected": {
+        "codePoint": 65,
+        "advance": 16777216,
+        "boldOffset": 1,
+        "shadowOffset": 1,
+        "scale": 4096,
+        "oversample": 0.000244140625,
+        "sourceX": 0,
+        "sourceY": 0,
+        "pixelWidth": 4096,
+        "pixelHeight": 1,
+        "bearingTop": 1,
+        "inkWidth": 4096
+      }
+    },
+    {
+      "name": "round-up-with-explicit-limit",
+      "input": {
+        "width": 4097,
+        "height": 1,
+        "definition": {
+          "height": 4098,
+          "ascent": 1,
+          "chars": [
+            "A"
+          ]
+        },
+        "pixels": [
+          {
+            "x": 4096,
+            "y": 0,
+            "rgba": [
+              255,
+              255,
+              255,
+              255
+            ]
+          }
+        ],
+        "otherPixels": "RGBA zero",
+        "options": {
+          "maxDimension": 8192
+        },
+        "pngSha256": "008a3afa3cac854f1256b72df8fcfdf662d8d36d7f11a627958d5f0661e11485",
+        "rgbaSha256": "9c2adfc044b8dbf59821ac5d32f873d1353d7b5ca55856517633e2f3d4ee77ea"
+      },
+      "nativeStoredAdvance": 16789507,
+      "nativeBoldAdvance": 16789508,
+      "expected": {
+        "codePoint": 65,
+        "advance": 16789508,
+        "boldOffset": 1,
+        "shadowOffset": 1,
+        "scale": 4098,
+        "oversample": 0.00024402147391811013,
+        "sourceX": 0,
+        "sourceY": 0,
+        "pixelWidth": 4097,
+        "pixelHeight": 1,
+        "bearingTop": 1,
+        "inkWidth": 4097
+      }
+    }
+  ]
+}
