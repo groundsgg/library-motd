@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.4.0](https://github.com/groundsgg/library-motd/compare/v0.3.0...v0.4.0) (2026-10-28)
+
+
+### Features
+
+* **fonts:** compose paired runtime glyph sources ([#122](https://github.com/groundsgg/library-motd/issues/122)) ([2200770](https://github.com/groundsgg/library-motd/commit/2200770696b87f1041a3b4e3fb903be7fb6e00b6)), closes [#121](https://github.com/groundsgg/library-motd/issues/121)
+* **fonts:** decode bounded bitmap glyph metrics and pixels ([#114](https://github.com/groundsgg/library-motd/issues/114)) ([7b1f9ac](https://github.com/groundsgg/library-motd/commit/7b1f9ac5849030dd030731630230a1fd7079ed42))
+* **fonts:** decode bounded Unihex glyphs and native metrics ([#118](https://github.com/groundsgg/library-motd/issues/118)) ([adfa39b](https://github.com/groundsgg/library-motd/commit/adfa39bb0482a865c1319f4a7d9b72938c0f3d39))
+* **fonts:** resolve bounded local provider graphs ([#112](https://github.com/groundsgg/library-motd/issues/112)) ([bae7360](https://github.com/groundsgg/library-motd/commit/bae73606c50085d1c2e7c62d9fb1c8740f225f38))
+* **viewer:** calibrate Java 1.21.1 runtime fonts ([#136](https://github.com/groundsgg/library-motd/issues/136)) ([7de0048](https://github.com/groundsgg/library-motd/commit/7de00489f513ffaa63a0021036491d3c34a6ca27))
+* **viewer:** render paired runtime MOTD fonts ([#132](https://github.com/groundsgg/library-motd/issues/132)) ([9949d3c](https://github.com/groundsgg/library-motd/commit/9949d3c34aaa74e63a69971f8fb732aa2e434ea2))
+
+
+### Bug Fixes
+
+* align obfuscated text with native render frames ([#110](https://github.com/groundsgg/library-motd/issues/110)) ([4d6f956](https://github.com/groundsgg/library-motd/commit/4d6f95619ef42d51c7381bebb55ea37def0029bc))
+* **ci:** classify bounded Windows collector failures ([#124](https://github.com/groundsgg/library-motd/issues/124)) ([b32a48d](https://github.com/groundsgg/library-motd/commit/b32a48d69a35511ef246e411d3a4cc312fc28d16)), closes [#123](https://github.com/groundsgg/library-motd/issues/123)
+* **ci:** skip superseded main release work ([#128](https://github.com/groundsgg/library-motd/issues/128)) ([6ce3d06](https://github.com/groundsgg/library-motd/commit/6ce3d0697e84f0cd3ddc95894165b4f5b2388d76)), closes [#127](https://github.com/groundsgg/library-motd/issues/127)
+* **fonts:** keep validated byte extents fixed ([#117](https://github.com/groundsgg/library-motd/issues/117)) ([a66821f](https://github.com/groundsgg/library-motd/commit/a66821fa4c694bc6b24a30bc22d9ed53cbd63d42))
+* **fonts:** preserve native float32 bitmap advances ([#130](https://github.com/groundsgg/library-motd/issues/130)) ([a9ec1a3](https://github.com/groundsgg/library-motd/commit/a9ec1a34361069d9eefea650d1a29d87186f0859))
+* preserve flattened JSON component array siblings ([#103](https://github.com/groundsgg/library-motd/issues/103)) ([bddbf83](https://github.com/groundsgg/library-motd/commit/bddbf836dac14f7bc61a276daf5fcdcc30938bf6))
+* preserve protected JSON array inheritance ([#101](https://github.com/groundsgg/library-motd/issues/101)) ([dc88247](https://github.com/groundsgg/library-motd/commit/dc88247c86e854be7dd5318c7eed1043e6035b6d))
+* **viewer:** preserve ping geometry under layout zoom ([#138](https://github.com/groundsgg/library-motd/issues/138)) ([1a9e844](https://github.com/groundsgg/library-motd/commit/1a9e84444081ead3cc5d785bafd60d7d4975a804)), closes [#137](https://github.com/groundsgg/library-motd/issues/137)
+* **viewer:** preserve regular glyph metrics during obfuscation ([#126](https://github.com/groundsgg/library-motd/issues/126)) ([0b1814b](https://github.com/groundsgg/library-motd/commit/0b1814bad491dabae0440283d430093831d8d61c)), closes [#125](https://github.com/groundsgg/library-motd/issues/125)
+
 ## [0.3.0](https://github.com/groundsgg/library-motd/compare/v0.2.0...v0.3.0) (2026-10-26)
 
 
