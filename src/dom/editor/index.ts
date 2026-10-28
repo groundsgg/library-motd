@@ -36,7 +36,11 @@ export function createEditor(
   host.append(root);
   const controller = createEditorController(initial),
     localization = controller.getLocalization(),
-    entry = createEntry(canvas, initial),
+    entry = createEntry(canvas, {
+      document: initial.document,
+      context: initial.context,
+      labels: initial.labels,
+    }),
     overlays = createOverlays(root),
     mount = { root, entry, controller, overlays, localization };
   let destroyed = false;

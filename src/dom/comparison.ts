@@ -4,10 +4,13 @@ import type {
   ServerListDocument,
 } from "../core/model.js";
 import { evaluateStatus } from "../core/status/evaluate.js";
-import { createPreview, element, type PreviewHandle } from "./preview.js";
+import { element, type PreviewHandle } from "./preview.js";
+import { createEntry } from "./entry.js";
 import { entryTextWidth } from "./render.js";
+import type { FontGlyphSource } from "../fonts/source.js";
 
 export interface ComparisonClient {
+  motdFontSource?: FontGlyphSource;
   /** Unique within this comparison; preserved when clients are reordered. */
   id: string;
   label?: string;
@@ -60,12 +63,39 @@ export function createComparison(
   let destroyed = false;
   let diagnostics = new Map<string, readonly Diagnostic[]>();
   let differences = new Map<string, readonly ComparisonField[]>();
+  let currentLabels: Readonly<Record<string, string>> = {};
   host.append(root);
+
+  function refreshDiagnostics(id: string) {
+    const panel = panels.get(id);
+    if (!panel) return;
+    const notes = panel.preview.getDiagnostics();
+    const previous = diagnostics.get(id);
+    diagnostics.set(id, notes);
+    if (previous && JSON.stringify(previous) === JSON.stringify(notes)) return;
+    panel.diagnostics.replaceChildren();
+    panel.diagnostics.setAttribute(
+      "aria-label",
+      formatLabel("comparisonDiagnostics", {}, currentLabels),
+    );
+    for (const note of notes) {
+      const item = element(
+        doc,
+        "li",
+        "",
+        formatDiagnostic(note, currentLabels),
+      );
+      item.dataset.code = note.code;
+      panel.diagnostics.append(item);
+    }
+    panel.diagnostics.hidden = notes.length === 0;
+  }
 
   function update(options: ComparisonOptions): void {
     if (destroyed) return;
     validateClients(options.clients);
     const labels = options.labels ?? {};
+    currentLabels = labels;
     const label = (key: string, fallback: string) =>
       formatLabel(key, {}, labels, fallback);
     const selected = new Set(options.clients.map((client) => client.id));
@@ -85,6 +115,10 @@ export function createComparison(
           motdLayout: {
             profile: client.context.profile,
             width: entryTextWidth(client.context),
+            fontSource:
+              client.context.profile.font.runtimeGlyphGeometry === "java-26.3"
+                ? client.motdFontSource
+                : undefined,
           },
         }).value,
     );
@@ -93,6 +127,7 @@ export function createComparison(
       const previewOptions = {
         document: options.document,
         context: client.context,
+        motdFontSource: client.motdFontSource,
         labels,
       };
       let panel = panels.get(client.id);
@@ -111,7 +146,9 @@ export function createComparison(
           details,
           differences: difference,
           diagnostics: notes,
-          preview: createPreview(viewport, previewOptions),
+          preview: createEntry(viewport, previewOptions, () =>
+            refreshDiagnostics(client.id),
+          ),
         };
         panels.set(client.id, panel);
       } else panel.preview.update(previewOptions);
@@ -140,19 +177,7 @@ export function createComparison(
           : changed.length
             ? `${label("comparisonDifferences", "Different from reference")}: ${changed.map((field) => label(`comparisonField.${field}`, fieldLabels[field])).join(", ")}`
             : label("comparisonSame", "Same evaluated status as reference");
-      const notes = panel.preview.getDiagnostics();
-      diagnostics.set(client.id, notes);
-      panel.diagnostics.replaceChildren();
-      panel.diagnostics.setAttribute(
-        "aria-label",
-        label("comparisonDiagnostics", "Preview diagnostics"),
-      );
-      for (const note of notes) {
-        const item = element(doc, "li", "", formatDiagnostic(note, labels));
-        item.dataset.code = note.code;
-        panel.diagnostics.append(item);
-      }
-      panel.diagnostics.hidden = notes.length === 0;
+      refreshDiagnostics(client.id);
     });
     if (!options.clients.length) {
       const empty = element(
@@ -170,7 +195,10 @@ export function createComparison(
     update,
     getDiagnostics: () =>
       new Map(
-        [...diagnostics].map(([id, notes]) => [id, structuredClone(notes)]),
+        [...panels].map(([id, panel]) => [
+          id,
+          structuredClone(panel.preview.getDiagnostics()),
+        ]),
       ),
     getDifferences: () =>
       new Map([...differences].map(([id, changed]) => [id, [...changed]])),

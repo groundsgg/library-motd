@@ -1,6 +1,16 @@
 import type { englishLabels } from "./en.js";
 /** Complete German catalog; override individual keys for host terminology. */
 export const germanLabels = {
+  "diagnostic.fontRuntimeProfile":
+    "Importierte MOTD-Schriften benötigen die kalibrierte CPU-Geometrie java-26.3 (gewählter Client: {version}). Stattdessen wird die Profilschrift verwendet.",
+  "diagnostic.fontRuntimeAlignmentLimit":
+    "Die Ausrichtung der importierten Schrift überschreitet das Leerzeichenbudget der Ausgabe.",
+  "diagnostic.fontRuntimeUnavailable":
+    "Die Laufzeit-Schrift kann in dieser Umgebung nicht gezeichnet werden.",
+  "diagnostic.fontRuntimeLimit":
+    "Die Laufzeit-Schrift überschreitet das begrenzte Zeichenbudget der Vorschau.",
+  "diagnostic.fontRuntimeUnverified":
+    "Für importierte MOTD-Schriften ist die CPU-Geometrie geprüft; natives GPU-Rendering ist nicht zertifiziert.",
   "diagnostic.fontSourceInput":
     "Ungültige Daten für die Laufzeit-Schriftquelle.",
   "diagnostic.fontSourceOptions":

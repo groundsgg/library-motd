@@ -31,10 +31,9 @@ for (const name of ["font-providers", "font-byte-bounds"]) {
   const file = `${name}.test.mjs`;
   writeFileSync(
     join(directory, file),
-    readFileSync(`tests/package/${file}`, "utf8").replaceAll(
-      "../../dist/fonts/index.js",
-      "@groundsgg/motd/fonts",
-    ),
+    readFileSync(`tests/package/${file}`, "utf8")
+      .replaceAll("../../dist/fonts/index.js", "@groundsgg/motd/fonts")
+      .replaceAll("../../dist/index.js", "@groundsgg/motd"),
   );
   execFileSync(process.execPath, ["--test", file], {
     cwd: directory,
@@ -62,6 +61,7 @@ writeFileSync(
   join(directory, "react-ssr.test.mjs"),
   readFileSync("tests/package/react-ssr.test.mjs", "utf8")
     .replace("../../dist/react/index.js", "@groundsgg/motd/react")
+    .replace("../../dist/fonts/index.js", "@groundsgg/motd/fonts")
     .replace("../../dist/index.js", "@groundsgg/motd"),
 );
 execFileSync(process.execPath, ["--test", "react-ssr.test.mjs"], {
@@ -80,11 +80,19 @@ console.log(
 const { build, preview } = await import("vite");
 writeFileSync(
   join(directory, "index.html"),
-  '<div id="editor"></div><script type="module" src="/main.js"></script>',
+  '<div id="editor"></div><div id="packed-viewer"></div><script type="module" src="/main.js"></script>',
 );
 writeFileSync(
   join(directory, "main.js"),
-  `import {createDocument,java1211Profile} from '@groundsgg/motd';import {createEditor}from '@groundsgg/motd/dom';import '@groundsgg/motd/styles.css';createEditor(document.querySelector('#editor'),{document:createDocument(),context:{base:{version:{protocol:767,name:'1.21.1'},players:{online:8,max:100,sample:[]},description:''},clientProtocol:767,values:{},profile:java1211Profile,viewportWidth:640,guiScale:2,serverName:'Packed consumer',pingMs:10,animations:false},onChange(){}});`,
+  `import {createDocument,parseText,java1211Profile,java263Profile} from '@groundsgg/motd';
+import {createEditor,createPreview} from '@groundsgg/motd/dom';
+import {decodeBitmapGlyphs,createFontGlyphSource} from '@groundsgg/motd/fonts';
+import '@groundsgg/motd/styles.css';
+const context={base:{version:{protocol:767,name:'1.21.1'},players:{online:8,max:100,sample:[]},description:''},clientProtocol:767,values:{},profile:java1211Profile,viewportWidth:640,guiScale:2,serverName:'Packed consumer',pingMs:10,animations:false};
+createEditor(document.querySelector('#editor'),{document:createDocument(),context,onChange(){}});
+const glyphs=decodeBitmapGlyphs({height:1,ascent:1,chars:['A']},{width:1,height:1,pixels:new Uint8Array([255,0,0,255])}).value;
+const motdFontSource=createFontGlyphSource([{type:'bitmap',glyphs}]).value;
+createPreview(document.querySelector('#packed-viewer'),{document:createDocument(parseText('<white>A','minimessage').value),context:{...context,profile:java263Profile,clientProtocol:777},motdFontSource});`,
 );
 await build({ root: directory, logLevel: "warn", build: { outDir: "build" } });
 const server = await preview({
@@ -111,8 +119,25 @@ try {
     .click();
   await page.getByLabel("Version display").selectOption("always");
   await page.getByLabel("Version inline editor").waitFor();
+  const imported = page.locator("#packed-viewer .mcp-runtime-ink");
+  await imported.waitFor();
+  const paintedRed = await imported.evaluate((canvas) => {
+    const pixels = canvas
+      .getContext("2d")
+      .getImageData(0, 0, canvas.width, canvas.height).data;
+    return pixels.some(
+      (value, index) =>
+        index % 4 === 0 &&
+        value === 255 &&
+        pixels[index + 1] === 0 &&
+        pixels[index + 2] === 0 &&
+        pixels[index + 3] === 255,
+    );
+  });
+  if (!paintedRed)
+    throw Error("Packed runtime font did not preserve its original RGBA ink");
   console.log(
-    "Packed production bundle preserves properties and inline version editing",
+    "Packed production bundle preserves properties, inline version editing and runtime font ink",
   );
 } finally {
   await browser?.close();

@@ -1,3 +1,5 @@
+import type { FontGlyphSource, FontSourceGlyph } from "../fonts/source.js";
+
 export type JsonValue =
   null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
 export interface Diagnostic {
@@ -92,9 +94,11 @@ export interface RuntimeContext {
   compatible?: boolean;
   values: Readonly<Record<string, string>>;
   /** Profile and logical width used when materializing aligned MOTD output. */
-  motdLayout?: Pick<LayoutOptions, "profile" | "width">;
+  motdLayout?: Pick<LayoutOptions, "profile" | "width" | "fontSource">;
 }
 export interface FontProfile {
+  /** Explicit CPU geometry supported by the optional imported-font viewer. */
+  runtimeGlyphGeometry?: "java-26.3";
   /** Native ASCII-space wrapping with LTR grapheme metrics; omission keeps legacy wrapping. */
   layout?: "java-ltr";
   family: string;
@@ -206,11 +210,17 @@ export interface SerializeOptions {
 }
 export interface LayoutOptions {
   profile: ClientProfile;
+  /** Explicit runtime source; selects scalar metrics without changing the document. */
+  fontSource?: FontGlyphSource;
+  /** Optional draw-time candidate selection; deterministic layout omits this. */
+  obfuscationRandom?: () => number;
   width: number;
   maxLines?: number;
   alignments?: Alignment[];
 }
 export interface Glyph {
+  /** Selected runtime metadata, shared with visible ink. Absent for a missing source glyph. */
+  fontGlyph?: FontSourceGlyph;
   /** Source space consumed at a native soft break; retained for editor/source mapping. */
   suppressed?: boolean;
   text: string;
@@ -225,7 +235,11 @@ export interface Glyph {
 }
 export interface LayoutResult {
   glyphs: Glyph[];
-  lines: { width: number; padding: number }[];
+  lines: {
+    width: number;
+    padding: number;
+    /** Exact synthesized space count for runtime float32 alignment. */ spaceCount?: number;
+  }[];
   diagnostics: Diagnostic[];
 }
 export type StatusTemplate = Omit<ServerListDocument, "extensions">;

@@ -35,6 +35,11 @@ export interface FontGlyphSource {
   readonly schemaVersion: 1;
   readonly codePoints: readonly number[];
   readonly glyphFor: (codePoint: number) => FontSourceGlyph | undefined;
+  /** Explicit selected-source width classes; no native FontSet filtering is implied. */
+  readonly randomGlyphFor?: (
+    advance: number,
+    random: number,
+  ) => FontSourceGlyph | undefined;
 }
 export interface FontSourceLimits {
   maxProviders: number;
@@ -248,11 +253,34 @@ export function createFontGlyphSource(
         );
       }
     }
+    let groups: Map<number, FontSourceGlyph[]> | undefined;
     return {
       value: Object.freeze({
         schemaVersion: 1,
         codePoints: Object.freeze([...selected.keys()].sort((a, b) => a - b)),
         glyphFor: (codePoint: number) => selected.get(codePoint),
+        randomGlyphFor(advance: number, random: number) {
+          if (
+            !Number.isFinite(advance) ||
+            !Number.isFinite(random) ||
+            random < 0 ||
+            random >= 1
+          )
+            return undefined;
+          if (!groups) {
+            groups = new Map();
+            for (const glyph of [...selected.values()].sort(
+              (a, b) => a.codePoint - b.codePoint,
+            )) {
+              const key = Math.ceil(glyph.advance),
+                pool = groups.get(key) ?? [];
+              pool.push(glyph);
+              groups.set(key, pool);
+            }
+          }
+          const pool = groups.get(Math.ceil(advance));
+          return pool?.[Math.floor(random * pool.length)];
+        },
       }),
       diagnostics: [],
     };

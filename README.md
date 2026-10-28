@@ -65,6 +65,7 @@ React: import `ServerListEditor` or `ServerListPreview` from `@groundsgg/motd/re
 - [Local font-provider inspection (unreleased)](https://docs.grounds.gg/reference/development/motd/resource-pack-fonts)
 - [Local bitmap glyph decoding (unreleased)](https://docs.grounds.gg/reference/development/motd/bitmap-fonts)
 - [Local Unihex glyph decoding (unreleased)](https://docs.grounds.gg/reference/development/motd/unihex-fonts)
+- [Paired runtime sources and MOTD viewer rendering (unreleased)](https://docs.grounds.gg/reference/development/motd/runtime-font-source)
 - [Known limits](https://docs.grounds.gg/reference/development/motd/limitations)
 
 Develop with Node 24: `npm ci`, `npm run dev`, then open `/examples/dom/` or `/examples/react/`. Bundled fonts are local; host asset providers remain optional. `npm run typecheck`, `npm test`, `npm run build`, `npm run test:browser`, `npm run test:package` and `npm run build:examples` validate the sources, package and examples. Install the engines and dependencies with `npx playwright install --with-deps chromium firefox webkit` before browser tests. The same suite runs in all three engines; see [browser verification](https://docs.grounds.gg/reference/development/motd/browser-verification) for coverage and limits.
