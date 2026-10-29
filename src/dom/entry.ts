@@ -1,3 +1,4 @@
+import { SpritePainter } from "./sprites.js";
 import type { Diagnostic } from "../core/model.js";
 import {
   evaluateStatus,
@@ -60,6 +61,7 @@ export function createEntry(
     pingTip = element(doc, "div", "");
   const bindings = new Map<EditableField, HTMLElement>();
   const panorama = createPanorama(backdrop);
+  const sprites = new SpritePainter(doc, onDiagnosticsChange);
   let options = initial,
     destroyed = false,
     diagnostics: Diagnostic[] = [],
@@ -122,6 +124,7 @@ export function createEntry(
     if (destroyed) return;
     options = next;
     stop();
+    sprites.clear();
     const fontSource = isRuntimeGlyphGeometry(
       next.context.profile.font.runtimeGlyphGeometry,
     )
@@ -449,6 +452,7 @@ export function createEntry(
         state.motd.alignments,
         undefined,
         runtime,
+        sprites,
       );
       motd.style.height = parseFloat(motd.style.height) + 2 + "px";
       if (runtime) onDiagnosticsChange?.();
@@ -515,8 +519,10 @@ export function createEntry(
   update(initial);
   return {
     update,
-    getDiagnostics: () =>
-      runtime ? [...diagnostics, ...runtimeDiagnostics] : diagnostics,
+    getDiagnostics: () => [
+      ...(runtime ? [...diagnostics, ...runtimeDiagnostics] : diagnostics),
+      ...sprites.diagnostics,
+    ],
     getAnchors: () => ({ icon, motd, status, ping, playerHover }),
     bindText(field, content) {
       if (destroyed || bindings.get(field) === (content ?? undefined)) return;
@@ -530,6 +536,7 @@ export function createEntry(
       destroyed = true;
       stop();
       panorama.destroy();
+      sprites.destroy();
       runtime?.destroy();
       disposeTips.forEach((dispose) => dispose());
       wrapper.remove();

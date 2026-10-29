@@ -105,3 +105,26 @@ it("honours the remaining viewer-wide pixel budget before allocating a frame", (
   expect(result.value).toBeNull();
   expect(result.diagnostics[0]?.code).toBe("font-runtime-limit");
 });
+
+it("honors explicit native ARGB shadow tint and zero alpha", () => {
+  const g = sample([255, 255, 255, 255]);
+  for (const [shadowColor, want] of [
+    [0, [0, 0, 0, 0]],
+    [0x80112233, [17, 34, 51, 128]],
+  ] as const) {
+    const out = rasterizeRuntimeGlyph(
+      g,
+      g.bitmap!.pixels().value!,
+      { shadowColor },
+      0,
+      0,
+      g.advance,
+      "#ffffff",
+      true,
+      1,
+      clip,
+    ).value!;
+    const at = (7 * out.width + 7) * 4;
+    expect([...out.pixels.slice(at, at + 4)]).toEqual(want);
+  }
+});

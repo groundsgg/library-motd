@@ -34,7 +34,9 @@ export function editorSchema(
           span.textContent =
             n.type === "placeholder"
               ? (values[n.name] ?? `{{${n.name}}}`)
-              : (n.fallback ?? "[protected]");
+              : n.type === "sprite"
+                ? "\ufffc"
+                : (n.fallback ?? "[protected]");
           setLabelAttribute(
             span,
             "title",

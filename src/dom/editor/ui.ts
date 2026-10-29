@@ -62,7 +62,8 @@ export function activeStyle(mount: ToolMount): TextStyle {
       (node) => {
         const path = node.isText
           ? node.marks.find((mark) => mark.type.name === "format")?.attrs.path
-          : node.type.name === "token" && node.attrs.node.type === "placeholder"
+          : node.type.name === "token" &&
+              ["placeholder", "sprite"].includes(node.attrs.node.type)
             ? node.attrs.path
             : undefined;
         if (node.isText || path)

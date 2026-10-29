@@ -26,7 +26,7 @@ export function suggestSimplification(
   if (
     hasPlaceholder(text.nodes) ||
     chars.length < 2 ||
-    chars.some((c) => c.opaque || c.text === "\n") ||
+    chars.some((c) => c.opaque || c.sprite || c.text === "\n") ||
     chars.some(
       (c) =>
         JSON.stringify({ ...c.style, color: undefined }) !==

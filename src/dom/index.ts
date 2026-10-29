@@ -19,3 +19,5 @@ export type {
   ComparisonField,
   ComparisonHandle,
 } from "./comparison.js";
+
+export { SpritePainter } from "./sprites.js";

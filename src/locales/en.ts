@@ -1,5 +1,25 @@
 /** Default standalone UI and diagnostic messages. */
 export const englishLabels = {
+  "diagnostic.spriteRendererRequired":
+    "Native sprite rendering requires an owned SpritePainter when calling renderText directly.",
+  spriteResourcePack: "Requires client resource pack",
+  insertSprite: "Insert sprite",
+  searchSprites: "Search sprites",
+  noSprites: "No matching sprites",
+  animatedSprite: "Animated",
+  staticSprite: "Static",
+  spriteIncompatible: "Unavailable for this client",
+  spriteChoice: "{label} · {kind}",
+
+  "diagnostic.spriteUnsupportedClient":
+    "Atlas sprites are not supported by this client profile; they are omitted.",
+  "diagnostic.spriteUnsupportedFormat":
+    "This output format cannot represent atlas sprites.",
+  "diagnostic.spriteResourceMissing":
+    "No preview resource is available for sprite {sprite}.",
+  "diagnostic.spriteResourceInvalid":
+    "The sprite preview resource is invalid or could not be loaded.",
+
   "diagnostic.fontRuntimeProfile":
     "Imported MOTD fonts require calibrated CPU geometry for this profile (selected client: {version}). The profile font is used instead.",
   "diagnostic.fontRuntimeAlignmentLimit":

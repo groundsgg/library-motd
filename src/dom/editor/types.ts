@@ -3,6 +3,7 @@ import type {
   ServerListDocument,
   TextFormat,
   TextStyle,
+  SpriteCatalogEntry,
 } from "../../core/model.js";
 export type EditableField = "motd" | "version" | "hover";
 export type Feature =
@@ -13,7 +14,8 @@ export type Feature =
   | "hover"
   | "import"
   | "export"
-  | "assistance";
+  | "assistance"
+  | "sprites";
 export interface EditorChange {
   origin: "visual" | "source" | "import" | "history";
   changedFields: (keyof Pick<
@@ -37,6 +39,8 @@ export interface EditorOptions {
     change: EditorChange,
   ): ServerListDocument;
   features?: Partial<Record<Feature, boolean>>;
+  /** Opt-in host catalog for the native inline MOTD sprite picker. */
+  spriteCatalog?: readonly SpriteCatalogEntry[];
   labels?: Readonly<Record<string, string>>;
   /** Fixed above the entry by default; selection places tools beside selected text. */
   toolbar?: "fixed" | "selection";

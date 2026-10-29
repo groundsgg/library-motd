@@ -59,6 +59,7 @@ React: import `ServerListEditor` or `ServerListPreview` from `@groundsgg/motd/re
 - [Embedding and configuration](https://docs.grounds.gg/reference/development/motd/embedding)
 - [Localization, catalogs and diagnostics](https://docs.grounds.gg/reference/development/motd/localization)
 - [Opt-in gradient and alignment import assistance](https://docs.grounds.gg/reference/development/motd/import-assistance)
+- [Native inline sprites and optional editor catalogs](https://docs.grounds.gg/reference/development/motd/sprites) (unreleased)
 - [Static server icons and animation limits](https://docs.grounds.gg/reference/development/motd/icons)
 - [Vanilla viewer behavior and native MOTD timing](https://docs.grounds.gg/reference/development/motd/vanilla-behavior)
 - [Client profile and reference evidence](https://docs.grounds.gg/reference/development/motd/profiles)

@@ -1,3 +1,4 @@
+import { spriteResourceId } from "./text/sprites.js";
 import { isStatusIcon as validIcon } from "./image/icon.js";
 import type {
   CountRule,
@@ -52,6 +53,11 @@ function validText(v: unknown): v is TextDocument {
       return false;
     ids.add(node.id);
     if (node.type === "text") return typeof node.value === "string";
+    if (node.type === "sprite")
+      return (
+        spriteResourceId(node.atlas) === node.atlas &&
+        spriteResourceId(node.sprite) === node.sprite
+      );
     if (node.type === "newline") return true;
     if (node.type === "placeholder") return typeof node.name === "string";
     if (node.type === "opaque")
@@ -72,6 +78,13 @@ function validText(v: unknown): v is TextDocument {
     )
       return false;
     const s = node.style;
+    if (
+      s.shadowColor !== undefined &&
+      (!Number.isInteger(s.shadowColor) ||
+        (s.shadowColor as number) < -2147483648 ||
+        (s.shadowColor as number) > 4294967295)
+    )
+      return false;
     if (
       s.color !== undefined &&
       (typeof s.color !== "string" || !/^#[\da-f]{6}$/i.test(s.color))

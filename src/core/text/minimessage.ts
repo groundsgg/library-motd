@@ -1,3 +1,4 @@
+import { parseSpriteTag } from "./sprites.js";
 import type {
   Outcome,
   ParseOptions,
@@ -121,6 +122,13 @@ export function parseMiniMessage(
       i = end + 1;
       continue;
     }
+    const sprite = tag === "sprite" ? parseSpriteTag(body) : null;
+    if (sprite) {
+      flush();
+      current().push({ id: id(), type: "sprite", ...sprite });
+      i = end + 1;
+      continue;
+    }
     if (lower === "reset") {
       flush();
       stack.splice(1);
@@ -129,7 +137,27 @@ export function parseMiniMessage(
     }
     let style: TextStyle | undefined;
     const color = COLORS[tag] ?? (/^#[\da-f]{6}$/.test(tag) ? tag : undefined);
-    if (color) style = { color };
+    if (tag === "shadow") {
+      const c = COLORS[parts[1] ?? ""] ?? parts[1] ?? "";
+      if (lower === "!shadow") style = { shadowColor: 0 };
+      else if (/^#[\da-f]{8}$/.test(c))
+        style = {
+          shadowColor:
+            (parseInt(c.slice(7), 16) * 16777216 +
+              parseInt(c.slice(1, 7), 16)) >>>
+            0,
+        };
+      else if (/^#[\da-f]{6}$/.test(c)) {
+        const a = Number(parts[2] ?? 0.25);
+        if (Number.isFinite(a) && a >= 0 && a <= 1)
+          style = {
+            shadowColor:
+              (Math.trunc(Math.fround(Math.fround(a) * 255)) * 16777216 +
+                parseInt(c.slice(1), 16)) >>>
+              0,
+          };
+      }
+    } else if (color) style = { color };
     else if (
       tag === "color" &&
       parts[1] &&

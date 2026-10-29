@@ -1,4 +1,5 @@
 import type {
+  AtlasSprite,
   GradientStop,
   TextDocument,
   TextNode,
@@ -72,6 +73,7 @@ function adventureGradient(
   );
 }
 export interface StyledChar {
+  sprite?: AtlasSprite;
   text: string;
   color: string;
   style: TextStyle;
@@ -115,13 +117,15 @@ export function flattenText(document: TextDocument): StyledChar[] {
         continue;
       }
       const value =
-        node.type === "text"
-          ? node.value
-          : node.type === "newline"
-            ? "\n"
-            : node.type === "placeholder"
-              ? `{{${node.name}}}`
-              : (node.fallback ?? node.raw);
+        node.type === "sprite"
+          ? "\ufffc"
+          : node.type === "text"
+            ? node.value
+            : node.type === "newline"
+              ? "\n"
+              : node.type === "placeholder"
+                ? `{{${node.name}}}`
+                : (node.fallback ?? node.raw);
       for (const part of segmenter.segment(value)) {
         // CRLF is one Unicode grapheme, but Java treats CR as a control glyph
         // and LF as the hard line boundary. Preserve both source offsets.
@@ -135,6 +139,9 @@ export function flattenText(document: TextDocument): StyledChar[] {
             nodeId: node.id,
             offset,
             position,
+            ...(node.type === "sprite"
+              ? { sprite: { atlas: node.atlas, sprite: node.sprite } }
+              : {}),
             ...(node.type === "opaque" ? { opaque: node } : {}),
           });
           position += piece.length;

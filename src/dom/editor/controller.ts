@@ -1,3 +1,4 @@
+import { spriteResourceId } from "../../core/text/sprites.js";
 import {
   EditorState,
   Plugin,
@@ -8,6 +9,7 @@ import { EditorView } from "prosemirror-view";
 import { keymap } from "prosemirror-keymap";
 import { baseKeymap } from "prosemirror-commands";
 import type {
+  AtlasSprite,
   Diagnostic,
   ServerListDocument,
   TextDocument,
@@ -60,6 +62,7 @@ export interface EditorController extends EditorHandle {
   captureSelection(): FieldSelection | null;
   restoreSelection(selection: FieldSelection): boolean;
   insertPlaceholder(name: string, selection: FieldSelection): void;
+  insertSprite(sprite: AtlasSprite, selection: FieldSelection): void;
   applySources(
     sources: { field: EditableField; source: string; format: TextFormat }[],
   ): void;
@@ -76,6 +79,10 @@ export function createEditorController(
       values: { ...next.context.values },
     },
     features: { ...next.features },
+    spriteCatalog: next.spriteCatalog?.map((item) => ({
+      ...item,
+      profiles: item.profiles ? [...item.profiles] : undefined,
+    })),
     labels: { ...next.labels },
   });
   let options = snapshotOptions(initial),
@@ -629,7 +636,7 @@ export function createEditorController(
         }
         if (
           node.type.name === "token" &&
-          node.attrs.node.type === "placeholder"
+          ["placeholder", "sprite"].includes(node.attrs.node.type)
         ) {
           const previous = node.attrs.path ?? [],
             next = mark(previous).attrs.path;
@@ -777,6 +784,44 @@ export function createEditorController(
       return saved;
     },
     restoreSelection,
+    insertSprite(sprite, saved) {
+      if (
+        locked() ||
+        !enabled("sprites") ||
+        !enabled("motd") ||
+        saved.field !== "motd" ||
+        !options.context.profile.atlasSprites ||
+        spriteResourceId(sprite.atlas) !== sprite.atlas ||
+        spriteResourceId(sprite.sprite) !== sprite.sprite ||
+        !options.spriteCatalog?.some(
+          (item) =>
+            item.atlas === sprite.atlas &&
+            item.sprite === sprite.sprite &&
+            (!item.profiles ||
+              item.profiles.includes(options.context.profile.id)),
+        ) ||
+        !restoreSelection(saved)
+      )
+        return;
+      const view = views.get("motd")!;
+      const mark = (
+        view.state.storedMarks ?? view.state.selection.$from.marks()
+      ).find((m) => m.type.name === "format");
+      view.dispatch(
+        view.state.tr.replaceSelectionWith(
+          view.state.schema.nodes.token!.create({
+            node: {
+              id: nextId(),
+              type: "sprite",
+              atlas: sprite.atlas,
+              sprite: sprite.sprite,
+            },
+            path: mark?.attrs.path ?? [],
+          }),
+        ),
+      );
+      view.focus();
+    },
     insertPlaceholder(name, saved) {
       if (
         locked() ||

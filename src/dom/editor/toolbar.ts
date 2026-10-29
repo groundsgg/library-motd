@@ -85,6 +85,7 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
   }
   tool("color", "A", "color", "Text color");
   tool("gradient", "▥", "gradient", "Gradient");
+  tool("sprite", "▧", "insertSprite", "Insert sprite");
   tool("placeholder", "{ }", "placeholder", "Insert placeholder");
   for (const [value, glyph, key, name] of [
     ["left", "≡←", "alignLeft", "Align left"],
@@ -193,7 +194,12 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
         "title",
         toolLabel(mount, item.key, item.fallback),
       );
+      if (item.key === "insertSprite")
+        item.button.hidden =
+          options.features?.sprites === false || !options.spriteCatalog?.length;
       item.button.disabled =
+        (item.key === "insertSprite" &&
+          controller.getActiveField() !== "motd") ||
         !editable() ||
         (!!item.motdOnly && controller.getActiveField() !== "motd");
       if (item.style)

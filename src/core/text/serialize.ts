@@ -1,3 +1,4 @@
+import { spriteTag } from "./sprites.js";
 import type {
   Outcome,
   SerializeOptions,
@@ -39,14 +40,31 @@ export function serializeText(
   )
     return { value: text.source.value, diagnostics: [] };
   const diagnostics = [];
-  let opaqueLoss = false;
+  let opaqueLoss = false,
+    spriteLoss = false;
   const inspect = (nodes: TextNode[]) => {
     for (const n of nodes) {
       if (n.type === "group") inspect(n.children);
+      if (
+        n.type === "sprite" &&
+        !["json", "minimessage"].includes(target.format)
+      )
+        spriteLoss = true;
       if (n.type === "opaque" && n.format !== target.format) opaqueLoss = true;
     }
   };
   inspect(text.nodes);
+  if (spriteLoss) {
+    diagnostics.push(
+      diagnostic(
+        "sprite-unsupported-format",
+        "",
+        { key: "diagnostic.spriteUnsupportedFormat" },
+        options.lossy === "reduce" ? "warning" : "error",
+      ),
+    );
+    if (options.lossy !== "reduce") return { value: null, diagnostics };
+  }
   if (opaqueLoss) {
     diagnostics.push(
       diagnostic(
@@ -72,6 +90,13 @@ export function serializeText(
       .map((c) => {
         const node = owners.get(c.nodeId),
           atom = node?.type === "placeholder" || node?.type === "opaque";
+        if (node?.type === "sprite")
+          return wrap(spriteTag(node), {
+            ...c.style,
+            color: c.color,
+            gradient: undefined,
+            rainbow: undefined,
+          });
         if (atom) {
           if (emitted.has(node.id)) return "";
           emitted.add(node.id);
@@ -102,6 +127,7 @@ export function serializeText(
   const mm = (nodes: TextNode[]): string =>
     nodes
       .map((n) => {
+        if (n.type === "sprite") return spriteTag(n);
         if (n.type === "text") return esc(n.value);
         if (n.type === "newline") return "<newline>";
         if (n.type === "placeholder") return `{{${n.name}}}`;
@@ -119,6 +145,10 @@ export function serializeText(
       .join("");
   function wrap(value: string, style: TextStyle): string {
     let out = value;
+    if (style.shadowColor !== undefined) {
+      const argb = (style.shadowColor >>> 0).toString(16).padStart(8, "0");
+      out = `<shadow:#${argb.slice(2)}${argb.slice(0, 2)}>${out}</shadow>`;
+    }
     if (style.color) out = `<${style.color}>${out}</${style.color}>`;
     if (style.gradient)
       out = `<gradient:${style.gradient.map((s) => s.color).join(":")}${style.gradientPhase ? ":" + style.gradientPhase : ""}>${out}</gradient>`;
@@ -131,7 +161,22 @@ export function serializeText(
   }
   let chars = flattenText(text);
   if (options.layout) {
-    const layout = layoutText(text, options.layout);
+    // MiniMessage is persistent source, including legacy padded fallbacks.
+    // Preserve native objects here; client-specific omission belongs to status
+    // evaluation/JSON output, never to saving an editor's intent.
+    const sourceLayout =
+      target.format === "minimessage" &&
+      !options.layout.profile.atlasSprites &&
+      chars.some((c) => c.sprite)
+        ? {
+            ...options.layout,
+            profile: {
+              ...options.layout.profile,
+              atlasSprites: { advance: 8, boldOffset: 1 },
+            },
+          }
+        : options.layout;
+    const layout = layoutText(text, sourceLayout);
     diagnostics.push(...layout.diagnostics);
     const atomicBoundaries = new Map<
       string,
@@ -223,7 +268,14 @@ export function serializeText(
   }
   if (target.format === "json") {
     const charJson = (c: ReturnType<typeof flattenText>[number]) => ({
-      text: c.text,
+      ...(c.sprite
+        ? options.layout && !options.layout.profile.atlasSprites
+          ? { text: "" }
+          : { ...c.sprite }
+        : { text: c.text }),
+      ...(c.style.shadowColor !== undefined
+        ? { shadow_color: c.style.shadowColor }
+        : {}),
       color: c.color,
       ...Object.fromEntries(decorations.map((k) => [k, !!c.style[k]])),
     });
@@ -238,10 +290,15 @@ export function serializeText(
         return node.format === "json"
           ? JSON.parse(node.raw)
           : { text: node.fallback ?? node.raw };
+      if (node.type === "sprite")
+        return { atlas: node.atlas, sprite: node.sprite };
       if (node.type === "text") return { text: node.value };
       if (node.type === "newline") return { text: "\n" };
       if (node.type === "placeholder") return { text: `{{${node.name}}}` };
       const style = {
+        ...(node.style.shadowColor !== undefined
+          ? { shadow_color: node.style.shadowColor }
+          : {}),
         ...(node.style.color ? { color: node.style.color } : {}),
         ...Object.fromEntries(
           decorations
@@ -292,6 +349,7 @@ export function serializeText(
   let out = "",
     previous = "";
   for (const c of chars) {
+    if (c.sprite) continue;
     const style = c.style,
       key = c.color + "|" + decorations.map((k) => !!style[k]).join("|");
     if (key !== previous) {

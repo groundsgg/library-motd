@@ -1,3 +1,4 @@
+import { spriteResourceId } from "./sprites.js";
 import type { JsonValue, TextDocument, TextNode, TextStyle } from "../model.js";
 import { COLORS } from "./minimessage.js";
 export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
@@ -69,6 +70,11 @@ export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
       throw new TypeError("Expected text component");
     const allowed = [
       "text",
+      "shadow_color",
+      "atlas",
+      "sprite",
+      "object",
+      "type",
       "extra",
       "color",
       "bold",
@@ -77,7 +83,30 @@ export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
       "strikethrough",
       "obfuscated",
     ];
-    if (Object.keys(v).some((k) => !allowed.includes(k)))
+    const atlas = spriteResourceId(v.atlas ?? "minecraft:blocks"),
+      sprite = spriteResourceId(v.sprite);
+    const isSprite =
+      !!sprite &&
+      !!atlas &&
+      (v.object === undefined || v.object === "atlas") &&
+      (v.type === undefined || v.type === "object") &&
+      v.text === undefined;
+    if (
+      Object.keys(v).some((k) => !allowed.includes(k)) ||
+      (("sprite" in v || "atlas" in v || "object" in v || "type" in v) &&
+        !isSprite &&
+        !(
+          v.type === "text" &&
+          v.object === undefined &&
+          v.sprite === undefined &&
+          v.atlas === undefined
+        )) ||
+      (v.shadow_color !== undefined &&
+        (typeof v.shadow_color !== "number" ||
+          !Number.isInteger(v.shadow_color) ||
+          v.shadow_color < -2147483648 ||
+          v.shadow_color > 4294967295))
+    )
       return [
         {
           id: id(),
@@ -88,6 +117,7 @@ export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
         },
       ];
     const style: TextStyle = {};
+    if (typeof v.shadow_color === "number") style.shadowColor = v.shadow_color;
     if (typeof v.color === "string") {
       const c = COLORS[v.color] ?? v.color;
       if (!/^#[\da-f]{6}$/i.test(c))
@@ -111,6 +141,13 @@ export function parseJsonText(value: JsonValue, maxDepth = 128): TextDocument {
     if (v.extra !== undefined && !Array.isArray(v.extra))
       throw new TypeError("Expected extra array");
     const children: TextNode[] = [];
+    if (isSprite)
+      children.push({
+        id: id(),
+        type: "sprite",
+        atlas: atlas!,
+        sprite: sprite!,
+      });
     if (typeof v.text === "string" && v.text)
       children.push({ id: id(), type: "text", value: v.text });
     if (Array.isArray(v.extra))
