@@ -1,4 +1,4 @@
-import { setLabelText, setLabelAttribute } from "../localization.js";
+import { setLabelText } from "../localization.js";
 import type { GradientStop, TextStyle } from "../../core/model.js";
 import { element } from "../render.js";
 import {
@@ -19,7 +19,7 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
   let activeField: EditableField | undefined;
   function open(request: TextToolRequest) {
     const { tool, anchor, selection } = request;
-    if (tool === "sprite") return;
+    if (tool === "sprite" || tool === "placeholder") return;
     if (destroyed || !fieldEditable(mount, selection.field)) return;
     activeField = selection.field;
     const content = element(doc, "section", "mce-tool-content"),
@@ -32,11 +32,9 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
         ? "Text color"
         : tool === "gradient"
           ? "Gradient"
-          : tool === "placeholder"
-            ? "Insert placeholder"
-            : tool === "rainbow"
-              ? "Rainbow"
-              : "More formatting",
+          : tool === "rainbow"
+            ? "Rainbow"
+            : "More formatting",
     );
     const heading = element(doc, "div", "mce-tool-heading");
     heading.append(element(doc, "strong", "", name));
@@ -233,40 +231,6 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
             renderStops();
             applyGradient();
           },
-        ),
-      );
-    } else if (tool === "placeholder") {
-      const input = element(doc, "input", "");
-      input.type = "text";
-      setLabelAttribute(input, "placeholder", "players");
-      input.pattern = "[\\w.-]+";
-      content.append(
-        toolField(
-          doc,
-          toolLabel(mount, "placeholderName", "Placeholder name"),
-          input,
-        ),
-      );
-      const choices = element(doc, "div", "mce-placeholder-choices");
-      const insert = (name: string) => {
-        if (!/^[\w.-]+$/.test(name)) return;
-        if (toolLocked(mount)) return;
-        controller.insertPlaceholder(name, selection);
-        overlays.close("apply");
-      };
-      for (const key of new Set([
-        "players",
-        "max",
-        ...Object.keys(controller.getOptions().context.values),
-      ]))
-        choices.append(toolButton(doc, `{{${key}}}`, key, () => insert(key)));
-      content.append(
-        choices,
-        toolButton(
-          doc,
-          toolLabel(mount, "insert", "Insert"),
-          toolLabel(mount, "insert", "Insert"),
-          () => insert(input.value.trim()),
         ),
       );
     } else if (tool === "rainbow") {

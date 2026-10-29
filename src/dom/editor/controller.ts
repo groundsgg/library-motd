@@ -21,6 +21,7 @@ import { validateDocument } from "../../core/document.js";
 import { parseText } from "../../core/text/parse.js";
 import { layoutText } from "../../core/layout/layout.js";
 import { resolveText } from "../../core/text/placeholders.js";
+import { isVariableName } from "../../core/text/variables.js";
 import { editorSchema, type StylePath } from "./schema.js";
 import { fromEditorNode, nextId, toEditorNode } from "./mapping.js";
 import { EditorHistory, type HistoryEntry } from "./history.js";
@@ -42,6 +43,8 @@ export interface FieldSelection {
   from: number;
   to: number;
   generation: number;
+  formatPath?: StylePath[];
+  pendingFormat?: boolean;
 }
 export type EditorEvent =
   | "document"
@@ -60,8 +63,10 @@ export interface EditorController extends EditorHandle {
   isComposing(): boolean;
   mountText(field: EditableField, host: HTMLElement): void;
   captureSelection(): FieldSelection | null;
+  releaseSelection(selection: FieldSelection): void;
   restoreSelection(selection: FieldSelection): boolean;
-  insertPlaceholder(name: string, selection: FieldSelection): void;
+  getVariableValues(): Readonly<Record<string, string>>;
+  insertPlaceholder(name: string, selection: FieldSelection): boolean;
   insertSprite(sprite: AtlasSprite, selection: FieldSelection): void;
   applySources(
     sources: { field: EditableField; source: string; format: TextFormat }[],
@@ -83,6 +88,17 @@ export function createEditorController(
       ...item,
       profiles: item.profiles ? [...item.profiles] : undefined,
     })),
+    variableCatalog:
+      next.variableCatalog === undefined
+        ? undefined
+        : Array.isArray(next.variableCatalog)
+          ? next.variableCatalog.slice(0, 4096).map((item) => ({
+              ...item,
+              fields: Array.isArray(item?.fields)
+                ? [...item.fields]
+                : item?.fields,
+            }))
+          : [],
     labels: { ...next.labels },
   });
   let options = snapshotOptions(initial),
@@ -442,7 +458,9 @@ export function createEditorController(
               next,
               "visual",
               field,
-              !tr.storedMarksSet && !tr.getMeta("motd-formatting"),
+              !tr.storedMarksSet &&
+                !tr.getMeta("motd-formatting") &&
+                !tr.getMeta("motd-history-boundary"),
               before,
             )
           )
@@ -724,11 +742,20 @@ export function createEditorController(
     if (!view || saved.from < 1 || saved.to > view.state.doc.content.size - 1)
       return false;
     activeField = saved.field;
-    view.dispatch(
-      view.state.tr.setSelection(
-        TextSelection.create(view.state.doc, saved.from, saved.to),
-      ),
+    const transaction = view.state.tr.setSelection(
+      TextSelection.create(view.state.doc, saved.from, saved.to),
     );
+    if (saved.pendingFormat && transaction.selection.empty)
+      transaction.setStoredMarks(
+        saved.formatPath?.length
+          ? [
+              view.state.schema.marks.format!.create({
+                path: structuredClone(saved.formatPath),
+              }),
+            ]
+          : [],
+      );
+    view.dispatch(transaction);
     return true;
   }
   return {
@@ -736,6 +763,7 @@ export function createEditorController(
     execute,
     getDocument: () => structuredClone(current),
     getOptions: () => options,
+    getVariableValues: values,
     getGeneration: () => generation,
     getActiveField: () => activeField,
     getView: (field) => views.get(field),
@@ -774,16 +802,40 @@ export function createEditorController(
       const view = views.get(activeField);
       if (!view) return null;
       if (!syncNativeSelection(view)) return null;
+      const selected = view.state.selection;
+      let path: StylePath[] =
+        (view.state.storedMarks ?? selected.$from.marks()).find(
+          (mark) => mark.type.name === "format",
+        )?.attrs.path ?? [];
+      if (!selected.empty) {
+        let found = false;
+        view.state.doc.nodesBetween(selected.from, selected.to, (node) => {
+          if (found) return false;
+          if (!node.isInline) return true;
+          found = true;
+          path =
+            node.type.name === "token"
+              ? (node.attrs.path ?? [])
+              : (node.marks.find((mark) => mark.type.name === "format")?.attrs
+                  .path ?? []);
+          return false;
+        });
+      }
       const saved = {
         field: activeField,
         from: Math.max(1, view.state.selection.from),
         to: Math.min(view.state.doc.content.size - 1, view.state.selection.to),
         generation,
+        formatPath: structuredClone(path),
+        pendingFormat: view.state.storedMarks !== null,
       };
       selections.add(saved);
       return saved;
     },
     restoreSelection,
+    releaseSelection: (saved) => {
+      selections.delete(saved);
+    },
     insertSprite(sprite, saved) {
       if (
         locked() ||
@@ -825,21 +877,35 @@ export function createEditorController(
     insertPlaceholder(name, saved) {
       if (
         locked() ||
+        !enabled("variables") ||
         !enabled(saved.field) ||
-        !name.trim() ||
+        !isVariableName(name) ||
+        (saved.field === "version" && current.version.mode === "automatic") ||
+        (saved.field === "hover" && current.hover.mode !== "custom") ||
         !restoreSelection(saved)
       )
-        return;
+        return false;
       const view = views.get(saved.field)!;
+      const before = view.state.doc,
+        path = structuredClone(saved.formatPath ?? []);
       view.dispatch(
-        view.state.tr.replaceSelectionWith(
-          view.state.schema.nodes.token!.create({
-            node: { id: nextId(), type: "placeholder", name },
-            path: [],
-          }),
-        ),
+        view.state.tr
+          .setMeta("motd-history-boundary", true)
+          .replaceSelectionWith(
+            view.state.schema.nodes.token!.create({
+              node: { id: nextId(), type: "placeholder", name },
+              path,
+            }),
+          )
+          .setStoredMarks(
+            path.length
+              ? [view.state.schema.marks.format!.create({ path })]
+              : [],
+          ),
       );
-      view.focus();
+      const changed = !view.state.doc.eq(before);
+      if (changed) view.focus();
+      return changed;
     },
     subscribe(listener) {
       listeners.add(listener);

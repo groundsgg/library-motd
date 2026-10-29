@@ -1,3 +1,4 @@
+import { mountVariableTool } from "./variable-tool.js";
 import { mountSpriteTool } from "./sprite-tool.js";
 import { element } from "../render.js";
 import { createEntry } from "../entry.js";
@@ -56,6 +57,7 @@ export function createEditor(
   const tools = [
     mountToolbar(mount),
     mountTextTools(mount),
+    mountVariableTool(mount),
     mountSpriteTool(mount),
     mountStatusTools(mount),
     mountIconTool(mount),

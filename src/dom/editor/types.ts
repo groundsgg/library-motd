@@ -4,8 +4,10 @@ import type {
   TextFormat,
   TextStyle,
   SpriteCatalogEntry,
+  VariableCatalogEntry,
+  VariableField,
 } from "../../core/model.js";
-export type EditableField = "motd" | "version" | "hover";
+export type EditableField = VariableField;
 export type Feature =
   | "motd"
   | "version"
@@ -15,7 +17,8 @@ export type Feature =
   | "import"
   | "export"
   | "assistance"
-  | "sprites";
+  | "sprites"
+  | "variables";
 export interface EditorChange {
   origin: "visual" | "source" | "import" | "history";
   changedFields: (keyof Pick<
@@ -41,6 +44,8 @@ export interface EditorOptions {
   features?: Partial<Record<Feature, boolean>>;
   /** Opt-in host catalog for the native inline MOTD sprite picker. */
   spriteCatalog?: readonly SpriteCatalogEntry[];
+  /** Omitted discovers preview values; an explicit catalog controls discovery. */
+  variableCatalog?: readonly VariableCatalogEntry[];
   labels?: Readonly<Record<string, string>>;
   /** Fixed above the entry by default; selection places tools beside selected text. */
   toolbar?: "fixed" | "selection";

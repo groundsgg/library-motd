@@ -90,7 +90,7 @@ import {createEditor,createPreview} from '@groundsgg/motd/dom';
 import {decodeBitmapGlyphs,createFontGlyphSource} from '@groundsgg/motd/fonts';
 import '@groundsgg/motd/styles.css';
 const context={base:{version:{protocol:767,name:'1.21.1'},players:{online:8,max:100,sample:[]},description:''},clientProtocol:767,values:{},profile:java1211Profile,viewportWidth:640,guiScale:2,serverName:'Packed consumer',pingMs:10,animations:false};
-createEditor(document.querySelector('#editor'),{document:createDocument(),context,onChange(){}});
+createEditor(document.querySelector('#editor'),{document:createDocument(),context:{...context,values:{'server.name':'Packed'}},variableCatalog:[{name:'server.name',label:'Server name'}],onChange(next){window.packedDocument=next;}});
 const glyphs=decodeBitmapGlyphs({height:1,ascent:1,chars:['A']},{width:1,height:1,pixels:new Uint8Array([255,0,0,255])}).value;
 const motdFontSource=createFontGlyphSource([{type:'bitmap',glyphs}]).value;
 createPreview(document.querySelector('#packed-viewer'),{document:createDocument(parseText('<white>A','minimessage').value),context:{...context,profile:java263Profile,clientProtocol:777},motdFontSource});
@@ -113,6 +113,18 @@ try {
   );
   const page = await browser.newPage();
   await page.goto("http://127.0.0.1:4183");
+  await page.getByRole("button", { name: "Variables", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Server name (server.name)", exact: true })
+    .click();
+  const packedVariable = await page.locator("#editor .mce-token").textContent();
+  if (
+    packedVariable !== "Packed" ||
+    !(await page.evaluate(() =>
+      JSON.stringify(window.packedDocument).includes('"name":"server.name"'),
+    ))
+  )
+    throw Error("Packed variable catalog lost source-preserving insertion");
   await page
     .getByRole("button", { name: "Server entry tools", exact: true })
     .click({ timeout: 5000 });

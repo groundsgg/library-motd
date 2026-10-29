@@ -1015,3 +1015,34 @@
 .mce-token[data-sprite-token] .mcp-sprite {
   left: 0.5px;
 }
+
+.mce-variable-list {
+  display: grid;
+  gap: 6px;
+  max-height: min(300px, 40vh);
+  overflow: auto;
+}
+.mce-variable-choice {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  text-align: start;
+  border: 1px solid var(--mce-line);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.mce-variable-name {
+  color: var(--mce-accent);
+  font-size: 12px;
+}
+.mce-popout .mce-variable-choice:disabled {
+  opacity: 1;
+}
+.mce-variable-description,
+.mce-variable-value {
+  color: var(--mce-muted);
+  font-size: 12px;
+  font-weight: 400;
+}

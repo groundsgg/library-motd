@@ -1,6 +1,28 @@
 import type { englishLabels } from "./en.js";
 /** Complete German catalog; override individual keys for host terminology. */
 export const germanLabels = {
+  variables: "Variablen",
+  searchVariables: "Variablen suchen",
+  variablesEmpty: "Für dieses Textfeld sind keine Variablen aufgeführt.",
+  variablesNoMatches: "Keine passenden Variablen.",
+  variablesMore: "Weitere Treffer vorhanden. Grenze die Suche ein.",
+  variablesReadOnly:
+    "Du kannst Variablen ansehen. Bearbeiten ist nicht verfügbar.",
+  variableNotListed:
+    "Dieser Name ist für dieses Textfeld nicht aufgeführt. Prüfe, welche Variablen dein Host unterstützt.",
+  variablesPreviewOnly:
+    "Vorschauwerte und Beispiele dienen der Anzeige; gespeichert wird der Variablenname.",
+  variablePreviewValue: "Vorschau: {value}",
+  variableExampleValue: "Beispiel: {value}",
+  variableNoPreview: "Kein Vorschauwert angegeben",
+  variableInsertFailed:
+    "Die Variable konnte an dieser Position nicht eingefügt werden.",
+  variableInvalidName:
+    "Verwende Buchstaben, Ziffern, Unterstriche, Punkte oder Bindestriche (bis zu 128 Zeichen).",
+  variableScope: "Textfeld: {field}",
+  variableFieldMotd: "MOTD",
+  variableFieldVersion: "Versionstext",
+  variableFieldHover: "Spieler-Hovertext",
   "diagnostic.spriteRendererRequired":
     "Beim direkten Aufruf von renderText benötigen native Sprites einen eigenen SpritePainter.",
   spriteResourcePack: "Benötigt ein aktives Ressourcenpaket",

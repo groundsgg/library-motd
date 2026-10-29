@@ -1,5 +1,25 @@
 /** Default standalone UI and diagnostic messages. */
 export const englishLabels = {
+  variables: "Variables",
+  searchVariables: "Search variables",
+  variablesEmpty: "No variables are listed for this field.",
+  variablesNoMatches: "No matching variables.",
+  variablesMore: "More matches are available. Narrow the search.",
+  variablesReadOnly: "You can inspect variables here. Editing is unavailable.",
+  variableNotListed:
+    "This name is not listed for this field. Check which variables your host supports.",
+  variablesPreviewOnly:
+    "Preview values and examples are display information; the saved document keeps the variable name.",
+  variablePreviewValue: "Preview: {value}",
+  variableExampleValue: "Example: {value}",
+  variableNoPreview: "No preview value supplied",
+  variableInsertFailed: "The variable could not be inserted at this position.",
+  variableInvalidName:
+    "Use letters, numbers, underscores, dots or hyphens (up to 128 characters).",
+  variableScope: "Field: {field}",
+  variableFieldMotd: "MOTD",
+  variableFieldVersion: "Version text",
+  variableFieldHover: "Player hover",
   "diagnostic.spriteRendererRequired":
     "Native sprite rendering requires an owned SpritePainter when calling renderText directly.",
   spriteResourcePack: "Requires client resource pack",
