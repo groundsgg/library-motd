@@ -507,3 +507,27 @@ test("reduced motion and explicit pause freeze native resource animation", async
   await page.waitForTimeout(250); // Observation across more than one complete200ms loop.
   await expect(canvas).toHaveAttribute("data-sprite-frame", "0");
 });
+
+for (const adapter of ["dom", "react"]) {
+  test(`${adapter} example renders its host-provided sprite catalog and inserted object`, async ({
+    page,
+  }) => {
+    await page.goto(`/examples/${adapter}/`);
+    await page.locator(".ProseMirror").first().click();
+    await page
+      .getByRole("button", { name: "Insert sprite", exact: true })
+      .click();
+    await expect(
+      page.locator('.mce-sprite-thumbnail[data-sprite-state="ready"]'),
+    ).toHaveCount(2);
+    await page
+      .getByRole("button", { name: "Demo pulse · Animated", exact: true })
+      .click();
+    await expect(
+      page.locator('.mcp-sprite[data-sprite-state="ready"]'),
+    ).toHaveCount(2);
+    await expect(
+      page.locator('.mcp-sprite[data-sprite-state="failed"]'),
+    ).toHaveCount(0);
+  });
+}

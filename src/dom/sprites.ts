@@ -104,7 +104,7 @@ export class SpritePainter {
         return (
           ["http:", "https:", "blob:"].includes(parsed.protocol) ||
           (parsed.protocol === "data:" &&
-            /^data:image\/(png|jpeg|webp|svg\+xml);/i.test(url))
+            /^data:image\/(png|jpeg|webp|svg\+xml)[;,]/i.test(url))
         );
       } catch {
         return false;
