@@ -11,6 +11,7 @@ import { flattenText, rgb } from "./colors.js";
 import { LEGACY_PALETTE } from "./legacy.js";
 import { encodeProperties } from "./properties.js";
 import { layoutText } from "../layout/layout.js";
+import { nativePadding, supportsFinePadding } from "../layout/padding.js";
 const decorations = [
   "bold",
   "italic",
@@ -176,13 +177,13 @@ export function serializeText(
         };
       atomicLines.set(g.nodeId, g.line);
     }
-    const synthetic = (value: string) => ({
+    const synthetic = (value: string, bold?: boolean) => ({
       text: value,
       nodeId: "",
       offset: 0,
       position: 0,
       color: "#ffffff",
-      style: {},
+      style: bold === undefined ? {} : { bold },
     });
     const visual = layout.lines.map(() => [] as typeof chars);
     for (const g of layout.glyphs) if (!g.suppressed) visual[g.line]!.push(g);
@@ -193,11 +194,24 @@ export function serializeText(
       const pad =
         layout.lines[line]!.spaceCount ??
         (space > 0 ? Math.round(layout.lines[line]!.padding / space) : 0);
-      return [
-        ...(line ? [synthetic("\n")] : []),
-        ...Array.from({ length: pad }, () => synthetic(" ")),
-        ...glyphs,
-      ];
+      const native =
+        !options.layout!.fontSource &&
+        supportsFinePadding(options.layout!.profile.font);
+      const fine = native
+        ? nativePadding(
+            layout.lines[line]!.padding,
+            layout.lines[line]!.padding,
+          )
+        : { regular: pad, bold: 0 };
+      const prefix = native
+        ? [
+            ...(fine.regular
+              ? [synthetic(" ".repeat(fine.regular), false)]
+              : []),
+            ...(fine.bold ? [synthetic(" ".repeat(fine.bold), true)] : []),
+          ]
+        : Array.from({ length: pad }, () => synthetic(" "));
+      return [...(line ? [synthetic("\n")] : []), ...prefix, ...glyphs];
     });
   }
   if (target.format === "minimessage") {
