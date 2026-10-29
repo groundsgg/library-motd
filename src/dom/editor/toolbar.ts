@@ -123,7 +123,9 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
     () => {
       forced = true;
       update();
-      controls.find((c) => !c.button.disabled)?.button.focus();
+      controls
+        .find((c) => !c.button.disabled && !c.button.hidden)
+        ?.button.focus();
     },
   );
   actions.append(show, undo, redo);
@@ -194,6 +196,8 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
         "title",
         toolLabel(mount, item.key, item.fallback),
       );
+      if (item.key === "placeholder")
+        item.button.hidden = options.features?.variables === false;
       if (item.key === "insertSprite")
         item.button.hidden =
           options.features?.sprites === false || !options.spriteCatalog?.length;
@@ -218,7 +222,9 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
       "aria-label",
       toolLabel(mount, "textTools", "Text tools"),
     );
-    const focusable = controls.filter((c) => !c.button.disabled);
+    const focusable = controls.filter(
+      (c) => !c.button.disabled && !c.button.hidden,
+    );
     for (const c of controls) c.button.tabIndex = c === focusable[0] ? 0 : -1;
     position();
   }
@@ -235,7 +241,9 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
       event.stopPropagation();
       forced = true;
       update();
-      controls.find((c) => !c.button.disabled)?.button.focus();
+      controls
+        .find((c) => !c.button.disabled && !c.button.hidden)
+        ?.button.focus();
     } else if (event.key === "Escape") {
       event.stopPropagation();
       forced = false;
@@ -245,7 +253,9 @@ export function mountToolbar(mount: ToolMount): ToolHandle {
   };
   const toolbarKeys = (event: KeyboardEvent) => {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-    const buttons = controls.map((c) => c.button).filter((b) => !b.disabled),
+    const buttons = controls
+        .map((c) => c.button)
+        .filter((b) => !b.disabled && !b.hidden),
       index = buttons.indexOf(doc.activeElement as HTMLButtonElement);
     if (index < 0) return;
     event.preventDefault();

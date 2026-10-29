@@ -1,3 +1,4 @@
+import { demoVariableCatalog } from "../shared/variables.js";
 import { demoSpriteCatalog } from "../shared/sprites.js";
 import { createElement, StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -156,6 +157,7 @@ function App() {
     createElement("p", null, labels.panoramaDemoNote),
     createElement(ServerListEditor, {
       spriteCatalog: demoSpriteCatalog,
+      variableCatalog: demoVariableCatalog,
       document,
       context: previewContext,
       onChange: setDocument,

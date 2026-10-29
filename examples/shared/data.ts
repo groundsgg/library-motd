@@ -70,7 +70,11 @@ export const context: PreviewContext = {
   },
   clientProtocol: 777,
   compatible: true,
-  values: { region: "EU", continent: "Europe" },
+  values: {
+    region: "EU",
+    continent: "Europe",
+    "server.name": "Grounds Network",
+  },
   profile: java263Profile,
   presentation: "row",
   viewportWidth: 680,

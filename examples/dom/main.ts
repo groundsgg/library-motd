@@ -1,3 +1,4 @@
+import { demoVariableCatalog } from "../shared/variables.js";
 import { demoSpriteCatalog } from "../shared/sprites.js";
 import {
   clientProfiles,
@@ -28,6 +29,7 @@ const editor = createEditor(window.document.querySelector("#editor")!, {
   context,
   onChange,
   spriteCatalog: demoSpriteCatalog,
+  variableCatalog: demoVariableCatalog,
   labels,
 });
 const query = <T extends HTMLElement>(id: string) =>
@@ -74,6 +76,7 @@ const refresh = () => {
     toolbar,
     labels,
     spriteCatalog: demoSpriteCatalog,
+    variableCatalog: demoVariableCatalog,
   });
   preview.update({ document, context, labels });
 };

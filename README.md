@@ -56,6 +56,7 @@ React: import `ServerListEditor` or `ServerListPreview` from `@groundsgg/motd/re
 
 - [Public API](https://docs.grounds.gg/reference/development/motd/api)
 - [Text formats](https://docs.grounds.gg/reference/development/motd/formats)
+- [Variable discovery and host catalogs](https://docs.grounds.gg/reference/development/motd/variables)
 - [Embedding and configuration](https://docs.grounds.gg/reference/development/motd/embedding)
 - [Localization, catalogs and diagnostics](https://docs.grounds.gg/reference/development/motd/localization)
 - [Opt-in gradient and alignment import assistance](https://docs.grounds.gg/reference/development/motd/import-assistance)

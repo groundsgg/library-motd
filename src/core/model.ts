@@ -205,6 +205,16 @@ export interface SpriteCatalogEntry extends AtlasSprite {
   /** Optional profile allowlist in addition to native client capability. */
   profiles?: readonly string[];
 }
+export type VariableField = "motd" | "version" | "hover";
+export interface VariableCatalogEntry {
+  name: string;
+  label?: string;
+  description?: string;
+  /** Display-only metadata; resolving a preview still uses context.values. */
+  exampleValue?: string;
+  /** Optional discovery scope. Hosts supply their own application-context catalog. */
+  fields?: readonly VariableField[];
+}
 export interface PreviewContext extends RuntimeContext {
   spriteProvider?: SpriteProvider;
   profile: ClientProfile;
