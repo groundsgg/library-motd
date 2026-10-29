@@ -25,7 +25,10 @@ export const germanLabels = {
   variableFieldHover: "Spieler-Hovertext",
   "diagnostic.spriteRendererRequired":
     "Beim direkten Aufruf von renderText benötigen native Sprites einen eigenen SpritePainter.",
-  spriteResourcePack: "Benötigt ein aktives Ressourcenpaket",
+  spriteResourcePack: "Benötigt ein lokal aktiviertes Clientpack",
+  demoClientPack: "Lokal aktiviertes Demo-Clientpack",
+  demoClientPackNote:
+    "Eigene Demo-Sprites benötigen ein passendes, bereits im Client aktiviertes Pack. Serverpacks werden beim Beitritt geladen und beim Trennen entfernt; die MOTD liefert sie nicht mit.",
   insertSprite: "Symbol einfügen",
   searchSprites: "Symbole suchen",
   noSprites: "Keine passenden Symbole",

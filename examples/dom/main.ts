@@ -1,5 +1,5 @@
 import { demoVariableCatalog } from "../shared/variables.js";
-import { demoSpriteCatalog } from "../shared/sprites.js";
+import { demoSpriteCatalog, demoSpriteProvider } from "../shared/sprites.js";
 import {
   clientProfiles,
   englishLabels,
@@ -28,7 +28,7 @@ const editor = createEditor(window.document.querySelector("#editor")!, {
   document,
   context,
   onChange,
-  spriteCatalog: demoSpriteCatalog,
+  spriteCatalog: [],
   variableCatalog: demoVariableCatalog,
   labels,
 });
@@ -54,6 +54,12 @@ const refresh = () => {
   context.presentation = query<HTMLSelectElement>("#presentation").value as
     "row" | "server-list";
   context.selected = query<HTMLInputElement>("#selected").checked;
+  const localPack = query<HTMLInputElement>("#local-client-pack").checked;
+  context.spriteProvider = localPack ? demoSpriteProvider : undefined;
+  query<HTMLElement>("#local-client-pack-label").textContent =
+    labels.demoClientPack;
+  query<HTMLElement>("#local-client-pack-note").textContent =
+    labels.demoClientPackNote;
   demoPanoramaMotion.paused =
     query<HTMLInputElement>("#panorama-paused").checked;
   demoPanoramaMotion.speed = Number(
@@ -75,7 +81,7 @@ const refresh = () => {
     onChange,
     toolbar,
     labels,
-    spriteCatalog: demoSpriteCatalog,
+    spriteCatalog: localPack ? demoSpriteCatalog : [],
     variableCatalog: demoVariableCatalog,
   });
   preview.update({ document, context, labels });
@@ -89,6 +95,7 @@ for (const id of [
   "#toolbar",
   "#language",
   "#panorama-paused",
+  "#local-client-pack",
 ])
   query(id).addEventListener("change", refresh);
 query<HTMLInputElement>("#panorama-speed").addEventListener("input", refresh);

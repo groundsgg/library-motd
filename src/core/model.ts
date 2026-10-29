@@ -201,6 +201,7 @@ export type SpriteProvider = (
 export interface SpriteCatalogEntry extends AtlasSprite {
   label: string;
   animated?: boolean;
+  /** Needs a matching global client pack already enabled; status pings never install server packs. */
   requiresResourcePack?: boolean;
   /** Optional profile allowlist in addition to native client capability. */
   profiles?: readonly string[];

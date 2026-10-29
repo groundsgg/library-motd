@@ -18,7 +18,7 @@ export const demoSpriteCatalog: readonly SpriteCatalogEntry[] = [
     requiresResourcePack: true,
   },
 ];
-/** Original artwork; these custom IDs require a matching client pack in-game. */
+/** Original artwork for an explicitly selected global client pack, never a status-delivered pack. */
 export const demoSpriteProvider: SpriteProvider = ({ atlas, sprite }) =>
   atlas !== "minecraft:gui"
     ? undefined

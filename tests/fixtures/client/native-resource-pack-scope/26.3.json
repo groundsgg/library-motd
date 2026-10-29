@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "sessionDate": "2026-10-29",
+  "clientVersion": "26.3",
+  "protocol": 777,
+  "clientSha1": "e877b6a07acd633fb3bb475002175cec036e7b87",
+  "environment": {
+    "os": "Linux",
+    "display": "owned Xvfb X11; SDL x11 driver forced",
+    "viewport": [
+      854,
+      480
+    ],
+    "guiScale": 2,
+    "rendering": "software OpenGL",
+    "mods": [],
+    "account": "isolated offline test profile"
+  },
+  "status": {
+    "version": {
+      "name": "26.3",
+      "protocol": 777
+    },
+    "players": {
+      "online": 1,
+      "max": 20
+    },
+    "description": {
+      "text": "",
+      "color": "white",
+      "shadow_color": 0,
+      "extra": [
+        {
+          "text": "Vanilla A"
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/trial_available"
+        },
+        {
+          "text": "B\nCustom A"
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "audit:probe"
+        },
+        {
+          "text": "B C"
+        },
+        {
+          "text": "",
+          "font": "audit:custom"
+        },
+        {
+          "text": "D"
+        }
+      ]
+    }
+  },
+  "pack": {
+    "description": "Original synthetic resources only",
+    "metadata": {
+      "pack": {
+        "description": "Own Grounds resource-scope audit",
+        "min_format": [
+          97,
+          1
+        ],
+        "max_format": [
+          97,
+          1
+        ]
+      }
+    },
+    "resources": [
+      {
+        "path": "assets/audit/textures/gui/sprites/probe.png",
+        "size": [
+          8,
+          8
+        ],
+        "pixels": "alternating x+y parity; RGBA [0,255,255,255] and [0,70,70,255]"
+      },
+      {
+        "path": "assets/audit/textures/font/probe.png",
+        "size": [
+          8,
+          8
+        ],
+        "pixels": "alternating x+y parity; RGBA [255,255,0,255] and [90,80,0,255]"
+      },
+      {
+        "path": "assets/audit/font/custom.json",
+        "value": {
+          "providers": [
+            {
+              "type": "bitmap",
+              "file": "audit:font/probe.png",
+              "height": 8,
+              "ascent": 7,
+              "chars": [
+                ""
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "default resources before joining",
+      "selectedPacks": [
+        "vanilla"
+      ],
+      "statusRequests": 1,
+      "packDownloads": 0,
+      "customSprite": "missing texture",
+      "customFont": "missing glyph",
+      "builtInSprite": "present"
+    },
+    {
+      "name": "server pack during joining",
+      "fixture": "Offline login followed by configuration-stage resource_pack_push; no world or play stage",
+      "offerAfter": "login acknowledgement",
+      "resourcePackResponses": [
+        {
+          "action": 3,
+          "time": 1793302341.8890984
+        },
+        {
+          "action": 4,
+          "time": 1793302341.915371
+        },
+        {
+          "action": 0,
+          "time": 1793302342.9887729
+        }
+      ],
+      "responseNames": [
+        "ACCEPTED",
+        "DOWNLOADED",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "packDownloads": 1,
+      "resourceManager": "vanilla, vanilla, server/00000000/164831ac-78fc-41e9-b377-ae47acadefa5"
+    },
+    {
+      "name": "return to server list after server disconnect",
+      "resourceManager": "vanilla, vanilla",
+      "customSprite": "missing texture",
+      "customFont": "missing glyph",
+      "builtInSprite": "present",
+      "downloadCacheCanRemainOnDisk": true
+    },
+    {
+      "name": "explicit global client pack before joining",
+      "selectedPacks": [
+        "vanilla",
+        "file/audit.zip"
+      ],
+      "statusRequests": 1,
+      "gameLogins": 0,
+      "packDownloads": 0,
+      "customSprite": "present, 256 matching own-color pixels",
+      "customFont": "present, 256 matching own-color pixels",
+      "builtInSprite": "present"
+    }
+  ],
+  "measurements": {
+    "customLineRoi": [
+      195,
+      112,
+      380,
+      134
+    ],
+    "countedColors": {
+      "sprite": [
+        [
+          0,
+          255,
+          255
+        ],
+        [
+          0,
+          70,
+          70
+        ]
+      ],
+      "font": [
+        [
+          255,
+          255,
+          0
+        ],
+        [
+          90,
+          80,
+          0
+        ]
+      ]
+    },
+    "captures": {
+      "vanilla-clean/02-list.png": {
+        "sha256": "996d8e05aaed6f0222e3d3447d9203c253434a8ed53d1c40f9872e46b87b5711",
+        "customSpritePixelCount": 0,
+        "customFontPixelCount": 0
+      },
+      "vanilla-clean/04-join.png": {
+        "sha256": "81844b0b83fd188db1f532886aa9a35020b8d0c9f003fdf54a6d15e7327ab67f"
+      },
+      "vanilla-clean/06-loaded-config.png": {
+        "sha256": "60805393d68a3703a0c5a217548c59bbb2ff76e51e88b7ac13be014e38fbb8f0"
+      },
+      "vanilla-clean/07-disconnected.png": {
+        "sha256": "240b12387c9f7beea6fbcdd1a5656f6414397ee3673c01870b4b50f352cef652"
+      },
+      "vanilla-clean/08-list-after-serverpack.png": {
+        "sha256": "e1abdf098f87dc2f2745776b71aa66ed4f8b563d2d53134a05f0609711d93ef8",
+        "customSpritePixelCount": 0,
+        "customFontPixelCount": 0
+      },
+      "global/02-list.png": {
+        "sha256": "f91d8bd99d07f0d60c1375cf626038bee15933050356c9a948ad7378bfe076a7",
+        "customSpritePixelCount": 256,
+        "customFontPixelCount": 256
+      }
+    }
+  },
+  "auditedClientPaths": [
+    "StatusProtocols (status response/pong only)",
+    "ClientCommonPacketListenerImpl.handleResourcePackPush",
+    "DownloadedPackSource.cleanupAfterDisconnect -> ServerPackManager.popAll",
+    "Minecraft.clearDownloadedResourcePacks"
+  ],
+  "limits": [
+    "Official unmodified Java 26.3 Linux client only; not every historical release, Windows or Bedrock.",
+    "Server pack was loaded successfully in configuration then disconnected; this probe did not enter a game world.",
+    "No original Mojang images, client binaries or full captures are published.",
+    "Web provider resources do not install resources in Minecraft.",
+    "Default-resource atlas animation is measured separately in native-atlas/26.3.json."
+  ]
+}

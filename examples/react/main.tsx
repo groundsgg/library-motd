@@ -1,5 +1,5 @@
 import { demoVariableCatalog } from "../shared/variables.js";
-import { demoSpriteCatalog } from "../shared/sprites.js";
+import { demoSpriteCatalog, demoSpriteProvider } from "../shared/sprites.js";
 import { createElement, StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { ServerListEditor, ServerListPreview } from "../../src/react/index.js";
@@ -31,11 +31,13 @@ function App() {
   const [panoramaPaused, setPanoramaPaused] = useState(false);
   const [panoramaSpeed, setPanoramaSpeed] = useState(1);
   const [showRuntimeFont, setShowRuntimeFont] = useState(false);
+  const [localPack, setLocalPack] = useState(false);
   const previewContext = {
     ...context,
     profile,
     presentation,
     clientProtocol: profile.protocol!,
+    spriteProvider: localPack ? demoSpriteProvider : undefined,
   };
   return createElement(
     "div",
@@ -155,8 +157,21 @@ function App() {
       ),
     ),
     createElement("p", null, labels.panoramaDemoNote),
+    createElement(
+      "label",
+      null,
+      createElement("input", {
+        type: "checkbox",
+        checked: localPack,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+          setLocalPack(e.target.checked),
+      }),
+      " ",
+      labels.demoClientPack,
+    ),
+    createElement("p", null, labels.demoClientPackNote),
     createElement(ServerListEditor, {
-      spriteCatalog: demoSpriteCatalog,
+      spriteCatalog: localPack ? demoSpriteCatalog : [],
       variableCatalog: demoVariableCatalog,
       document,
       context: previewContext,
@@ -197,7 +212,7 @@ function App() {
         createElement(
           "p",
           null,
-          "Original bitmap A and Unihex B for 1.21.1 and 26.3. Viewer-only source; no game assets are included.",
+          "Original bitmap A and Unihex B for 1.21.1 and 26.3. Requires corresponding resources already active in the client; a server pack cannot supply them to the server list. Viewer-only source; no game assets are included.",
         ),
         createElement(
           "div",

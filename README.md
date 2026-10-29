@@ -8,6 +8,8 @@ A standalone Minecraft Java server-list editor and preview. Use the TypeScript c
 
 The viewer targets Vanilla Java behavior for the selected client profile. MOTDs and servericons remain supplied status snapshots; client-owned obfuscation and panorama motion are separate effects. Preview-only MOTD animation timelines are outside its scope. Profile-specific evidence and approximations remain explicit; see [native behavior and limits](https://docs.grounds.gg/reference/development/motd/vanilla-behavior).
 
+Custom fonts and sprite identifiers need matching resources already active in the player's global client packs. A server-list ping does not install server packs; packs offered on joining are removed from the active resource stack on disconnect. Web asset providers do not install anything in Minecraft. The examples keep their custom sprite resources off until you explicitly select the local client-pack context; see the [native pack-loading comparison](https://docs.grounds.gg/reference/development/motd/vanilla-behavior#resource-packs-in-the-server-list).
+
 ```sh
 npm install @groundsgg/motd
 ```

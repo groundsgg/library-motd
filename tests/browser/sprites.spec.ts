@@ -1,4 +1,48 @@
 import { expect, test } from "@playwright/test";
+for (const adapter of ["dom", "react"])
+  test(`${adapter} demo requires an explicitly active local pack for custom sprites`, async ({
+    page,
+  }) => {
+    await page.goto(`/examples/${adapter}/`);
+    const pack = page.getByLabel("Locally enabled demo client pack", {
+      exact: true,
+    });
+    await expect(pack).toBeVisible({ timeout: 2000 });
+    await expect(pack).not.toBeChecked();
+    const editable = page.locator(".mce-root .ProseMirror");
+    await editable.click();
+    const insert = page.getByRole("button", {
+      name: "Insert sprite",
+      exact: true,
+    });
+    await expect(insert).toHaveCount(0);
+    await pack.check();
+    await editable.click();
+    await insert.click();
+    await page.getByRole("button", { name: /Demo pulse/ }).click();
+    await expect(
+      page.locator('.mce-root [data-sprite-state="ready"]'),
+    ).toHaveCount(1);
+    await expect(
+      page.locator('.preview-output [data-sprite-state="ready"]'),
+    ).toHaveCount(1);
+    await pack.uncheck();
+    await expect(
+      page.locator('.mce-root [data-sprite-state="failed"]'),
+    ).toHaveCount(1);
+    await expect(
+      page.locator('.preview-output [data-sprite-state="failed"]'),
+    ).toHaveCount(1);
+    await editable.click();
+    await expect(insert).toHaveCount(0);
+    await pack.check();
+    await expect(
+      page.locator('.mce-root [data-sprite-state="ready"]'),
+    ).toHaveCount(1);
+    await expect(
+      page.locator('.preview-output [data-sprite-state="ready"]'),
+    ).toHaveCount(1);
+  });
 async function setup(page: import("@playwright/test").Page) {
   await page.goto("/tests/browser/host.html");
   await page.evaluate(() => {
@@ -513,6 +557,9 @@ for (const adapter of ["dom", "react"]) {
     page,
   }) => {
     await page.goto(`/examples/${adapter}/`);
+    await page
+      .getByLabel("Locally enabled demo client pack", { exact: true })
+      .check();
     await page.locator(".ProseMirror").first().click();
     await page
       .getByRole("button", { name: "Insert sprite", exact: true })

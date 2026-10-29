@@ -145,7 +145,7 @@ export function mountSpriteTool(mount: ToolMount): ToolHandle {
               toolLabel(
                 mount,
                 "spriteResourcePack",
-                "Requires client resource pack",
+                "Requires a locally enabled client pack",
               ),
             ),
           );

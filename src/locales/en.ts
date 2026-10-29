@@ -22,7 +22,10 @@ export const englishLabels = {
   variableFieldHover: "Player hover",
   "diagnostic.spriteRendererRequired":
     "Native sprite rendering requires an owned SpritePainter when calling renderText directly.",
-  spriteResourcePack: "Requires client resource pack",
+  spriteResourcePack: "Requires a locally enabled client pack",
+  demoClientPack: "Locally enabled demo client pack",
+  demoClientPackNote:
+    "Custom demo sprites need a matching pack already enabled in the client. Server packs load on joining and are removed on disconnect, not provided by a MOTD.",
   insertSprite: "Insert sprite",
   searchSprites: "Search sprites",
   noSprites: "No matching sprites",
