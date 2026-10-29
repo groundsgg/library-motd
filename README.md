@@ -71,6 +71,8 @@ React: import `ServerListEditor` or `ServerListPreview` from `@groundsgg/motd/re
 
 Develop with Node 24: `npm ci`, `npm run dev`, then open `/examples/dom/` or `/examples/react/`. Bundled fonts are local; host asset providers remain optional. `npm run typecheck`, `npm test`, `npm run build`, `npm run test:browser`, `npm run test:package` and `npm run build:examples` validate the sources, package and examples. Install the engines and dependencies with `npx playwright install --with-deps chromium firefox webkit` before browser tests. The same suite runs in all three engines; see [browser verification](https://docs.grounds.gg/reference/development/motd/browser-verification) for coverage and limits.
 
+Builds and type checks use TypeScript 7 through the `@typescript/native` npm alias. The `typescript` alias supplies Microsoft's TypeScript 6 compatibility API for ESLint and other API consumers. This is the [TypeScript team's recommended side-by-side setup](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6-0): `npx tsc --version` reports 7.x, while `node -p "require('typescript').version"` reports 6.x. Keep both aliases until API-dependent tools support the native compiler.
+
 See [contributing](CONTRIBUTING.md) for formatting, linting, checks and release conventions. Issue and PR templates come from the shared `groundsgg/.github` repository.
 
 MIT code; local pixel fonts use SIL OFL 1.1. See THIRD_PARTY_NOTICES.md. No original Minecraft game assets are included in the npm archive. Client captures are test evidence only.
