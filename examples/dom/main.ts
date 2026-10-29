@@ -1,3 +1,4 @@
+import { demoSpriteCatalog } from "../shared/sprites.js";
 import {
   clientProfiles,
   englishLabels,
@@ -26,6 +27,7 @@ const editor = createEditor(window.document.querySelector("#editor")!, {
   document,
   context,
   onChange,
+  spriteCatalog: demoSpriteCatalog,
   labels,
 });
 const query = <T extends HTMLElement>(id: string) =>
@@ -65,7 +67,14 @@ const refresh = () => {
     labels.panoramaDemoNote;
   const toolbar = query<HTMLSelectElement>("#toolbar").value as
     "fixed" | "selection";
-  editor.update({ document, context, onChange, toolbar, labels });
+  editor.update({
+    document,
+    context,
+    onChange,
+    toolbar,
+    labels,
+    spriteCatalog: demoSpriteCatalog,
+  });
   preview.update({ document, context, labels });
 };
 for (const id of [

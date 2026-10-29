@@ -942,3 +942,76 @@
   max-width: 100%;
   overflow-x: auto;
 }
+
+/* Native sprite ink stays square; the containing advance can include bold spacing. */
+.mcp-sprite {
+  display: inline-block;
+  position: relative;
+  height: 9px;
+  line-height: 9px;
+  vertical-align: top;
+  overflow: visible;
+}
+.mcp-sprite canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 9px;
+  height: 9px;
+  max-width: none;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+.mcp-motd > .mcp-glyph.mcp-sprite {
+  margin-left: 1.5px;
+}
+.mce-token[data-sprite-token] {
+  display: inline-block;
+  height: 9px;
+  vertical-align: top;
+  background: transparent;
+}
+.mce-sprite-picker {
+  width: min(440px, calc(100vw - 40px));
+}
+.mce-sprite-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-height: 300px;
+  overflow: auto;
+  padding: 2px;
+}
+.mce-sprite-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  gap: 8px;
+  min-height: 104px;
+  padding: 12px 8px;
+  overflow-wrap: anywhere;
+}
+.mce-sprite-choice small {
+  font-size: 10px;
+  color: var(--mce-muted);
+}
+.mce-sprite-thumbnail {
+  width: 32px !important;
+  height: 32px !important;
+}
+.mce-sprite-thumbnail canvas {
+  width: 36px;
+  height: 36px;
+}
+.mce-sprite-empty {
+  padding: 16px 0;
+  color: var(--mce-muted);
+}
+
+.mcp-glyph.mcp-sprite {
+  position: absolute;
+}
+.mce-token[data-sprite-token] .mcp-sprite {
+  left: 0.5px;
+}

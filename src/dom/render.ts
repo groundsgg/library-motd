@@ -1,3 +1,5 @@
+import { diagnostic } from "../core/diagnostics.js";
+import { SpritePainter } from "./sprites.js";
 import type {
   Alignment,
   Diagnostic,
@@ -74,7 +76,15 @@ export function applyTextStyle(
 ): void {
   const fg = color ?? style.color ?? "#aaaaaa";
   span.style.color = fg;
-  span.style.setProperty("--mcp-shadow-color", shadowColor(fg));
+  const shadow = style.shadowColor;
+  const hex =
+    shadow === undefined
+      ? undefined
+      : (shadow >>> 0).toString(16).padStart(8, "0");
+  span.style.setProperty(
+    "--mcp-shadow-color",
+    hex ? `#${hex.slice(2)}${hex.slice(0, 2)}` : shadowColor(fg),
+  );
   span.style.textShadow =
     "var(--mcp-shadow-offset, 0px 0px) var(--mcp-shadow-color)";
   span.style.fontWeight = style.bold ? "700" : "400";
@@ -91,7 +101,9 @@ export function renderText(
   alignments?: Alignment[],
   defaultColor?: string,
   runtime?: RuntimeFontPainter,
+  sprites?: SpritePainter,
 ): Diagnostic[] {
+  sprites?.clear();
   runtime?.beginFrame();
   const layout = layoutText(text, {
     profile: context.profile,
@@ -142,6 +154,23 @@ export function renderText(
         ? defaultColor
         : glyph.color,
     );
+    if (glyph.sprite) {
+      if (!context.profile.atlasSprites) continue;
+      if (sprites) sprites.paint(span, glyph, context);
+      else {
+        span.textContent = "";
+        layout.diagnostics.push(
+          diagnostic(
+            "sprite-renderer-required",
+            glyph.nodeId,
+            { key: "diagnostic.spriteRendererRequired" },
+            "warning",
+          ),
+        );
+      }
+      root.append(span);
+      continue;
+    }
     if (runtime) {
       span.classList.add("mcp-runtime-glyph");
       layout.diagnostics.push(

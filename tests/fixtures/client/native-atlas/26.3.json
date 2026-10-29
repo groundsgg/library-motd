@@ -1,0 +1,100 @@
+{
+  "clientVersion": "26.3",
+  "clientSha1": "e877b6a07acd633fb3bb475002175cec036e7b87",
+  "guiScale": 2,
+  "viewport": [
+    854,
+    480
+  ],
+  "resourcePacks": [
+    "vanilla"
+  ],
+  "description": {
+    "text": "",
+    "extra": [
+      {
+        "text": "A",
+        "color": "#ffffff",
+        "shadow_color": 0
+      },
+      {
+        "atlas": "minecraft:gui",
+        "sprite": "minecraft:icon/trial_available",
+        "color": "white",
+        "shadow_color": 0
+      },
+      {
+        "text": "B\n",
+        "color": "#ffffff",
+        "shadow_color": 0
+      },
+      {
+        "text": "A",
+        "color": "#ffffff",
+        "shadow_color": 0
+      },
+      {
+        "atlas": "minecraft:gui",
+        "sprite": "minecraft:icon/trial_available",
+        "color": "white",
+        "shadow_color": 0,
+        "bold": true,
+        "italic": true
+      },
+      {
+        "text": "B",
+        "color": "#ffffff",
+        "shadow_color": 0
+      }
+    ]
+  },
+  "statusResponses": 1,
+  "sampleCount": 120,
+  "spriteTopLefts": [
+    [
+      208,
+      96
+    ],
+    [
+      208,
+      114
+    ]
+  ],
+  "advanceProbe": {
+    "regularAdvance": 8,
+    "boldAdvance": 9,
+    "boldOffset": 1,
+    "shadowOffset": 1
+  },
+  "hashes": {
+    "status.json": "594c28e00dea375b44feab6f256dcdf5a5ebaa05e5b2d09facc212db55646549",
+    "list-initial.png": "3b99aa38273cc6ae43866da6353e0e7ea6c5797969131028149c28eb1e983bf3",
+    "samples/frames.json": "1bce681cd564fbbd50ffa2757ca279247e37c833a247602aa9a8f549d00d8182",
+    "measurement.json": "d5cc0844807798fc000cc7c9cb7f804aabef73ed03f7f7ac113bc7642bb321a1",
+    "glyph-advance-probe.log": "47c0925b451e890b8c3dd6fde199b35a412343099f76d6adb2db4f28bf3a8cc4"
+  },
+  "measuredSpanNs": 3955882340,
+  "spriteSize": [
+    8,
+    8
+  ],
+  "animation": {
+    "frameIndexes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "frameTicks": [
+      10,
+      2,
+      2,
+      2,
+      2,
+      2
+    ]
+  },
+  "scope": "Original screenshots and textures remain private. Native26.3/default-pack setup only; host assets required for browser rendering."
+}

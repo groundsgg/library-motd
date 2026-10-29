@@ -19,6 +19,7 @@ export function mountTextTools(mount: ToolMount): ToolHandle {
   let activeField: EditableField | undefined;
   function open(request: TextToolRequest) {
     const { tool, anchor, selection } = request;
+    if (tool === "sprite") return;
     if (destroyed || !fieldEditable(mount, selection.field)) return;
     activeField = selection.field;
     const content = element(doc, "section", "mce-tool-content"),

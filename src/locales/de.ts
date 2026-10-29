@@ -1,6 +1,26 @@
 import type { englishLabels } from "./en.js";
 /** Complete German catalog; override individual keys for host terminology. */
 export const germanLabels = {
+  "diagnostic.spriteRendererRequired":
+    "Beim direkten Aufruf von renderText benötigen native Sprites einen eigenen SpritePainter.",
+  spriteResourcePack: "Benötigt ein aktives Ressourcenpaket",
+  insertSprite: "Symbol einfügen",
+  searchSprites: "Symbole suchen",
+  noSprites: "Keine passenden Symbole",
+  animatedSprite: "Animiert",
+  staticSprite: "Statisch",
+  spriteIncompatible: "Für diesen Client nicht verfügbar",
+  spriteChoice: "{label} · {kind}",
+
+  "diagnostic.spriteUnsupportedClient":
+    "Dieses Clientprofil unterstützt keine Atlas-Sprites; sie werden ausgelassen.",
+  "diagnostic.spriteUnsupportedFormat":
+    "Dieses Ausgabeformat kann keine Atlas-Sprites darstellen.",
+  "diagnostic.spriteResourceMissing":
+    "Für das Sprite {sprite} ist keine Vorschau-Ressource verfügbar.",
+  "diagnostic.spriteResourceInvalid":
+    "Die Sprite-Vorschau-Ressource ist ungültig oder konnte nicht geladen werden.",
+
   "diagnostic.fontRuntimeProfile":
     "Importierte MOTD-Schriften benötigen eine kalibrierte CPU-Geometrie für dieses Profil (gewählter Client: {version}). Stattdessen wird die Profilschrift verwendet.",
   "diagnostic.fontRuntimeAlignmentLimit":

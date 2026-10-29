@@ -127,7 +127,9 @@ export function layoutText(
     native = !!source || font.layout === "java-ltr";
   const selected = chars.map((c) => {
     const glyph =
-      c.text === "\n" ? undefined : source?.glyphFor(c.text.codePointAt(0)!);
+      c.text === "\n" || c.sprite
+        ? undefined
+        : source?.glyphFor(c.text.codePointAt(0)!);
     return glyph &&
       c.style.obfuscated &&
       c.text !== " " &&
@@ -156,6 +158,21 @@ export function layoutText(
     );
   const advances = chars.map((c, index) => {
     if (c.text === "\n") return 0;
+    if (c.sprite) {
+      const native = options.profile.atlasSprites;
+      if (!native)
+        diagnostics.push(
+          diagnostic(
+            "sprite-unsupported-client",
+            c.nodeId,
+            { key: "diagnostic.spriteUnsupportedClient" },
+            "warning",
+          ),
+        );
+      return native
+        ? native.advance + (c.style.bold ? native.boldOffset : 0)
+        : 0;
+    }
     const glyph = selected[index];
     if (source ? !glyph : c.text === "\r" || !font.supported(c.text))
       diagnostics.push(

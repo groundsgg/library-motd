@@ -44,6 +44,7 @@ export function pixelInkStyle(
   scale = Math.min(16, Math.max(0.5, scale));
   const key = JSON.stringify([
     text,
+    style.shadowColor,
     !!style.bold,
     !!style.italic,
     !!style.underlined,
@@ -92,7 +93,13 @@ export function pixelInkStyle(
     if (colors.size >= 512) colors.delete(colors.keys().next().value!);
     colors.set(color, rgb);
   }
-  const shade = rgb.map((value) => Math.floor(value / 4));
+  const argb = style.shadowColor;
+  const shade =
+    argb === undefined
+      ? rgb.map((value) => Math.floor(value / 4))
+      : [(argb >>> 16) & 255, (argb >>> 8) & 255, argb & 255];
+  const rawShadowAlpha = argb === undefined ? 255 : argb >>> 24;
+  const shadowAlpha = rawShadowAlpha < 26 ? 0 : rawShadowAlpha;
   const decorated = (x: number, y: number) =>
     x >= -0.5 &&
     x < advance + 0.5 &&
@@ -108,15 +115,29 @@ export function pixelInkStyle(
       const cell = Math.floor(x - 0.5 - shear);
       const glyph = cell >= 0 && cell < pixelColumns && !!(bits & (1 << cell));
       const decoration = decorated(x, y);
-      const effectShadow = decorationShadow && decorated(x - 1, y - 1);
+      const effectShadow =
+        decorationShadow && shadowAlpha > 0 && decorated(x - 1, y - 1);
       if (!glyph && !decoration && !effectShadow) continue;
       const offset = (py * width + px) * 4;
       // Native effects are drawn after glyphs: their shadow can cover glyph ink.
       image.data.set(
-        [...(decoration || !effectShadow ? rgb : shade), 255],
+        [
+          ...(decoration || !effectShadow
+            ? rgb
+            : glyph && shadowAlpha < 255
+              ? shade.map((c, i) =>
+                  Math.round(
+                    (c * shadowAlpha) / 255 +
+                      rgb![i]! * (1 - shadowAlpha / 255),
+                  ),
+                )
+              : shade),
+          glyph || decoration ? 255 : shadowAlpha,
+        ],
         offset,
       );
-      if (glyph || decoration) shadowImage.data.set([...shade, 255], offset);
+      if (glyph || decoration)
+        shadowImage.data.set([...shade, shadowAlpha], offset);
     }
   }
   ctx.putImageData(image, 0, 0);

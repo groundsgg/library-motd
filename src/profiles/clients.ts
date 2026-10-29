@@ -22,6 +22,7 @@ export const java12111Profile: ClientProfile = {
   id: "java-1.21.11",
   font: { ...java1211Profile.font, runtimeGlyphGeometry: undefined },
   clientVersion: "1.21.11",
+  atlasSprites: { advance: 8, boldOffset: 1 },
   protocol: 774,
   geometry: {
     ...java1211Profile.geometry,

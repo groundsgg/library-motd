@@ -1,3 +1,4 @@
+import { java263Profile } from "../../profiles/clients.js";
 import type {
   CountRule,
   Diagnostic,
@@ -79,7 +80,32 @@ export function evaluateStatus(
     ...(max !== undefined ? { max: String(max) } : {}),
   };
   const output = (text: TextDocument, target: TextTarget): string | null => {
-    const resolved = resolveText(text, values);
+    const spriteCapable = context.motdLayout
+      ? !!context.motdLayout.profile.atlasSprites
+      : context.clientProtocol >= 773;
+    const project = (nodes: TextDocument["nodes"]): TextDocument["nodes"] =>
+      nodes.map((node) => {
+        if (node.type === "group")
+          return { ...node, children: project(node.children) };
+        if (node.type !== "sprite" || spriteCapable) return node;
+        diagnostics.push(
+          diagnostic(
+            "sprite-unsupported-client",
+            node.id,
+            { key: "diagnostic.spriteUnsupportedClient" },
+            "warning",
+          ),
+        );
+        return { id: node.id, type: "text", value: "" };
+      });
+    const resolved = resolveText(
+      {
+        ...text,
+        nodes: project(text.nodes),
+        ...(spriteCapable ? {} : { source: undefined }),
+      },
+      values,
+    );
     diagnostics.push(...resolved.diagnostics);
     const serialized = serializeText(resolved.value!, target, {
       ...(target.format === "legacy-section"
@@ -89,7 +115,11 @@ export function evaluateStatus(
       document.motd.alignments.some((a) => a !== "left")
         ? {
             layout: {
-              profile: context.motdLayout?.profile ?? java1211Profile,
+              profile:
+                context.motdLayout?.profile ??
+                (context.clientProtocol >= 773
+                  ? java263Profile
+                  : java1211Profile),
               width: context.motdLayout?.width ?? 271,
               fontSource: context.motdLayout?.fontSource,
               maxLines: 2,

@@ -22,7 +22,13 @@ export interface GradientStop {
   color: string;
   position: number;
 }
+export interface AtlasSprite {
+  atlas: string;
+  sprite: string;
+}
 export interface TextStyle {
+  /** Packed native ARGB, including zero for no shadow. */
+  shadowColor?: number;
   color?: string;
   bold?: boolean;
   italic?: boolean;
@@ -39,6 +45,7 @@ interface NodeBase {
 export type TextNode =
   | (NodeBase & { type: "text"; value: string })
   | (NodeBase & { type: "group"; style: TextStyle; children: TextNode[] })
+  | (NodeBase & { type: "sprite" } & AtlasSprite)
   | (NodeBase & { type: "newline" })
   | (NodeBase & { type: "placeholder"; name: string })
   | (NodeBase & {
@@ -116,6 +123,8 @@ export interface ClientProfile {
   protocol?: number;
   background?: "dirt" | "panorama";
   verified: boolean;
+  /** Native atlas objects supported by this client. Omission keeps legacy behavior. */
+  atlasSprites?: { advance: number; boldOffset: number };
   font: FontProfile;
   geometry: {
     rowWidth: number;
@@ -181,7 +190,23 @@ export interface ClientAssets {
 export type ClientAssetProvider = (
   profile: ClientProfile,
 ) => ClientAssets | undefined;
+export interface SpriteAsset {
+  /** Explicit host URLs; frames must be square and independently decodable. */
+  frames: readonly { url: string; ticks?: number }[];
+}
+export type SpriteProvider = (
+  sprite: AtlasSprite,
+  profile: ClientProfile,
+) => SpriteAsset | undefined;
+export interface SpriteCatalogEntry extends AtlasSprite {
+  label: string;
+  animated?: boolean;
+  requiresResourcePack?: boolean;
+  /** Optional profile allowlist in addition to native client capability. */
+  profiles?: readonly string[];
+}
 export interface PreviewContext extends RuntimeContext {
+  spriteProvider?: SpriteProvider;
   profile: ClientProfile;
   viewportWidth: number;
   /** Physical preview height. Defaults to 180 logical GUI pixels. */
@@ -220,6 +245,7 @@ export interface LayoutOptions {
   alignments?: Alignment[];
 }
 export interface Glyph {
+  sprite?: AtlasSprite;
   /** Selected runtime metadata, shared with visible ink. Absent for a missing source glyph. */
   fontGlyph?: FontSourceGlyph;
   /** Source space consumed at a native soft break; retained for editor/source mapping. */

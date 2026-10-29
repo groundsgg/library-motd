@@ -14,7 +14,8 @@ export interface ToolHandle {
   destroy(): void;
 }
 export interface TextToolRequest {
-  tool: "color" | "gradient" | "placeholder" | "rainbow" | "decorations";
+  tool:
+    "color" | "gradient" | "placeholder" | "rainbow" | "decorations" | "sprite";
   anchor: HTMLElement;
   selection: FieldSelection;
 }

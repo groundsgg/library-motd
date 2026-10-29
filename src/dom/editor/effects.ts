@@ -1,3 +1,4 @@
+import { SpritePainter } from "../sprites.js";
 import type { Node as PMNode } from "prosemirror-model";
 import { Plugin, PluginKey } from "prosemirror-state";
 import { Decoration, DecorationSet, type NodeView } from "prosemirror-view";
@@ -95,6 +96,7 @@ function decorations(
       hidden: line !== undefined && line >= (layout?.maxLines ?? 2),
       inkCSS:
         pixelFont &&
+        !glyph.sprite &&
         !metric?.suppressed &&
         (line === undefined || line < (layout?.maxLines ?? 2))
           ? pixelInkStyle(
@@ -276,20 +278,25 @@ export function inlineEffects(
           const span = view.dom.ownerDocument.createElement("span");
           span.className = "mce-token";
           span.contentEditable = "false";
+          const sprites = new SpritePainter(span.ownerDocument);
           function render(
             next: PMNode,
             currentDecorations: readonly Decoration[],
           ) {
             const source = next.attrs.node;
+            sprites.clear();
+            span.toggleAttribute("data-sprite-token", source.type === "sprite");
             setLabelAttribute(
               span,
               "title",
               source.type === "placeholder"
                 ? `{{${source.name}}}`
-                : (localization?.message(
-                    "protectedSourceHint",
-                    "Protected source construct; edit in source mode",
-                  ) ?? "Protected source construct; edit in source mode"),
+                : source.type === "sprite"
+                  ? `${source.atlas} / ${source.sprite}`
+                  : (localization?.message(
+                      "protectedSourceHint",
+                      "Protected source construct; edit in source mode",
+                    ) ?? "Protected source construct; edit in source mode"),
             );
             const glyphs = currentDecorations.flatMap(
               (decoration) =>
@@ -322,6 +329,16 @@ export function inlineEffects(
               child.className = `mce-effect-glyph mce-native-glyph${glyph.suppressed ? " mce-consumed-space" : ""}`;
               child.textContent = glyph.text === "\r" ? "?" : glyph.text;
               applyTextStyle(child, glyph.style, glyph.color);
+              if (glyph.sprite && context) {
+                if (!context().profile.atlasSprites) continue;
+                sprites.paint(
+                  child,
+                  { ...glyph, advance: glyph.advance ?? 8 },
+                  context(),
+                );
+                span.append(child);
+                continue;
+              }
               if (glyph.inkCSS) {
                 child.classList.add("mcp-pixel-glyph");
                 if (glyph.style.italic) child.classList.add("mcp-pixel-italic");
@@ -334,6 +351,9 @@ export function inlineEffects(
           render(node, initialDecorations);
           return {
             dom: span,
+            destroy() {
+              sprites.destroy();
+            },
             update(next, nextDecorations) {
               if (next.type !== node.type) return false;
               render(next, nextDecorations);
