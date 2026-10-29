@@ -128,3 +128,28 @@ it("honors explicit native ARGB shadow tint and zero alpha", () => {
     expect([...out.pixels.slice(at, at + 4)]).toEqual(want);
   }
 });
+
+it("applies native shadow alpha discard after multiplying texture and shadow opacity", () => {
+  for (const [textureAlpha, shadowAlpha, want] of [
+    [255, 25, [0, 0, 0, 0]],
+    [128, 26, [0, 0, 0, 0]],
+    [255, 26, [17, 34, 51, 26]],
+  ] as const) {
+    const g = sample([255, 255, 255, textureAlpha]);
+    const out = rasterizeRuntimeGlyph(
+      g,
+      g.bitmap!.pixels().value!,
+      { shadowColor: shadowAlpha * 16777216 + 0x112233 },
+      0,
+      0,
+      g.advance,
+      "#ffffff",
+      true,
+      1,
+      clip,
+    ).value!;
+    expect([
+      ...out.pixels.slice((7 * out.width + 7) * 4, (7 * out.width + 7) * 4 + 4),
+    ]).toEqual(want);
+  }
+});

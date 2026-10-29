@@ -98,7 +98,8 @@ export function pixelInkStyle(
     argb === undefined
       ? rgb.map((value) => Math.floor(value / 4))
       : [(argb >>> 16) & 255, (argb >>> 8) & 255, argb & 255];
-  const shadowAlpha = argb === undefined ? 255 : argb >>> 24;
+  const rawShadowAlpha = argb === undefined ? 255 : argb >>> 24;
+  const shadowAlpha = rawShadowAlpha < 26 ? 0 : rawShadowAlpha;
   const decorated = (x: number, y: number) =>
     x >= -0.5 &&
     x < advance + 0.5 &&

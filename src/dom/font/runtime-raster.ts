@@ -265,8 +265,9 @@ export function rasterizeRuntimeGlyph(
           ];
           if (rgba[3]! < 26) continue; // Text shader final alpha < 0.1 is discarded.
         }
+        const alpha = (rgba[3]! / 255) * opacity;
+        if (alpha < 0.1) continue;
         const offset = (py * width + px) * 4,
-          alpha = (rgba[3]! / 255) * opacity,
           previousAlpha = output[offset + 3]! / 255,
           combined = alpha + previousAlpha * (1 - alpha);
         for (let c = 0; c < 3; c++)
