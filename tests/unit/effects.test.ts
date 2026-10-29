@@ -36,7 +36,7 @@ it("measures narrow glyphs, bold and alignment from the same profile", () => {
     width: 40,
     alignments: ["center"],
   });
-  expect(result.lines[0]).toEqual({ width: 15, padding: 12 });
+  expect(result.lines[0]).toEqual({ width: 15, padding: 13 });
   expect(result.glyphs.map((c) => c.advance)).toEqual([6, 2, 7]);
   expect(
     core.layoutText(core.parseText("😀", "minimessage").value!, {

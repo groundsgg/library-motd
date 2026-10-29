@@ -7,6 +7,7 @@ import type {
 import { flattenDisplayText } from "../text/display.js";
 import { diagnostic } from "../diagnostics.js";
 import { regularGlyphAdvance } from "./metrics.js";
+import { nativePadding, supportsFinePadding } from "./padding.js";
 export function layoutText(
   text: TextDocument,
   options: LayoutOptions,
@@ -67,6 +68,16 @@ export function layoutText(
     }
     insertedSpaces += count;
     let padding = count ? count * space : 0;
+    if (
+      !source &&
+      align !== "left" &&
+      supportsFinePadding(options.profile.font)
+    ) {
+      padding = nativePadding(
+        align === "center" ? remaining / 2 : remaining,
+        remaining,
+      ).padding;
+    }
     if (source) {
       padding = 0;
       for (let i = 0; i < count; i++) padding = add(padding, space);

@@ -100,7 +100,7 @@ it("requires explicit bounded tolerances and reports position deviation", () => 
       positionTolerance: 4,
     })
     .find((p) => p.kind === "alignment")!;
-  expect(proposal.maximumPositionError).toBe(4);
+  expect(proposal.maximumPositionError).toBe(2);
   for (const tolerance of [-1, NaN, Infinity, 256])
     expect(
       api.suggestImportAssistance(document, {

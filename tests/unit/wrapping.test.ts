@@ -122,7 +122,7 @@ it("right padding never pushes an otherwise fitting word beyond the line width",
     alignments: ["right" as const],
   };
   const result = core.layoutText(doc, options);
-  expect(result.lines[0]).toEqual({ width: 12, padding: 12 });
+  expect(result.lines[0]).toEqual({ width: 12, padding: 14 });
   const exported = core.serializeText(
     doc,
     { format: "json" },
@@ -160,7 +160,7 @@ it("uses the caller's profile and width for aligned runtime MOTD output", () => 
       .flattenText(parsed)
       .map((g) => g.text)
       .join(""),
-  ).toBe("  MM\n   MM");
+  ).toBe(" MM\n   MM");
 });
 
 it("does not generate invalid padding for a zero-advance custom space", () => {
@@ -278,7 +278,7 @@ it.each(["json", "minimessage", "legacy-section"] as const)(
         .flattenText(exported)
         .map((c) => c.text)
         .join(""),
-    ).toBe("  MM\n   MM");
+    ).toBe(" MM\n   MM");
     expect(core.serializeText(doc, { format: "minimessage" }).value).toBe(
       "MM MM",
     );
