@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.0](https://github.com/groundsgg/library-motd/compare/v0.4.0...v0.5.0) (2026-10-30)
+
+
+### Features
+
+* **editor:** expose host-defined variable catalogs ([#147](https://github.com/groundsgg/library-motd/issues/147)) ([5066788](https://github.com/groundsgg/library-motd/commit/50667885240abe02ff6d3666cff9f326f951a89e))
+* **editor:** offer audited Vanilla sprite catalogs ([#150](https://github.com/groundsgg/library-motd/issues/150)) ([dad8e86](https://github.com/groundsgg/library-motd/commit/dad8e86fb9cd898c2c8560bda58e08435831daa0))
+* **editor:** support native atlas sprites and optional sprite catalogs ([#146](https://github.com/groundsgg/library-motd/issues/146)) ([63b4368](https://github.com/groundsgg/library-motd/commit/63b436831a53dbbd465107fcba39786115f89b46))
+
+
+### Bug Fixes
+
+* **editor:** keep trailing placeholder caret on the second line ([#140](https://github.com/groundsgg/library-motd/issues/140)) ([95d1e7e](https://github.com/groundsgg/library-motd/commit/95d1e7e39e946d15c929ebb65b9685f982aa56e8)), closes [#139](https://github.com/groundsgg/library-motd/issues/139)
+* **layout:** improve native MOTD alignment precision ([#145](https://github.com/groundsgg/library-motd/issues/145)) ([fbc76ce](https://github.com/groundsgg/library-motd/commit/fbc76cea20070f6fe0b4d0e251d6c74feed7f851))
+
 ## [0.4.0](https://github.com/groundsgg/library-motd/compare/v0.3.0...v0.4.0) (2026-10-28)
 
 
