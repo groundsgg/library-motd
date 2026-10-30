@@ -25,7 +25,13 @@ export const germanLabels = {
   variableFieldHover: "Spieler-Hovertext",
   "diagnostic.spriteRendererRequired":
     "Beim direkten Aufruf von renderText benötigen native Sprites einen eigenen SpritePainter.",
-  spriteResourcePack: "Benötigt ein aktives Ressourcenpaket",
+  spriteResourcePack: "Benötigt ein lokal aktiviertes Clientpack",
+  vanillaSpritesLoading: "Lokale Vanilla-Sprite-Ressourcen werden geladen…",
+  vanillaSpritesReady: "Vanilla-Sprite-Ressourcen sind bereit.",
+  vanillaSpritesMissing:
+    "Für diese Vorschau sind keine Originalressourcen für Vanilla-Sprites eingerichtet.",
+  vanillaSpritesUnsupported:
+    "Der geprüfte Vanilla-Sprite-Katalog ist für dieses Clientprofil nicht verfügbar.",
   insertSprite: "Symbol einfügen",
   searchSprites: "Symbole suchen",
   noSprites: "Keine passenden Symbole",

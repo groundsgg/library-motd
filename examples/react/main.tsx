@@ -1,12 +1,18 @@
 import { demoVariableCatalog } from "../shared/variables.js";
-import { demoSpriteCatalog } from "../shared/sprites.js";
-import { createElement, StrictMode, useState } from "react";
+import {
+  loadVanillaSpriteProvider,
+  vanillaSpriteStatusKey,
+  type VanillaSpriteState,
+} from "../shared/sprites.js";
+import { createElement, StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { ServerListEditor, ServerListPreview } from "../../src/react/index.js";
 import {
   clientProfiles,
   englishLabels,
   germanLabels,
+  vanillaSpriteCatalog,
+  type SpriteProvider,
 } from "../../src/index.js";
 import {
   context,
@@ -31,11 +37,39 @@ function App() {
   const [panoramaPaused, setPanoramaPaused] = useState(false);
   const [panoramaSpeed, setPanoramaSpeed] = useState(1);
   const [showRuntimeFont, setShowRuntimeFont] = useState(false);
+  const [sprites, setSprites] = useState<{
+    version: string;
+    provider?: SpriteProvider;
+    state: VanillaSpriteState;
+  }>({ version: "", state: "loading" });
+  useEffect(() => {
+    const abort = new AbortController();
+    const version = profile.clientVersion;
+    setSprites({
+      version,
+      state: vanillaSpriteCatalog(profile).length ? "loading" : "unsupported",
+    });
+    void loadVanillaSpriteProvider(profile, abort.signal).then((provider) => {
+      if (!abort.signal.aborted)
+        setSprites({
+          version,
+          provider,
+          state: !vanillaSpriteCatalog(profile).length
+            ? "unsupported"
+            : provider
+              ? "ready"
+              : "missing",
+        });
+    });
+    return () => abort.abort();
+  }, [profile]);
   const previewContext = {
     ...context,
     profile,
     presentation,
     clientProtocol: profile.protocol!,
+    spriteProvider:
+      sprites.version === profile.clientVersion ? sprites.provider : undefined,
   };
   return createElement(
     "div",
@@ -155,8 +189,17 @@ function App() {
       ),
     ),
     createElement("p", null, labels.panoramaDemoNote),
+    createElement(
+      "p",
+      { role: "status" },
+      labels[
+        vanillaSpriteStatusKey[
+          sprites.version === profile.clientVersion ? sprites.state : "loading"
+        ]
+      ],
+    ),
     createElement(ServerListEditor, {
-      spriteCatalog: demoSpriteCatalog,
+      spriteCatalog: vanillaSpriteCatalog(profile),
       variableCatalog: demoVariableCatalog,
       document,
       context: previewContext,
@@ -197,7 +240,7 @@ function App() {
         createElement(
           "p",
           null,
-          "Original bitmap A and Unihex B for 1.21.1 and 26.3. Viewer-only source; no game assets are included.",
+          "Original bitmap A and Unihex B for 1.21.1 and 26.3. These resources would need to be globally enabled in the client before viewing the server list. Viewer-only source; no game assets are included.",
         ),
         createElement(
           "div",

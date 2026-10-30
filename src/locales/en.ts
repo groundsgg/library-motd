@@ -22,7 +22,13 @@ export const englishLabels = {
   variableFieldHover: "Player hover",
   "diagnostic.spriteRendererRequired":
     "Native sprite rendering requires an owned SpritePainter when calling renderText directly.",
-  spriteResourcePack: "Requires client resource pack",
+  spriteResourcePack: "Requires a locally enabled client pack",
+  vanillaSpritesLoading: "Loading local Vanilla sprite resources…",
+  vanillaSpritesReady: "Vanilla sprite resources are ready.",
+  vanillaSpritesMissing:
+    "Original Vanilla sprite resources are not configured for this preview.",
+  vanillaSpritesUnsupported:
+    "The verified Vanilla sprite catalog is unavailable for this client profile.",
   insertSprite: "Insert sprite",
   searchSprites: "Search sprites",
   noSprites: "No matching sprites",

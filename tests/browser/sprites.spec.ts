@@ -1,4 +1,153 @@
 import { expect, test } from "@playwright/test";
+import { PNG } from "pngjs";
+
+const nativePrefix = "/_motd/vanilla-sprites/";
+async function supplyVanillaAssets(page: import("@playwright/test").Page) {
+  const png = new PNG({ width: 1, height: 1 });
+  png.data.set([255, 255, 255, 255]);
+  const pixels = PNG.sync.write(png);
+  await page.route(`**${nativePrefix}**`, async (route) => {
+    const path = new URL(route.request().url()).pathname;
+    const version = path.slice(nativePrefix.length).split("/")[0];
+    if (path.endsWith("manifest.json"))
+      await route.fulfill({
+        json: {
+          schemaVersion: 1,
+          clientVersion: version,
+          sprites: {
+            "minecraft:icon/trial_available": {
+              frames: [
+                {
+                  url: `${nativePrefix}${version}/icon/trial_available-0.png`,
+                  ticks: 10,
+                },
+                {
+                  url: `${nativePrefix}${version}/icon/trial_available-1.png`,
+                  ticks: 2,
+                },
+              ],
+            },
+          },
+        },
+      });
+    else await route.fulfill({ contentType: "image/png", body: pixels });
+  });
+}
+
+for (const adapter of ["dom", "react"])
+  test(`${adapter} defaults to Vanilla choices and keeps native source across client changes`, async ({
+    page,
+  }) => {
+    await supplyVanillaAssets(page);
+    await page.goto(`/examples/${adapter}/`);
+    await expect(
+      page.getByText("Vanilla sprite resources are ready.", { exact: true }),
+    ).toBeVisible();
+    await page.locator(".ProseMirror").first().click();
+    const insert = page.getByRole("button", {
+      name: "Insert sprite",
+      exact: true,
+    });
+    await insert.click();
+    await expect(
+      page.getByRole("button", { name: /Demo pulse|Demo gem/ }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("button", {
+        name: "Trial available · Animated",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Heart · Static", exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Trial available · Animated", exact: true })
+      .click();
+    await expect(
+      page.locator('.mcp-sprite[data-sprite-state="ready"]'),
+    ).toHaveCount(2);
+    await page.getByLabel("Client version").selectOption("java-1.21.1");
+    await page.locator(".ProseMirror").first().click();
+    await expect(insert).toHaveCount(0);
+    await expect(
+      page.locator('.mcp-sprite[data-sprite-state="ready"]'),
+    ).toHaveCount(0);
+    await page.getByLabel("Client version").selectOption("java-26.3");
+    await expect(
+      page.locator('.mcp-sprite[data-sprite-state="ready"]'),
+    ).toHaveCount(2);
+  });
+
+test("unconfigured original assets stay missing instead of using invented demo artwork", async ({
+  page,
+}) => {
+  await page.route(`**${nativePrefix}**`, (route) =>
+    route.fulfill({ status: 404, body: "" }),
+  );
+  await page.goto("/examples/react/");
+  await expect(
+    page.getByText(
+      "Original Vanilla sprite resources are not configured for this preview.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await page.locator(".ProseMirror").first().click();
+  await page
+    .getByRole("button", { name: "Insert sprite", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Trial available · Animated", exact: true })
+    .click();
+  await expect(
+    page.locator('.mcp-sprite[data-sprite-state="failed"]'),
+  ).toHaveCount(2);
+});
+for (const adapter of ["dom", "react"])
+  test(`${adapter} ignores a stale Vanilla resource load after switching clients`, async ({
+    page,
+  }) => {
+    await supplyVanillaAssets(page);
+    await page.addInitScript(() => {
+      const original = window.fetch.bind(window);
+      window.fetch = (input, options) => {
+        if (String(input).endsWith("/26.3/manifest.json"))
+          return new Promise<Response>((resolve) => {
+            (window as any).releaseOldVanilla = async () => {
+              resolve(await original(input, { ...options, signal: undefined }));
+            };
+          });
+        return original(input, options);
+      };
+    });
+    await page.goto(`/examples/${adapter}/`);
+    await page.waitForFunction(
+      () => typeof (window as any).releaseOldVanilla === "function",
+    );
+    await page.getByLabel("Client version").selectOption("java-1.21.11");
+    await expect(
+      page.getByText("Vanilla sprite resources are ready.", { exact: true }),
+    ).toBeVisible();
+    await page.evaluate(async () => {
+      await (window as any).releaseOldVanilla();
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+    });
+    await expect(
+      page.getByText("Vanilla sprite resources are ready.", { exact: true }),
+    ).toBeVisible();
+    await page.locator(".ProseMirror").first().click();
+    await page
+      .getByRole("button", { name: "Insert sprite", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: "Trial available · Animated", exact: true })
+      .click();
+    await expect(
+      page.locator('.mcp-sprite[data-sprite-state="ready"]'),
+    ).toHaveCount(2);
+  });
+
 async function setup(page: import("@playwright/test").Page) {
   await page.goto("/tests/browser/host.html");
   await page.evaluate(() => {
@@ -507,27 +656,3 @@ test("reduced motion and explicit pause freeze native resource animation", async
   await page.waitForTimeout(250); // Observation across more than one complete200ms loop.
   await expect(canvas).toHaveAttribute("data-sprite-frame", "0");
 });
-
-for (const adapter of ["dom", "react"]) {
-  test(`${adapter} example renders its host-provided sprite catalog and inserted object`, async ({
-    page,
-  }) => {
-    await page.goto(`/examples/${adapter}/`);
-    await page.locator(".ProseMirror").first().click();
-    await page
-      .getByRole("button", { name: "Insert sprite", exact: true })
-      .click();
-    await expect(
-      page.locator('.mce-sprite-thumbnail[data-sprite-state="ready"]'),
-    ).toHaveCount(2);
-    await page
-      .getByRole("button", { name: "Demo pulse · Animated", exact: true })
-      .click();
-    await expect(
-      page.locator('.mcp-sprite[data-sprite-state="ready"]'),
-    ).toHaveCount(2);
-    await expect(
-      page.locator('.mcp-sprite[data-sprite-state="failed"]'),
-    ).toHaveCount(0);
-  });
-}

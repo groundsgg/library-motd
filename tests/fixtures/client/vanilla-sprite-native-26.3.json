@@ -1,0 +1,342 @@
+{
+  "sessionDate": "2026-10-30",
+  "clientVersion": "26.3",
+  "clientSha1": "e877b6a07acd633fb3bb475002175cec036e7b87",
+  "environment": "Official unmodified Linux client, owned Xvfb X11 display, forced SDL x11, software OpenGL, default Vanilla resources only",
+  "guiScale": 2,
+  "viewport": [
+    854,
+    480
+  ],
+  "status": {
+    "version": {
+      "name": "26.3",
+      "protocol": 777
+    },
+    "players": {
+      "online": 1,
+      "max": 20
+    },
+    "description": {
+      "text": "",
+      "extra": [
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/trial_available",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/music_notes",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/info",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/link",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/search",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/invite",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/news",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/unseen_notification",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:hud/heart/full",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:hud/heart/hardcore_full",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:hud/armor_full",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:hud/food_full",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/speed",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/strength",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/regeneration",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/luck",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/fire_resistance",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/night_vision",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/invisibility",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/haste",
+          "color": "white",
+          "shadow_color": 0
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/trial_available",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/music_notes",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/info",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/link",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/search",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/invite",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/news",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:icon/unseen_notification",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:hud/heart/full",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:hud/heart/hardcore_full",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:hud/armor_full",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:hud/food_full",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/speed",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/strength",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/regeneration",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/luck",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/fire_resistance",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/night_vision",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/invisibility",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        },
+        {
+          "atlas": "minecraft:gui",
+          "sprite": "minecraft:mob_effect/haste",
+          "color": "white",
+          "shadow_color": 0,
+          "bold": true,
+          "italic": true
+        }
+      ]
+    }
+  },
+  "statusResponses": 1,
+  "objectsPerLine": 20,
+  "lines": [
+    "regular",
+    "bold and italic"
+  ],
+  "opaqueForegroundComparison": {
+    "browsers": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "surfaces": [
+      "viewer",
+      "editor"
+    ],
+    "staticSprites": 18,
+    "cases": 216,
+    "exactCases": 216,
+    "comparedPixels": 30972
+  },
+  "privateEvidenceSha256": {
+    "native-26.3/02-list.png": "af31178675676835fe5ceeee078316e96123f00d89a7f5f5484a30725d515013",
+    "native-26.3/status.json": "673f816813744f267253f1092bdc463bc1c1a79f4e4174d0def8640b8f920f15",
+    "all-browser-native-sampling.json": "fb7246429f4ceeccf86ba115f2fc5b0adebfa1c20a829113ce914167f1d8bda0",
+    "live-browser-proof.json": "a94ee92a5ca7699a9e8eeeb90f3efcffe7549eabd12a670844c790353ea2d296"
+  },
+  "limits": [
+    "Only opaque foreground pixels were compared; transparent background and every shadow combination were not certified.",
+    "Two animated sprites were displayed by the native client; frame order/ticks were audited separately in source archives. Native trial animation has the independent native-atlas/26.3.json120-sample reference.",
+    "Native raster comparison covers GUI2/DPR1 on26.3. Other GUI/DPR combinations use original synthetic sampling tests, not a claim of native capture coverage.",
+    "Original client resources and captures remain private and are not shipped in Git or npm."
+  ]
+}
