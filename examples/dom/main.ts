@@ -1,9 +1,14 @@
 import { demoVariableCatalog } from "../shared/variables.js";
-import { demoSpriteCatalog } from "../shared/sprites.js";
+import {
+  loadVanillaSpriteProvider,
+  vanillaSpriteStatusKey,
+  type VanillaSpriteState,
+} from "../shared/sprites.js";
 import {
   clientProfiles,
   englishLabels,
   germanLabels,
+  vanillaSpriteCatalog,
 } from "../../src/index.js";
 import { createEditor, createPreview } from "../../src/dom/index.js";
 import {
@@ -28,7 +33,7 @@ const editor = createEditor(window.document.querySelector("#editor")!, {
   document,
   context,
   onChange,
-  spriteCatalog: demoSpriteCatalog,
+  spriteCatalog: vanillaSpriteCatalog(context.profile),
   variableCatalog: demoVariableCatalog,
   labels,
 });
@@ -40,6 +45,9 @@ for (const profile of clientProfiles) {
   option.selected = profile.id === context.profile.id;
   versions.add(option);
 }
+let spriteVersion = "";
+let spriteState: VanillaSpriteState = "loading";
+let spriteLoad: AbortController | undefined;
 const refresh = () => {
   labels =
     query<HTMLSelectElement>("#language").value === "de"
@@ -47,6 +55,29 @@ const refresh = () => {
       : englishLabels;
   context.profile = clientProfiles.find((p) => p.id === versions.value)!;
   context.clientProtocol = context.profile.protocol!;
+  if (spriteVersion !== context.profile.clientVersion) {
+    spriteLoad?.abort();
+    const abort = (spriteLoad = new AbortController());
+    spriteVersion = context.profile.clientVersion;
+    context.spriteProvider = undefined;
+    spriteState = vanillaSpriteCatalog(context.profile).length
+      ? "loading"
+      : "unsupported";
+    void loadVanillaSpriteProvider(context.profile, abort.signal).then(
+      (provider) => {
+        if (abort.signal.aborted) return;
+        context.spriteProvider = provider;
+        spriteState = !vanillaSpriteCatalog(context.profile).length
+          ? "unsupported"
+          : provider
+            ? "ready"
+            : "missing";
+        refresh();
+      },
+    );
+  }
+  query<HTMLElement>("#vanilla-sprite-status").textContent =
+    labels[vanillaSpriteStatusKey[spriteState]];
   context.compatible =
     query<HTMLSelectElement>("#protocol").value === "compatible";
   context.background = query<HTMLSelectElement>("#background").value as
@@ -75,7 +106,7 @@ const refresh = () => {
     onChange,
     toolbar,
     labels,
-    spriteCatalog: demoSpriteCatalog,
+    spriteCatalog: vanillaSpriteCatalog(context.profile),
     variableCatalog: demoVariableCatalog,
   });
   preview.update({ document, context, labels });

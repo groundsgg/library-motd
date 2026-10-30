@@ -3,6 +3,7 @@ export interface SpriteImage {
   image: HTMLImageElement;
   references: number;
   pixels: number;
+  raster?: ImageData;
   state: "loading" | "ready" | "failed";
   listeners: Set<() => void>;
 }
@@ -15,6 +16,7 @@ export class SpriteImages {
     this.entries.delete(key);
     this.pixels -= entry.pixels;
     entry.pixels = 0;
+    entry.raster = undefined;
     entry.image.onload = entry.image.onerror = null;
     entry.image.removeAttribute("src");
   }
@@ -81,6 +83,22 @@ export class SpriteImages {
             break;
           }
       });
+  }
+  /** One original-resolution RGBA copy per retained frame, evicted with its image. */
+  raster(entry: SpriteImage): ImageData {
+    if (entry.raster) return entry.raster;
+    const canvas = this.doc.createElement("canvas");
+    canvas.width = entry.image.naturalWidth;
+    canvas.height = entry.image.naturalHeight;
+    try {
+      const g = canvas.getContext("2d", { willReadFrequently: true });
+      if (!g) throw new Error("Sprite pixel context unavailable");
+      g.drawImage(entry.image, 0, 0);
+      entry.raster = g.getImageData(0, 0, canvas.width, canvas.height);
+      return entry.raster;
+    } finally {
+      canvas.width = canvas.height = 0;
+    }
   }
   destroy(): void {
     for (const [key, entry] of this.entries) {

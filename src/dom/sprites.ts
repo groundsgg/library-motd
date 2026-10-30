@@ -61,6 +61,7 @@ export class SpritePainter {
       releaseFrames();
       if (raf !== undefined) win.cancelAnimationFrame(raf);
       raf = undefined;
+      canvas.width = canvas.height = 9;
       g.clearRect(0, 0, 9, 9);
       for (let y = 0; y < 8; y++)
         for (let x = 0; x < 8; x++) {
@@ -137,9 +138,6 @@ export class SpritePainter {
       total = frames.reduce((n, f) => n + f.ticks, 0);
     let loaded = 0,
       last = -1;
-    const source = this.doc.createElement("canvas");
-    source.width = source.height = 8;
-    const sourceContext = source.getContext("2d", { willReadFrequently: true });
     const now = () => win.performance.now();
     if (!epochs.has(this.doc)) epochs.set(this.doc, now());
     const epoch = epochs.get(this.doc)!;
@@ -152,13 +150,27 @@ export class SpritePainter {
       return 0;
     }
     const draw = (index: number) => {
-      if (disposed || index === last || !sourceContext) return;
+      if (disposed || index === last) return;
       try {
-        sourceContext.clearRect(0, 0, 8, 8);
-        sourceContext.imageSmoothingEnabled = false;
-        sourceContext.drawImage(images[index]!, 0, 0, 8, 8);
-        const pixels = sourceContext.getImageData(0, 0, 8, 8),
-          output = g.createImageData(9, 9);
+        // Larger atlas images are sampled at final screen resolution in Vanilla,
+        // not reduced to eight samples before the GUI transform. Eight-pixel
+        // sources already have exactly that information. Bound owned rasters.
+        const physicalScale = context.guiScale * win.devicePixelRatio;
+        const scale =
+          images[index]!.naturalWidth !== 8 && Number.isFinite(physicalScale)
+            ? Math.min(8, Math.max(1, Math.ceil(physicalScale)))
+            : 1;
+        const ink = 8 * scale,
+          size = 9 * scale;
+        if (canvas.width !== size) canvas.width = canvas.height = size;
+        const pixels = this.images.raster(acquired[index]!),
+          output = g.createImageData(size, size);
+        // Select texel centers explicitly. Canvas downscaling differs across
+        // browser backends even with imageSmoothingEnabled=false.
+        const sample = (x: number, y: number) =>
+          (Math.floor(((y + 0.5) * pixels.height) / ink) * pixels.width +
+            Math.floor(((x + 0.5) * pixels.width) / ink)) *
+          4;
         const rgb = [1, 3, 5].map((i) =>
           parseInt(glyph.color.slice(i, i + 2), 16),
         );
@@ -170,7 +182,7 @@ export class SpritePainter {
         const shadowAlpha = argb === undefined ? 255 : argb >>> 24;
         const over = (x: number, y: number, color: number[], alpha: number) => {
           if (alpha < 25.5) return;
-          const at = (y * 9 + x) * 4,
+          const at = (y * size + x) * 4,
             a = alpha / 255,
             old = output.data[at + 3]! / 255,
             combined = a + old * (1 - a);
@@ -182,19 +194,19 @@ export class SpritePainter {
           output.data[at + 3] = combined * 255;
         };
         if (context.profile.geometry.motdShadow && shadowAlpha)
-          for (let y = 0; y < 8; y++)
-            for (let x = 0; x < 8; x++)
+          for (let y = 0; y < ink; y++)
+            for (let x = 0; x < ink; x++) {
+              const at = sample(x, y);
               over(
-                x + 1,
-                y + 1,
-                shadow.map(
-                  (c, i) => (pixels.data[(y * 8 + x) * 4 + i]! * c) / 255,
-                ),
-                (pixels.data[(y * 8 + x) * 4 + 3]! * shadowAlpha) / 255,
+                x + scale,
+                y + scale,
+                shadow.map((c, i) => (pixels.data[at + i]! * c) / 255),
+                (pixels.data[at + 3]! * shadowAlpha) / 255,
               );
-        for (let y = 0; y < 8; y++)
-          for (let x = 0; x < 8; x++) {
-            const at = (y * 8 + x) * 4;
+            }
+        for (let y = 0; y < ink; y++)
+          for (let x = 0; x < ink; x++) {
+            const at = sample(x, y);
             over(
               x,
               y,

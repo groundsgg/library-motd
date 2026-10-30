@@ -1,0 +1,2639 @@
+{
+  "sessionDate": "2026-10-30",
+  "scope": "Curated square GUI-atlas resources only; metadata audit of official client archives. Native animation and geometry evidence is separate. No original resource pixels or binaries included.",
+  "atlas": "minecraft:gui",
+  "clients": {
+    "1.21.11": {
+      "clientSha1": "ba2df812c2d12e0219c489c4cd9a5e1f0760f5bd",
+      "atlasSources": [
+        {
+          "type": "minecraft:directory",
+          "prefix": "",
+          "source": "gui/sprites"
+        },
+        {
+          "type": "minecraft:directory",
+          "prefix": "mob_effect/",
+          "source": "mob_effect"
+        }
+      ],
+      "sprites": {
+        "minecraft:icon/trial_available": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/trial_available.png",
+          "sha256": "703906c3d15b828808e919f4d57792623af70c2b916bff09d496ca0bcb523a09",
+          "textureSize": [
+            8,
+            48
+          ],
+          "frameSize": [
+            8,
+            8
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 10
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/music_notes": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/music_notes.png",
+          "sha256": "39b0da4f1659f2de5412d4a73b1e543de4d83f61a17ef4858071752ddb7b5eef",
+          "textureSize": [
+            16,
+            128
+          ],
+          "frameSize": [
+            16,
+            16
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 2
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            },
+            {
+              "index": 6,
+              "ticks": 2
+            },
+            {
+              "index": 7,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/info": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/info.png",
+          "sha256": "b3d732885e04004530bc066a08e9112cb735d3a6b7a822cf17782c98d997f370",
+          "textureSize": [
+            20,
+            20
+          ],
+          "frameSize": [
+            20,
+            20
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/link": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/link.png",
+          "sha256": "b48a304d7d13b21cf53d4d78ccacf2d6cc7b89afafc9818099caabf7dc393aad",
+          "textureSize": [
+            15,
+            15
+          ],
+          "frameSize": [
+            15,
+            15
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/search": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/search.png",
+          "sha256": "c3e27020baba359cb74a5c340b377986d08e0d17259a723183bc5049e192b898",
+          "textureSize": [
+            12,
+            12
+          ],
+          "frameSize": [
+            12,
+            12
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/invite": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/invite.png",
+          "sha256": "b8fffccc180617b40e3a91fd7338358255c61782bb4f9f4aeebb23d70c04392a",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/news": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/news.png",
+          "sha256": "f521fb00ea8a561758fc2bfe363f0bc4e04748533fdad89151fe7508fb089fab",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/unseen_notification": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/unseen_notification.png",
+          "sha256": "5dd9dab0830d4447366a5c50cbdfad91b908e6c73e967fc3d2c068ba02eeb440",
+          "textureSize": [
+            10,
+            10
+          ],
+          "frameSize": [
+            10,
+            10
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/full.png",
+          "sha256": "acb11da7611dc8239d4da2fe500cca2fe88a2c4facccf42fa7207c0e9dba4a16",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/hardcore_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/hardcore_full.png",
+          "sha256": "0a7788d62fb70523880ca26120add4fb397a35ea70e7deca036c8fc2afcbada7",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/armor_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/armor_full.png",
+          "sha256": "c597732ea51f36099214344e02d2a6621b85d98c526b42aa9a2ba9c1a137a8da",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/food_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/food_full.png",
+          "sha256": "0ac83b16e7c7c7cd100cbfde07202a6f6df2d805fe35a8a95e003b2d525a760b",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/speed": {
+          "resource": "assets/minecraft/textures/mob_effect/speed.png",
+          "sha256": "3745e2979516481b70ecbc8b016817003cbd0f6bc4d49498ee66a9480816617c",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/strength": {
+          "resource": "assets/minecraft/textures/mob_effect/strength.png",
+          "sha256": "6aa0bfb48dc95b3f6bb296b0c6e204d4721721a441a7513a12d504a92f723f93",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/regeneration": {
+          "resource": "assets/minecraft/textures/mob_effect/regeneration.png",
+          "sha256": "e70573cce87561ccdbdb1bf6bc71d2ecf119460b9bdaf5f59a404ac06d9ce0b6",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/luck": {
+          "resource": "assets/minecraft/textures/mob_effect/luck.png",
+          "sha256": "30a242e3432fb0ce3f680bcfe4d085d3f94738c18da06d65319fe89a207c6da3",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/fire_resistance": {
+          "resource": "assets/minecraft/textures/mob_effect/fire_resistance.png",
+          "sha256": "df4d3bded7518b70b50e80e5e87545f62c9b287729067b2f12892bd28acfaf36",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/night_vision": {
+          "resource": "assets/minecraft/textures/mob_effect/night_vision.png",
+          "sha256": "b040a6aa0f74ab87714a14ce37bc22e890d228d6e3e662538717d4979dc566b1",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/invisibility": {
+          "resource": "assets/minecraft/textures/mob_effect/invisibility.png",
+          "sha256": "897145a88521f1a91abf9ea24142c2bf20a3197df5c0e8f37100bc72c9d167a9",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/haste": {
+          "resource": "assets/minecraft/textures/mob_effect/haste.png",
+          "sha256": "a60bfc0cbe80713de63b4cfea69a0cd9640475e12da661cea495dad6592903b8",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        }
+      }
+    },
+    "26.1": {
+      "clientSha1": "191771837687b766537a8c4607cb6fad79c533a1",
+      "atlasSources": [
+        {
+          "type": "minecraft:directory",
+          "prefix": "",
+          "source": "gui/sprites"
+        },
+        {
+          "type": "minecraft:directory",
+          "prefix": "mob_effect/",
+          "source": "mob_effect"
+        }
+      ],
+      "sprites": {
+        "minecraft:icon/trial_available": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/trial_available.png",
+          "sha256": "703906c3d15b828808e919f4d57792623af70c2b916bff09d496ca0bcb523a09",
+          "textureSize": [
+            8,
+            48
+          ],
+          "frameSize": [
+            8,
+            8
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 10
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/music_notes": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/music_notes.png",
+          "sha256": "39b0da4f1659f2de5412d4a73b1e543de4d83f61a17ef4858071752ddb7b5eef",
+          "textureSize": [
+            16,
+            128
+          ],
+          "frameSize": [
+            16,
+            16
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 2
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            },
+            {
+              "index": 6,
+              "ticks": 2
+            },
+            {
+              "index": 7,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/info": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/info.png",
+          "sha256": "b3d732885e04004530bc066a08e9112cb735d3a6b7a822cf17782c98d997f370",
+          "textureSize": [
+            20,
+            20
+          ],
+          "frameSize": [
+            20,
+            20
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/link": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/link.png",
+          "sha256": "b48a304d7d13b21cf53d4d78ccacf2d6cc7b89afafc9818099caabf7dc393aad",
+          "textureSize": [
+            15,
+            15
+          ],
+          "frameSize": [
+            15,
+            15
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/search": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/search.png",
+          "sha256": "c3e27020baba359cb74a5c340b377986d08e0d17259a723183bc5049e192b898",
+          "textureSize": [
+            12,
+            12
+          ],
+          "frameSize": [
+            12,
+            12
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/invite": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/invite.png",
+          "sha256": "b8fffccc180617b40e3a91fd7338358255c61782bb4f9f4aeebb23d70c04392a",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/news": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/news.png",
+          "sha256": "f521fb00ea8a561758fc2bfe363f0bc4e04748533fdad89151fe7508fb089fab",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/unseen_notification": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/unseen_notification.png",
+          "sha256": "5dd9dab0830d4447366a5c50cbdfad91b908e6c73e967fc3d2c068ba02eeb440",
+          "textureSize": [
+            10,
+            10
+          ],
+          "frameSize": [
+            10,
+            10
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/full.png",
+          "sha256": "acb11da7611dc8239d4da2fe500cca2fe88a2c4facccf42fa7207c0e9dba4a16",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/hardcore_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/hardcore_full.png",
+          "sha256": "0a7788d62fb70523880ca26120add4fb397a35ea70e7deca036c8fc2afcbada7",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/armor_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/armor_full.png",
+          "sha256": "c597732ea51f36099214344e02d2a6621b85d98c526b42aa9a2ba9c1a137a8da",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/food_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/food_full.png",
+          "sha256": "0ac83b16e7c7c7cd100cbfde07202a6f6df2d805fe35a8a95e003b2d525a760b",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/speed": {
+          "resource": "assets/minecraft/textures/mob_effect/speed.png",
+          "sha256": "3745e2979516481b70ecbc8b016817003cbd0f6bc4d49498ee66a9480816617c",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/strength": {
+          "resource": "assets/minecraft/textures/mob_effect/strength.png",
+          "sha256": "6aa0bfb48dc95b3f6bb296b0c6e204d4721721a441a7513a12d504a92f723f93",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/regeneration": {
+          "resource": "assets/minecraft/textures/mob_effect/regeneration.png",
+          "sha256": "e70573cce87561ccdbdb1bf6bc71d2ecf119460b9bdaf5f59a404ac06d9ce0b6",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/luck": {
+          "resource": "assets/minecraft/textures/mob_effect/luck.png",
+          "sha256": "30a242e3432fb0ce3f680bcfe4d085d3f94738c18da06d65319fe89a207c6da3",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/fire_resistance": {
+          "resource": "assets/minecraft/textures/mob_effect/fire_resistance.png",
+          "sha256": "df4d3bded7518b70b50e80e5e87545f62c9b287729067b2f12892bd28acfaf36",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/night_vision": {
+          "resource": "assets/minecraft/textures/mob_effect/night_vision.png",
+          "sha256": "b040a6aa0f74ab87714a14ce37bc22e890d228d6e3e662538717d4979dc566b1",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/invisibility": {
+          "resource": "assets/minecraft/textures/mob_effect/invisibility.png",
+          "sha256": "897145a88521f1a91abf9ea24142c2bf20a3197df5c0e8f37100bc72c9d167a9",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/haste": {
+          "resource": "assets/minecraft/textures/mob_effect/haste.png",
+          "sha256": "a60bfc0cbe80713de63b4cfea69a0cd9640475e12da661cea495dad6592903b8",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        }
+      }
+    },
+    "26.1.1": {
+      "clientSha1": "377031a9e733ba8ab4d355959a8f6fb8eb707556",
+      "atlasSources": [
+        {
+          "type": "minecraft:directory",
+          "prefix": "",
+          "source": "gui/sprites"
+        },
+        {
+          "type": "minecraft:directory",
+          "prefix": "mob_effect/",
+          "source": "mob_effect"
+        }
+      ],
+      "sprites": {
+        "minecraft:icon/trial_available": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/trial_available.png",
+          "sha256": "703906c3d15b828808e919f4d57792623af70c2b916bff09d496ca0bcb523a09",
+          "textureSize": [
+            8,
+            48
+          ],
+          "frameSize": [
+            8,
+            8
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 10
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/music_notes": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/music_notes.png",
+          "sha256": "39b0da4f1659f2de5412d4a73b1e543de4d83f61a17ef4858071752ddb7b5eef",
+          "textureSize": [
+            16,
+            128
+          ],
+          "frameSize": [
+            16,
+            16
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 2
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            },
+            {
+              "index": 6,
+              "ticks": 2
+            },
+            {
+              "index": 7,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/info": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/info.png",
+          "sha256": "b3d732885e04004530bc066a08e9112cb735d3a6b7a822cf17782c98d997f370",
+          "textureSize": [
+            20,
+            20
+          ],
+          "frameSize": [
+            20,
+            20
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/link": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/link.png",
+          "sha256": "b48a304d7d13b21cf53d4d78ccacf2d6cc7b89afafc9818099caabf7dc393aad",
+          "textureSize": [
+            15,
+            15
+          ],
+          "frameSize": [
+            15,
+            15
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/search": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/search.png",
+          "sha256": "c3e27020baba359cb74a5c340b377986d08e0d17259a723183bc5049e192b898",
+          "textureSize": [
+            12,
+            12
+          ],
+          "frameSize": [
+            12,
+            12
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/invite": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/invite.png",
+          "sha256": "b8fffccc180617b40e3a91fd7338358255c61782bb4f9f4aeebb23d70c04392a",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/news": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/news.png",
+          "sha256": "f521fb00ea8a561758fc2bfe363f0bc4e04748533fdad89151fe7508fb089fab",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/unseen_notification": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/unseen_notification.png",
+          "sha256": "5dd9dab0830d4447366a5c50cbdfad91b908e6c73e967fc3d2c068ba02eeb440",
+          "textureSize": [
+            10,
+            10
+          ],
+          "frameSize": [
+            10,
+            10
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/full.png",
+          "sha256": "acb11da7611dc8239d4da2fe500cca2fe88a2c4facccf42fa7207c0e9dba4a16",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/hardcore_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/hardcore_full.png",
+          "sha256": "0a7788d62fb70523880ca26120add4fb397a35ea70e7deca036c8fc2afcbada7",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/armor_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/armor_full.png",
+          "sha256": "c597732ea51f36099214344e02d2a6621b85d98c526b42aa9a2ba9c1a137a8da",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/food_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/food_full.png",
+          "sha256": "0ac83b16e7c7c7cd100cbfde07202a6f6df2d805fe35a8a95e003b2d525a760b",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/speed": {
+          "resource": "assets/minecraft/textures/mob_effect/speed.png",
+          "sha256": "3745e2979516481b70ecbc8b016817003cbd0f6bc4d49498ee66a9480816617c",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/strength": {
+          "resource": "assets/minecraft/textures/mob_effect/strength.png",
+          "sha256": "6aa0bfb48dc95b3f6bb296b0c6e204d4721721a441a7513a12d504a92f723f93",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/regeneration": {
+          "resource": "assets/minecraft/textures/mob_effect/regeneration.png",
+          "sha256": "e70573cce87561ccdbdb1bf6bc71d2ecf119460b9bdaf5f59a404ac06d9ce0b6",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/luck": {
+          "resource": "assets/minecraft/textures/mob_effect/luck.png",
+          "sha256": "30a242e3432fb0ce3f680bcfe4d085d3f94738c18da06d65319fe89a207c6da3",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/fire_resistance": {
+          "resource": "assets/minecraft/textures/mob_effect/fire_resistance.png",
+          "sha256": "df4d3bded7518b70b50e80e5e87545f62c9b287729067b2f12892bd28acfaf36",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/night_vision": {
+          "resource": "assets/minecraft/textures/mob_effect/night_vision.png",
+          "sha256": "b040a6aa0f74ab87714a14ce37bc22e890d228d6e3e662538717d4979dc566b1",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/invisibility": {
+          "resource": "assets/minecraft/textures/mob_effect/invisibility.png",
+          "sha256": "897145a88521f1a91abf9ea24142c2bf20a3197df5c0e8f37100bc72c9d167a9",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/haste": {
+          "resource": "assets/minecraft/textures/mob_effect/haste.png",
+          "sha256": "a60bfc0cbe80713de63b4cfea69a0cd9640475e12da661cea495dad6592903b8",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        }
+      }
+    },
+    "26.1.2": {
+      "clientSha1": "4e618f09a0c649dde3fdf829df443ce0b8831e65",
+      "atlasSources": [
+        {
+          "type": "minecraft:directory",
+          "prefix": "",
+          "source": "gui/sprites"
+        },
+        {
+          "type": "minecraft:directory",
+          "prefix": "mob_effect/",
+          "source": "mob_effect"
+        }
+      ],
+      "sprites": {
+        "minecraft:icon/trial_available": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/trial_available.png",
+          "sha256": "703906c3d15b828808e919f4d57792623af70c2b916bff09d496ca0bcb523a09",
+          "textureSize": [
+            8,
+            48
+          ],
+          "frameSize": [
+            8,
+            8
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 10
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/music_notes": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/music_notes.png",
+          "sha256": "39b0da4f1659f2de5412d4a73b1e543de4d83f61a17ef4858071752ddb7b5eef",
+          "textureSize": [
+            16,
+            128
+          ],
+          "frameSize": [
+            16,
+            16
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 2
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            },
+            {
+              "index": 6,
+              "ticks": 2
+            },
+            {
+              "index": 7,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/info": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/info.png",
+          "sha256": "b3d732885e04004530bc066a08e9112cb735d3a6b7a822cf17782c98d997f370",
+          "textureSize": [
+            20,
+            20
+          ],
+          "frameSize": [
+            20,
+            20
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/link": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/link.png",
+          "sha256": "b48a304d7d13b21cf53d4d78ccacf2d6cc7b89afafc9818099caabf7dc393aad",
+          "textureSize": [
+            15,
+            15
+          ],
+          "frameSize": [
+            15,
+            15
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/search": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/search.png",
+          "sha256": "c3e27020baba359cb74a5c340b377986d08e0d17259a723183bc5049e192b898",
+          "textureSize": [
+            12,
+            12
+          ],
+          "frameSize": [
+            12,
+            12
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/invite": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/invite.png",
+          "sha256": "b8fffccc180617b40e3a91fd7338358255c61782bb4f9f4aeebb23d70c04392a",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/news": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/news.png",
+          "sha256": "f521fb00ea8a561758fc2bfe363f0bc4e04748533fdad89151fe7508fb089fab",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/unseen_notification": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/unseen_notification.png",
+          "sha256": "5dd9dab0830d4447366a5c50cbdfad91b908e6c73e967fc3d2c068ba02eeb440",
+          "textureSize": [
+            10,
+            10
+          ],
+          "frameSize": [
+            10,
+            10
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/full.png",
+          "sha256": "acb11da7611dc8239d4da2fe500cca2fe88a2c4facccf42fa7207c0e9dba4a16",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/hardcore_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/hardcore_full.png",
+          "sha256": "0a7788d62fb70523880ca26120add4fb397a35ea70e7deca036c8fc2afcbada7",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/armor_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/armor_full.png",
+          "sha256": "c597732ea51f36099214344e02d2a6621b85d98c526b42aa9a2ba9c1a137a8da",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/food_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/food_full.png",
+          "sha256": "0ac83b16e7c7c7cd100cbfde07202a6f6df2d805fe35a8a95e003b2d525a760b",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/speed": {
+          "resource": "assets/minecraft/textures/mob_effect/speed.png",
+          "sha256": "3745e2979516481b70ecbc8b016817003cbd0f6bc4d49498ee66a9480816617c",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/strength": {
+          "resource": "assets/minecraft/textures/mob_effect/strength.png",
+          "sha256": "6aa0bfb48dc95b3f6bb296b0c6e204d4721721a441a7513a12d504a92f723f93",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/regeneration": {
+          "resource": "assets/minecraft/textures/mob_effect/regeneration.png",
+          "sha256": "e70573cce87561ccdbdb1bf6bc71d2ecf119460b9bdaf5f59a404ac06d9ce0b6",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/luck": {
+          "resource": "assets/minecraft/textures/mob_effect/luck.png",
+          "sha256": "30a242e3432fb0ce3f680bcfe4d085d3f94738c18da06d65319fe89a207c6da3",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/fire_resistance": {
+          "resource": "assets/minecraft/textures/mob_effect/fire_resistance.png",
+          "sha256": "df4d3bded7518b70b50e80e5e87545f62c9b287729067b2f12892bd28acfaf36",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/night_vision": {
+          "resource": "assets/minecraft/textures/mob_effect/night_vision.png",
+          "sha256": "b040a6aa0f74ab87714a14ce37bc22e890d228d6e3e662538717d4979dc566b1",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/invisibility": {
+          "resource": "assets/minecraft/textures/mob_effect/invisibility.png",
+          "sha256": "897145a88521f1a91abf9ea24142c2bf20a3197df5c0e8f37100bc72c9d167a9",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/haste": {
+          "resource": "assets/minecraft/textures/mob_effect/haste.png",
+          "sha256": "a60bfc0cbe80713de63b4cfea69a0cd9640475e12da661cea495dad6592903b8",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        }
+      }
+    },
+    "26.2": {
+      "clientSha1": "2dc72797acbc1b63fc16a11c4ac393605f453754",
+      "atlasSources": [
+        {
+          "type": "minecraft:directory",
+          "prefix": "",
+          "source": "gui/sprites"
+        },
+        {
+          "type": "minecraft:directory",
+          "prefix": "mob_effect/",
+          "source": "mob_effect"
+        }
+      ],
+      "sprites": {
+        "minecraft:icon/trial_available": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/trial_available.png",
+          "sha256": "703906c3d15b828808e919f4d57792623af70c2b916bff09d496ca0bcb523a09",
+          "textureSize": [
+            8,
+            48
+          ],
+          "frameSize": [
+            8,
+            8
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 10
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/music_notes": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/music_notes.png",
+          "sha256": "39b0da4f1659f2de5412d4a73b1e543de4d83f61a17ef4858071752ddb7b5eef",
+          "textureSize": [
+            16,
+            128
+          ],
+          "frameSize": [
+            16,
+            16
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 2
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            },
+            {
+              "index": 6,
+              "ticks": 2
+            },
+            {
+              "index": 7,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/info": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/info.png",
+          "sha256": "b3d732885e04004530bc066a08e9112cb735d3a6b7a822cf17782c98d997f370",
+          "textureSize": [
+            20,
+            20
+          ],
+          "frameSize": [
+            20,
+            20
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/link": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/link.png",
+          "sha256": "b48a304d7d13b21cf53d4d78ccacf2d6cc7b89afafc9818099caabf7dc393aad",
+          "textureSize": [
+            15,
+            15
+          ],
+          "frameSize": [
+            15,
+            15
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/search": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/search.png",
+          "sha256": "c3e27020baba359cb74a5c340b377986d08e0d17259a723183bc5049e192b898",
+          "textureSize": [
+            12,
+            12
+          ],
+          "frameSize": [
+            12,
+            12
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/invite": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/invite.png",
+          "sha256": "b8fffccc180617b40e3a91fd7338358255c61782bb4f9f4aeebb23d70c04392a",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/news": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/news.png",
+          "sha256": "f521fb00ea8a561758fc2bfe363f0bc4e04748533fdad89151fe7508fb089fab",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/unseen_notification": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/unseen_notification.png",
+          "sha256": "5dd9dab0830d4447366a5c50cbdfad91b908e6c73e967fc3d2c068ba02eeb440",
+          "textureSize": [
+            10,
+            10
+          ],
+          "frameSize": [
+            10,
+            10
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/full.png",
+          "sha256": "acb11da7611dc8239d4da2fe500cca2fe88a2c4facccf42fa7207c0e9dba4a16",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/hardcore_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/hardcore_full.png",
+          "sha256": "0a7788d62fb70523880ca26120add4fb397a35ea70e7deca036c8fc2afcbada7",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/armor_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/armor_full.png",
+          "sha256": "c597732ea51f36099214344e02d2a6621b85d98c526b42aa9a2ba9c1a137a8da",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/food_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/food_full.png",
+          "sha256": "0ac83b16e7c7c7cd100cbfde07202a6f6df2d805fe35a8a95e003b2d525a760b",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/speed": {
+          "resource": "assets/minecraft/textures/mob_effect/speed.png",
+          "sha256": "3745e2979516481b70ecbc8b016817003cbd0f6bc4d49498ee66a9480816617c",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/strength": {
+          "resource": "assets/minecraft/textures/mob_effect/strength.png",
+          "sha256": "6aa0bfb48dc95b3f6bb296b0c6e204d4721721a441a7513a12d504a92f723f93",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/regeneration": {
+          "resource": "assets/minecraft/textures/mob_effect/regeneration.png",
+          "sha256": "e70573cce87561ccdbdb1bf6bc71d2ecf119460b9bdaf5f59a404ac06d9ce0b6",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/luck": {
+          "resource": "assets/minecraft/textures/mob_effect/luck.png",
+          "sha256": "30a242e3432fb0ce3f680bcfe4d085d3f94738c18da06d65319fe89a207c6da3",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/fire_resistance": {
+          "resource": "assets/minecraft/textures/mob_effect/fire_resistance.png",
+          "sha256": "df4d3bded7518b70b50e80e5e87545f62c9b287729067b2f12892bd28acfaf36",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/night_vision": {
+          "resource": "assets/minecraft/textures/mob_effect/night_vision.png",
+          "sha256": "b040a6aa0f74ab87714a14ce37bc22e890d228d6e3e662538717d4979dc566b1",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/invisibility": {
+          "resource": "assets/minecraft/textures/mob_effect/invisibility.png",
+          "sha256": "897145a88521f1a91abf9ea24142c2bf20a3197df5c0e8f37100bc72c9d167a9",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/haste": {
+          "resource": "assets/minecraft/textures/mob_effect/haste.png",
+          "sha256": "a60bfc0cbe80713de63b4cfea69a0cd9640475e12da661cea495dad6592903b8",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        }
+      }
+    },
+    "26.3": {
+      "clientSha1": "e877b6a07acd633fb3bb475002175cec036e7b87",
+      "atlasSources": [
+        {
+          "type": "minecraft:directory",
+          "prefix": "",
+          "source": "gui/sprites"
+        },
+        {
+          "type": "minecraft:directory",
+          "prefix": "mob_effect/",
+          "source": "mob_effect"
+        }
+      ],
+      "sprites": {
+        "minecraft:icon/trial_available": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/trial_available.png",
+          "sha256": "cc2fd31fe9eedd3f6285291ced9408059dbba52c4e0571e8e61cf8cc182f493b",
+          "textureSize": [
+            8,
+            48
+          ],
+          "frameSize": [
+            8,
+            8
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 10
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/music_notes": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/music_notes.png",
+          "sha256": "39b0da4f1659f2de5412d4a73b1e543de4d83f61a17ef4858071752ddb7b5eef",
+          "textureSize": [
+            16,
+            128
+          ],
+          "frameSize": [
+            16,
+            16
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 2
+            },
+            {
+              "index": 1,
+              "ticks": 2
+            },
+            {
+              "index": 2,
+              "ticks": 2
+            },
+            {
+              "index": 3,
+              "ticks": 2
+            },
+            {
+              "index": 4,
+              "ticks": 2
+            },
+            {
+              "index": 5,
+              "ticks": 2
+            },
+            {
+              "index": 6,
+              "ticks": 2
+            },
+            {
+              "index": 7,
+              "ticks": 2
+            }
+          ]
+        },
+        "minecraft:icon/info": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/info.png",
+          "sha256": "b3d732885e04004530bc066a08e9112cb735d3a6b7a822cf17782c98d997f370",
+          "textureSize": [
+            20,
+            20
+          ],
+          "frameSize": [
+            20,
+            20
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/link": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/link.png",
+          "sha256": "b48a304d7d13b21cf53d4d78ccacf2d6cc7b89afafc9818099caabf7dc393aad",
+          "textureSize": [
+            15,
+            15
+          ],
+          "frameSize": [
+            15,
+            15
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/search": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/search.png",
+          "sha256": "c3e27020baba359cb74a5c340b377986d08e0d17259a723183bc5049e192b898",
+          "textureSize": [
+            12,
+            12
+          ],
+          "frameSize": [
+            12,
+            12
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/invite": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/invite.png",
+          "sha256": "b8fffccc180617b40e3a91fd7338358255c61782bb4f9f4aeebb23d70c04392a",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/news": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/news.png",
+          "sha256": "f521fb00ea8a561758fc2bfe363f0bc4e04748533fdad89151fe7508fb089fab",
+          "textureSize": [
+            14,
+            14
+          ],
+          "frameSize": [
+            14,
+            14
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:icon/unseen_notification": {
+          "resource": "assets/minecraft/textures/gui/sprites/icon/unseen_notification.png",
+          "sha256": "5dd9dab0830d4447366a5c50cbdfad91b908e6c73e967fc3d2c068ba02eeb440",
+          "textureSize": [
+            10,
+            10
+          ],
+          "frameSize": [
+            10,
+            10
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/full.png",
+          "sha256": "acb11da7611dc8239d4da2fe500cca2fe88a2c4facccf42fa7207c0e9dba4a16",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/heart/hardcore_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/heart/hardcore_full.png",
+          "sha256": "0a7788d62fb70523880ca26120add4fb397a35ea70e7deca036c8fc2afcbada7",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/armor_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/armor_full.png",
+          "sha256": "c597732ea51f36099214344e02d2a6621b85d98c526b42aa9a2ba9c1a137a8da",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:hud/food_full": {
+          "resource": "assets/minecraft/textures/gui/sprites/hud/food_full.png",
+          "sha256": "0ac83b16e7c7c7cd100cbfde07202a6f6df2d805fe35a8a95e003b2d525a760b",
+          "textureSize": [
+            9,
+            9
+          ],
+          "frameSize": [
+            9,
+            9
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/speed": {
+          "resource": "assets/minecraft/textures/mob_effect/speed.png",
+          "sha256": "3745e2979516481b70ecbc8b016817003cbd0f6bc4d49498ee66a9480816617c",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/strength": {
+          "resource": "assets/minecraft/textures/mob_effect/strength.png",
+          "sha256": "6aa0bfb48dc95b3f6bb296b0c6e204d4721721a441a7513a12d504a92f723f93",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/regeneration": {
+          "resource": "assets/minecraft/textures/mob_effect/regeneration.png",
+          "sha256": "e70573cce87561ccdbdb1bf6bc71d2ecf119460b9bdaf5f59a404ac06d9ce0b6",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/luck": {
+          "resource": "assets/minecraft/textures/mob_effect/luck.png",
+          "sha256": "30a242e3432fb0ce3f680bcfe4d085d3f94738c18da06d65319fe89a207c6da3",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/fire_resistance": {
+          "resource": "assets/minecraft/textures/mob_effect/fire_resistance.png",
+          "sha256": "df4d3bded7518b70b50e80e5e87545f62c9b287729067b2f12892bd28acfaf36",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/night_vision": {
+          "resource": "assets/minecraft/textures/mob_effect/night_vision.png",
+          "sha256": "b040a6aa0f74ab87714a14ce37bc22e890d228d6e3e662538717d4979dc566b1",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/invisibility": {
+          "resource": "assets/minecraft/textures/mob_effect/invisibility.png",
+          "sha256": "897145a88521f1a91abf9ea24142c2bf20a3197df5c0e8f37100bc72c9d167a9",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        },
+        "minecraft:mob_effect/haste": {
+          "resource": "assets/minecraft/textures/mob_effect/haste.png",
+          "sha256": "a60bfc0cbe80713de63b4cfea69a0cd9640475e12da661cea495dad6592903b8",
+          "textureSize": [
+            18,
+            18
+          ],
+          "frameSize": [
+            18,
+            18
+          ],
+          "frames": [
+            {
+              "index": 0,
+              "ticks": 1
+            }
+          ]
+        }
+      }
+    }
+  },
+  "catalog": [
+    {
+      "sprite": "minecraft:icon/trial_available",
+      "label": "Trial available"
+    },
+    {
+      "sprite": "minecraft:icon/music_notes",
+      "label": "Music notes"
+    },
+    {
+      "sprite": "minecraft:icon/info",
+      "label": "Information"
+    },
+    {
+      "sprite": "minecraft:icon/link",
+      "label": "Link"
+    },
+    {
+      "sprite": "minecraft:icon/search",
+      "label": "Search"
+    },
+    {
+      "sprite": "minecraft:icon/invite",
+      "label": "Invitation"
+    },
+    {
+      "sprite": "minecraft:icon/news",
+      "label": "News"
+    },
+    {
+      "sprite": "minecraft:icon/unseen_notification",
+      "label": "Notification"
+    },
+    {
+      "sprite": "minecraft:hud/heart/full",
+      "label": "Heart"
+    },
+    {
+      "sprite": "minecraft:hud/heart/hardcore_full",
+      "label": "Hardcore heart"
+    },
+    {
+      "sprite": "minecraft:hud/armor_full",
+      "label": "Armor"
+    },
+    {
+      "sprite": "minecraft:hud/food_full",
+      "label": "Food"
+    },
+    {
+      "sprite": "minecraft:mob_effect/speed",
+      "label": "Speed"
+    },
+    {
+      "sprite": "minecraft:mob_effect/strength",
+      "label": "Strength"
+    },
+    {
+      "sprite": "minecraft:mob_effect/regeneration",
+      "label": "Regeneration"
+    },
+    {
+      "sprite": "minecraft:mob_effect/luck",
+      "label": "Luck"
+    },
+    {
+      "sprite": "minecraft:mob_effect/fire_resistance",
+      "label": "Fire resistance"
+    },
+    {
+      "sprite": "minecraft:mob_effect/night_vision",
+      "label": "Night vision"
+    },
+    {
+      "sprite": "minecraft:mob_effect/invisibility",
+      "label": "Invisibility"
+    },
+    {
+      "sprite": "minecraft:mob_effect/haste",
+      "label": "Haste"
+    }
+  ]
+}

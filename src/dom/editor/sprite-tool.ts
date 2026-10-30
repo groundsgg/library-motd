@@ -124,6 +124,7 @@ export function mountSpriteTool(mount: ToolMount): ToolHandle {
           },
           {
             ...context,
+            guiScale: 4,
             animations: false,
             spriteProvider: (sprite, profile) => {
               const asset = context.spriteProvider?.(sprite, profile);
@@ -145,7 +146,7 @@ export function mountSpriteTool(mount: ToolMount): ToolHandle {
               toolLabel(
                 mount,
                 "spriteResourcePack",
-                "Requires client resource pack",
+                "Requires a locally enabled client pack",
               ),
             ),
           );

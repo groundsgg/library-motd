@@ -1,4 +1,3 @@
-import { demoSpriteProvider } from "./sprites.js";
 import {
   createDocument,
   java263Profile,
@@ -49,7 +48,6 @@ export const demoPanoramaAssets = (profile: ClientProfile) => {
     : undefined;
 };
 export const context: PreviewContext = {
-  spriteProvider: demoSpriteProvider,
   base: {
     version: { protocol: 777, name: "26.3" },
     players: {

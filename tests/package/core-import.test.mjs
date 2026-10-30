@@ -4,8 +4,14 @@ test("core imports without DOM or network", async () => {
   globalThis.fetch = () => {
     throw new Error("Unexpected network");
   };
-  const { createDocument, writeDocument, readDocument, listVariables } =
-    await import("../../dist/index.js");
+  const {
+    createDocument,
+    writeDocument,
+    readDocument,
+    listVariables,
+    vanillaSpriteCatalog,
+    java263Profile,
+  } = await import("../../dist/index.js");
   assert.deepEqual(
     readDocument(writeDocument(createDocument())).value,
     createDocument(),
@@ -18,4 +24,9 @@ test("core imports without DOM or network", async () => {
     [{ name: "custom", fields: ["motd"] }],
   );
   assert.equal("window" in globalThis, false);
+  assert.equal(vanillaSpriteCatalog(java263Profile).length, 20);
+  assert.equal(
+    vanillaSpriteCatalog(java263Profile)[0].sprite,
+    "minecraft:icon/trial_available",
+  );
 });
