@@ -11,6 +11,8 @@
     <script type="module">
       import * as api from "/src/index.ts";
       import * as dom from "/src/dom/index.ts";
+      import { installSelectionModelProbe } from "./selection-model-probe.ts";
+      installSelectionModelProbe();
       const document = api.createDocument(
         api.parseText(
           "<gold><b>Grounds</b></gold><newline><green>Welcome, {{players}} players",
